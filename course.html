@@ -188,6 +188,15 @@
       border: 0;
     }
 
+    .pdf-frame {
+      width: 100%;
+      height: 460px;
+      border: 1px solid #93c5fd;
+      border-radius: 8px;
+      margin-top: 10px;
+      background-color: #ffffff;
+    }
+
     .video-actions {
       margin-top: 10px;
       display: flex;
@@ -370,6 +379,11 @@
       </div>
 
       <div class="card">
+        <h2>اختبارات المادة</h2>
+        <div id="quizzesContainer"></div>
+      </div>
+
+      <div class="card">
         <h2>ملاحظاتك على المادة (جلسة حالية)</h2>
         <label for="courseNoteInput">اكتب ملخصاً أو نقطة مهمة للمراجعة</label>
         <textarea id="courseNoteInput" placeholder="اكتب ملاحظاتك هنا..."></textarea>
@@ -391,6 +405,7 @@
     const FIREBASE_DB_URL = "https://al7ref-platform-default-rtdb.firebaseio.com";
     const SYNC_NODE = "al7ref_platform_state";
     const COURSES_CACHE_KEY = "al7refCoursesDataCache";
+    const TEMP_CODE_CACHE_KEY = "al7refTempAccessCode";
 
     const ADMIN_CODE = "M2601820";
     const ADMIN_SESSION_KEY = "eduPlatformAdminUnlocked";
@@ -431,8 +446,28 @@
     const ALLOWED_CODES_LIST = generateComplexCodes(TOTAL_CODES);
     const ALLOWED_CODES_SET = new Set(ALLOWED_CODES_LIST);
 
+    let TEMP_ACCESS_CODE = null;
+    try {
+      const cachedTemp = localStorage.getItem(TEMP_CODE_CACHE_KEY);
+      if (cachedTemp) TEMP_ACCESS_CODE = JSON.parse(cachedTemp);
+    } catch (e) {}
+
+    function getActiveTempCode() {
+      if (!TEMP_ACCESS_CODE || !TEMP_ACCESS_CODE.code || !TEMP_ACCESS_CODE.expiresAt) {
+        return null;
+      }
+      if (Date.now() > Number(TEMP_ACCESS_CODE.expiresAt)) {
+        return null;
+      }
+      return String(TEMP_ACCESS_CODE.code).trim();
+    }
+
     function isValidCode(code) {
-      return ALLOWED_CODES_SET.has((code || "").trim());
+      const clean = (code || "").trim();
+      if (!clean) return false;
+      if (ALLOWED_CODES_SET.has(clean)) return true;
+      const activeTemp = getActiveTempCode();
+      return Boolean(activeTemp && clean === activeTemp);
     }
 
     function parseYouTubeVideo(urlOrId) {
@@ -488,7 +523,8 @@
           { title: "الدرس الثاني: مصادر القانون وتدرجها", summary: "التشريع، العرف، ومبادئ الشريعة والقانون.", youtubeUrl: "" },
           { title: "الدرس الثالث: الأشخاص وحقوقهم والتزاماتهم", summary: "الشخص الطبيعي والشخص المعنوي وأهلية الأداء والوجوب.", youtubeUrl: "" }
         ],
-        books: []
+        books: [],
+        quizzes: []
       },
       "2": {
         title: "مبادئ الاقتصاد",
@@ -498,7 +534,8 @@
           { title: "الدرس الثاني: الطلب والعرض وتوازن السوق", summary: "العلاقة بين السعر والكمية المطلوبة والمعروضة.", youtubeUrl: "" },
           { title: "الدرس الثالث: النشاط الاقتصادي والسياسات العامة", summary: "الناتج المحلي، التضخم، ودور الدولة في استقرار السوق.", youtubeUrl: "" }
         ],
-        books: []
+        books: [],
+        quizzes: []
       },
       "3": {
         title: "لغة أجنبية",
@@ -508,7 +545,8 @@
           { title: "الدرس الثاني: الأزمنة وتركيب الجملة", summary: "بناء الجمل الصحيحة في المضارع والماضي والمستقبل.", youtubeUrl: "" },
           { title: "الدرس الثالث: الفهم القرائي والكتابة المختصرة", summary: "استخراج الفكرة الرئيسية وصياغة فقرات واضحة.", youtubeUrl: "" }
         ],
-        books: []
+        books: [],
+        quizzes: []
       },
       "4": {
         title: "مبادئ المحاسبة المالية",
@@ -518,7 +556,8 @@
           { title: "الدرس الثاني: دفتر اليومية ودفتر الأستاذ", summary: "تسجيل القيود المحاسبية والترحيل إلى الحسابات المختصة.", youtubeUrl: "" },
           { title: "الدرس الثالث: ميزان المراجعة والقوائم الختامية", summary: "التحقق من التوازن وإعداد قائمة الدخل والمركز المالي.", youtubeUrl: "" }
         ],
-        books: []
+        books: [],
+        quizzes: []
       },
       "5": {
         title: "مبادئ إدارة الأعمال",
@@ -528,7 +567,8 @@
           { title: "الدرس الثاني: التنظيم وتوزيع المسؤوليات", summary: "الهياكل التنظيمية وتفويض الصلاحيات وتنسيق الأقسام.", youtubeUrl: "" },
           { title: "الدرس الثالث: القيادة والرقابة وتحسين الأداء", summary: "تحفيز العاملين وقياس النتائج ومعالجة الانحرافات.", youtubeUrl: "" }
         ],
-        books: []
+        books: [],
+        quizzes: []
       }
     };
 
@@ -543,6 +583,7 @@
           if (incoming.description) base[courseId].description = incoming.description;
           if (Array.isArray(incoming.lessons)) base[courseId].lessons = incoming.lessons;
           if (Array.isArray(incoming.books)) base[courseId].books = incoming.books;
+          if (Array.isArray(incoming.quizzes)) base[courseId].quizzes = incoming.quizzes;
         }
       });
 
@@ -565,6 +606,7 @@
     const courseDescription = document.getElementById("courseDescription");
     const lessonsList = document.getElementById("lessonsList");
     const booksList = document.getElementById("booksList");
+    const quizzesContainer = document.getElementById("quizzesContainer");
     const courseNoteInput = document.getElementById("courseNoteInput");
     const saveNoteBtn = document.getElementById("saveNoteBtn");
     const clearNoteBtn = document.getElementById("clearNoteBtn");
@@ -726,7 +768,7 @@
         logoutBtn.classList.add("hidden");
         courseContentSection.classList.add("hidden");
         unauthorizedSection.classList.remove("hidden");
-        unauthorizedReason.textContent = "كود الطالب الحالي غير معتمد ضمن قائمة الأكواد المسموحة.";
+        unauthorizedReason.textContent = "كود الطالب الحالي غير معتمد أو انتهت صلاحية الكود المؤقت.";
         refreshAdminView();
         return;
       }
@@ -804,7 +846,7 @@
       if (books.length === 0) {
         const emptyBook = document.createElement("li");
         emptyBook.className = "video-missing";
-        emptyBook.textContent = "لا توجد كتب أو ملفات مضافة لهذه المادة حتى الآن.";
+        emptyBook.textContent = "لا توجد كتب أو ملفات مرفقة لهذه المادة حتى الآن.";
         booksList.appendChild(emptyBook);
       } else {
         books.forEach((book) => {
@@ -812,22 +854,100 @@
           li.className = "lesson-item";
 
           const strong = document.createElement("strong");
-          strong.textContent = book.title || "كتاب / ملف دراسي";
+          strong.textContent = book.title || "ملف دراسي";
           li.appendChild(strong);
+
+          const isPdf =
+            (book.url && book.url.toLowerCase().includes(".pdf")) ||
+            (book.mimeType && book.mimeType.toLowerCase().includes("pdf")) ||
+            (book.url && book.url.startsWith("data:application/pdf"));
+
+          if (isPdf && book.url) {
+            const frame = document.createElement("iframe");
+            frame.src = book.url;
+            frame.className = "pdf-frame";
+            frame.title = book.title || "معاينة ملف PDF";
+            frame.loading = "lazy";
+            li.appendChild(frame);
+          }
 
           const actions = document.createElement("div");
           actions.className = "video-actions";
 
           const link = document.createElement("a");
           link.href = book.url;
+          link.download = book.fileName || (book.title ? book.title + ".pdf" : "file.pdf");
           link.target = "_blank";
           link.rel = "noopener noreferrer";
           link.className = "btn btn-sm";
-          link.textContent = "فتح / تحميل الملف";
+          link.textContent = "تحميل / فتح الملف";
 
           actions.appendChild(link);
           li.appendChild(actions);
           booksList.appendChild(li);
+        });
+      }
+
+      quizzesContainer.innerHTML = "";
+      const quizzes = Array.isArray(course.quizzes) ? course.quizzes : [];
+      if (quizzes.length === 0) {
+        const emptyQuiz = document.createElement("div");
+        emptyQuiz.className = "video-missing";
+        emptyQuiz.textContent = "لا توجد اختبارات مضافة لهذه المادة حتى الآن.";
+        quizzesContainer.appendChild(emptyQuiz);
+      } else {
+        quizzes.forEach((quiz, qIdx) => {
+          const box = document.createElement("div");
+          box.className = "lesson-item";
+
+          const qTitle = document.createElement("strong");
+          qTitle.textContent = (quiz.title || "اختبار") + " — " + quiz.question;
+          box.appendChild(qTitle);
+
+          const groupName = "quiz_" + courseId + "_" + qIdx;
+          (quiz.options || []).forEach((optText, oIdx) => {
+            const optLabel = document.createElement("label");
+            optLabel.style.fontWeight = "normal";
+            optLabel.style.cursor = "pointer";
+
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = groupName;
+            radio.value = String(oIdx);
+            radio.style.width = "auto";
+            radio.style.marginLeft = "8px";
+
+            optLabel.appendChild(radio);
+            optLabel.appendChild(document.createTextNode(optText));
+            box.appendChild(optLabel);
+          });
+
+          const checkBtn = document.createElement("button");
+          checkBtn.type = "button";
+          checkBtn.className = "btn btn-sm";
+          checkBtn.style.marginTop = "10px";
+          checkBtn.textContent = "تحقق من الإجابة";
+
+          const resultMsg = document.createElement("div");
+          resultMsg.className = "msg";
+
+          checkBtn.addEventListener("click", function () {
+            const selected = box.querySelector(`input[name="${groupName}"]:checked`);
+            if (!selected) {
+              resultMsg.className = "msg error";
+              resultMsg.textContent = "اختر إجابة أولاً.";
+              return;
+            }
+            const isCorrect = Number(selected.value) === Number(quiz.correctIndex);
+            resultMsg.className = isCorrect ? "msg info" : "msg error";
+            resultMsg.textContent = isCorrect
+              ? "إجابة صحيحة! أحسنت."
+              : "إجابة غير صحيحة، راجع الدرس وحاول مرة أخرى.";
+          });
+
+          box.appendChild(checkBtn);
+          box.appendChild(resultMsg);
+          quizzesContainer.appendChild(box);
         });
       }
 
@@ -938,6 +1058,13 @@
         if (cloudState.coursesData && typeof cloudState.coursesData === "object") {
           COURSES_DATA = normalizeCoursesData(cloudState.coursesData);
           localStorage.setItem(COURSES_CACHE_KEY, JSON.stringify(COURSES_DATA));
+        }
+        if (cloudState.tempAccessCode && typeof cloudState.tempAccessCode === "object") {
+          TEMP_ACCESS_CODE = cloudState.tempAccessCode;
+          localStorage.setItem(TEMP_CODE_CACHE_KEY, JSON.stringify(TEMP_ACCESS_CODE));
+        } else if (cloudState.tempAccessCode === null) {
+          TEMP_ACCESS_CODE = null;
+          localStorage.removeItem(TEMP_CODE_CACHE_KEY);
         }
         renderCoursePage();
       }
