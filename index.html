@@ -83,7 +83,10 @@
 
     input[type="text"],
     input[type="tel"],
-    input[type="password"] {
+    input[type="password"],
+    input[type="file"],
+    select,
+    textarea {
       width: 100%;
       box-sizing: border-box;
       padding: 10px 12px;
@@ -91,9 +94,17 @@
       border-radius: 8px;
       font-size: 0.95rem;
       background-color: #ffffff;
+      font-family: inherit;
     }
 
-    input:focus {
+    textarea {
+      min-height: 85px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
       outline: 2px solid #2563eb;
       border-color: #2563eb;
     }
@@ -146,6 +157,14 @@
       border-radius: 12px;
       padding: 16px;
       margin-top: 16px;
+    }
+
+    .admin-subbox {
+      background-color: #ffffff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 14px;
     }
 
     .admin-actions {
@@ -233,10 +252,10 @@
       <div id="adminAuthMsg" class="msg"></div>
     </section>
 
-    <!-- لوحة التحكم وسجل الطلاب -->
+    <!-- لوحة التحكم -->
     <section id="adminDashboardSection" class="card admin-panel hidden">
       <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-        <h3>لوحة التحكم — سجل الطلاب</h3>
+        <h3>لوحة التحكم — إدارة المحتوى وسجل الطلاب</h3>
         <button type="button" id="lockAdminBtn" class="btn btn-danger btn-sm">إغلاق لوحة التحكم</button>
       </div>
       <p id="studentsCountText" style="margin:8px 0 0; color:#1e3a8a;"></p>
@@ -248,6 +267,61 @@
       </div>
       <div id="adminDashboardMsg" class="msg"></div>
 
+      <!-- 1. رفع درس جديد وفيديو يوتيوب -->
+      <div class="admin-subbox">
+        <h4>رفع درس جديد إلى المادة</h4>
+        <label for="uploadCourseSelect">اختر المادة الدراسية</label>
+        <select id="uploadCourseSelect">
+          <option value="1">مبادئ القانون</option>
+          <option value="2">مبادئ الاقتصاد</option>
+          <option value="3">لغة أجنبية</option>
+          <option value="4">مبادئ المحاسبة المالية</option>
+          <option value="5">مبادئ إدارة الأعمال</option>
+        </select>
+
+        <label for="lessonTitleInput">عنوان الدرس</label>
+        <input type="text" id="lessonTitleInput" placeholder="مثال: الدرس الرابع — تطبيقات عملية">
+
+        <label for="lessonSummaryInput">ملخص الدرس</label>
+        <textarea id="lessonSummaryInput" placeholder="اكتب ملخصاً مختصراً للدرس..."></textarea>
+
+        <label for="lessonYoutubeInput">رابط أو معرف فيديو يوتيوب (اختياري)</label>
+        <input type="text" id="lessonYoutubeInput" placeholder="مثال: https://youtu.be/... أو معرف الفيديو">
+
+        <div class="admin-actions">
+          <button type="button" id="publishLessonBtn" class="btn btn-sm">رفع الدرس إلى قاعدة البيانات</button>
+        </div>
+        <div id="lessonUploadMsg" class="msg"></div>
+      </div>
+
+      <!-- 2. رفع / إضافة كتاب أو ملف للمادة -->
+      <div class="admin-subbox">
+        <h4>إضافة كتاب أو ملف (من مجلد books أو رابط أو ملف محلي)</h4>
+        <label for="bookCourseSelect">اختر المادة الدراسية</label>
+        <select id="bookCourseSelect">
+          <option value="1">مبادئ القانون</option>
+          <option value="2">مبادئ الاقتصاد</option>
+          <option value="3">لغة أجنبية</option>
+          <option value="4">مبادئ المحاسبة المالية</option>
+          <option value="5">مبادئ إدارة الأعمال</option>
+        </select>
+
+        <label for="bookTitleInput">اسم الكتاب أو الملف</label>
+        <input type="text" id="bookTitleInput" placeholder="مثال: مذكرة المحاسبة — الترم الأول">
+
+        <label for="bookUrlInput">مسار أو رابط الملف (مثال: books/accounting.pdf أو رابط مباشر)</label>
+        <input type="text" id="bookUrlInput" placeholder="books/file.pdf أو https://...">
+
+        <label for="bookFileInput">أو اختر ملفاً من جهازك للمعاينة الفورية</label>
+        <input type="file" id="bookFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip">
+
+        <div class="admin-actions">
+          <button type="button" id="publishBookBtn" class="btn btn-sm">حفظ الكتاب / الملف</button>
+        </div>
+        <div id="bookUploadMsg" class="msg"></div>
+      </div>
+
+      <!-- سجل الطلاب -->
       <div class="log-table-wrap">
         <table>
           <thead>
@@ -337,6 +411,7 @@
   <script>
     const FIREBASE_DB_URL = "https://al7ref-platform-default-rtdb.firebaseio.com";
     const SYNC_NODE = "al7ref_platform_state";
+    const COURSES_CACHE_KEY = "al7refCoursesDataCache";
 
     const ADMIN_CODE = "M2601820";
     const ADMIN_SESSION_KEY = "eduPlatformAdminUnlocked";
@@ -386,6 +461,86 @@
       return digits.length >= 8 && digits.length <= 15;
     }
 
+    const DEFAULT_COURSES_DATA = {
+      "1": {
+        title: "مبادئ القانون",
+        description: "مدخل إلى القاعدة القانونية، مصادر القانون، وتطبيقاته الأساسية في الحياة العملية.",
+        lessons: [
+          { title: "الدرس الأول: مفهوم القاعدة القانونية وخصائصها", summary: "الفرق بين القاعدة القانونية والقواعد الأخلاقية والاجتماعية.", youtubeUrl: "" },
+          { title: "الدرس الثاني: مصادر القانون وتدرجها", summary: "التشريع، العرف، ومبادئ الشريعة والقانون.", youtubeUrl: "" },
+          { title: "الدرس الثالث: الأشخاص وحقوقهم والتزاماتهم", summary: "الشخص الطبيعي والشخص المعنوي وأهلية الأداء والوجوب.", youtubeUrl: "" }
+        ],
+        books: []
+      },
+      "2": {
+        title: "مبادئ الاقتصاد",
+        description: "فهم المشكلة الاقتصادية، ندرة الموارد، وآليات السوق والعرض والطلب.",
+        lessons: [
+          { title: "الدرس الأول: المشكلة الاقتصادية والندرة", summary: "اختيار البدائل وتكلفة الفرصة البديلة وإنتاجية الموارد.", youtubeUrl: "" },
+          { title: "الدرس الثاني: الطلب والعرض وتوازن السوق", summary: "العلاقة بين السعر والكمية المطلوبة والمعروضة.", youtubeUrl: "" },
+          { title: "الدرس الثالث: النشاط الاقتصادي والسياسات العامة", summary: "الناتج المحلي، التضخم، ودور الدولة في استقرار السوق.", youtubeUrl: "" }
+        ],
+        books: []
+      },
+      "3": {
+        title: "لغة أجنبية",
+        description: "تنمية الحصيلة اللغوية، القواعد الأساسية، وفهم النصوص والتواصل.",
+        lessons: [
+          { title: "الدرس الأول: المفردات الأساسية والمصطلحات", summary: "الكلمات الأكثر استخداماً في القراءة والمحادثة اليومية.", youtubeUrl: "" },
+          { title: "الدرس الثاني: الأزمنة وتركيب الجملة", summary: "بناء الجمل الصحيحة في المضارع والماضي والمستقبل.", youtubeUrl: "" },
+          { title: "الدرس الثالث: الفهم القرائي والكتابة المختصرة", summary: "استخراج الفكرة الرئيسية وصياغة فقرات واضحة.", youtubeUrl: "" }
+        ],
+        books: []
+      },
+      "4": {
+        title: "مبادئ المحاسبة المالية",
+        description: "أسس الدورة المحاسبية، قيود اليومية، إعداد ميزان المراجعة والقوائم المالية.",
+        lessons: [
+          { title: "الدرس الأول: المعادلة المحاسبية والحسابات", summary: "الأصول = الخصوم + حقوق الملكية، وتأثير العمليات المالية.", youtubeUrl: "" },
+          { title: "الدرس الثاني: دفتر اليومية ودفتر الأستاذ", summary: "تسجيل القيود المحاسبية والترحيل إلى الحسابات المختصة.", youtubeUrl: "" },
+          { title: "الدرس الثالث: ميزان المراجعة والقوائم الختامية", summary: "التحقق من التوازن وإعداد قائمة الدخل والمركز المالي.", youtubeUrl: "" }
+        ],
+        books: []
+      },
+      "5": {
+        title: "مبادئ إدارة الأعمال",
+        description: "دراسة وظائف الإدارة الحديثة واتخاذ القرار وتنظيم فرق العمل وتحقيق الأهداف.",
+        lessons: [
+          { title: "الدرس الأول: التخطيط وتحديد الأهداف", summary: "وضع الخطط قصيرة وطويلة المدى وتحديد الأولويات.", youtubeUrl: "" },
+          { title: "الدرس الثاني: التنظيم وتوزيع المسؤوليات", summary: "الهياكل التنظيمية وتفويض الصلاحيات وتنسيق الأقسام.", youtubeUrl: "" },
+          { title: "الدرس الثالث: القيادة والرقابة وتحسين الأداء", summary: "تحفيز العاملين وقياس النتائج ومعالجة الانحرافات.", youtubeUrl: "" }
+        ],
+        books: []
+      }
+    };
+
+    function cloneDefaultCourses() {
+      return JSON.parse(JSON.stringify(DEFAULT_COURSES_DATA));
+    }
+
+    function normalizeCoursesData(rawCourses) {
+      const base = cloneDefaultCourses();
+      if (!rawCourses || typeof rawCourses !== "object") return base;
+
+      Object.keys(base).forEach((courseId) => {
+        const incoming = rawCourses[courseId];
+        if (incoming && typeof incoming === "object") {
+          if (incoming.title) base[courseId].title = incoming.title;
+          if (incoming.description) base[courseId].description = incoming.description;
+          if (Array.isArray(incoming.lessons)) base[courseId].lessons = incoming.lessons;
+          if (Array.isArray(incoming.books)) base[courseId].books = incoming.books;
+        }
+      });
+
+      return base;
+    }
+
+    let COURSES_DATA = cloneDefaultCourses();
+    try {
+      const cached = localStorage.getItem(COURSES_CACHE_KEY);
+      if (cached) COURSES_DATA = normalizeCoursesData(JSON.parse(cached));
+    } catch (e) {}
+
     const loginSection = document.getElementById("loginSection");
     const coursesSection = document.getElementById("coursesSection");
     const loginForm = document.getElementById("loginForm");
@@ -413,6 +568,20 @@
     const exportLogBtn = document.getElementById("exportLogBtn");
     const clearLogBtn = document.getElementById("clearLogBtn");
     const adminDashboardMsg = document.getElementById("adminDashboardMsg");
+
+    const uploadCourseSelect = document.getElementById("uploadCourseSelect");
+    const lessonTitleInput = document.getElementById("lessonTitleInput");
+    const lessonSummaryInput = document.getElementById("lessonSummaryInput");
+    const lessonYoutubeInput = document.getElementById("lessonYoutubeInput");
+    const publishLessonBtn = document.getElementById("publishLessonBtn");
+    const lessonUploadMsg = document.getElementById("lessonUploadMsg");
+
+    const bookCourseSelect = document.getElementById("bookCourseSelect");
+    const bookTitleInput = document.getElementById("bookTitleInput");
+    const bookUrlInput = document.getElementById("bookUrlInput");
+    const bookFileInput = document.getElementById("bookFileInput");
+    const publishBookBtn = document.getElementById("publishBookBtn");
+    const bookUploadMsg = document.getElementById("bookUploadMsg");
 
     async function loadCloudState() {
       try {
@@ -459,6 +628,12 @@
     function saveStudentsLog(list) {
       localStorage.setItem(STUDENTS_LOG_KEY, JSON.stringify(list));
       saveCloudState({ studentsLog: list });
+    }
+
+    async function persistCoursesData() {
+      COURSES_DATA = normalizeCoursesData(COURSES_DATA);
+      localStorage.setItem(COURSES_CACHE_KEY, JSON.stringify(COURSES_DATA));
+      return await saveCloudState({ coursesData: COURSES_DATA });
     }
 
     function renderStudentsLog() {
@@ -551,6 +726,70 @@
 
       refreshAdminView();
     }
+
+    publishLessonBtn.addEventListener("click", async function () {
+      const courseId = uploadCourseSelect.value;
+      const title = lessonTitleInput.value.trim();
+      const summary = lessonSummaryInput.value.trim();
+      const youtubeUrl = lessonYoutubeInput.value.trim();
+
+      if (!title) {
+        lessonUploadMsg.className = "msg error";
+        lessonUploadMsg.textContent = "من فضلك أدخل عنوان الدرس.";
+        return;
+      }
+
+      COURSES_DATA = normalizeCoursesData(COURSES_DATA);
+      COURSES_DATA[courseId].lessons.push({
+        title: title,
+        summary: summary || "درس مضاف من لوحة التحكم.",
+        youtubeUrl: youtubeUrl
+      });
+
+      const saved = await persistCoursesData();
+      lessonTitleInput.value = "";
+      lessonSummaryInput.value = "";
+      lessonYoutubeInput.value = "";
+      lessonUploadMsg.className = saved ? "msg info" : "msg error";
+      lessonUploadMsg.textContent = saved
+        ? "تم رفع الدرس وحفظه على Firebase بنجاح."
+        : "تم الحفظ محلياً، لكن تعذر الاتصال بـ Firebase.";
+    });
+
+    publishBookBtn.addEventListener("click", async function () {
+      const courseId = bookCourseSelect.value;
+      const customTitle = bookTitleInput.value.trim();
+      let fileUrl = bookUrlInput.value.trim();
+      const selectedFile = bookFileInput.files && bookFileInput.files[0];
+
+      let finalTitle = customTitle;
+      if (!fileUrl && selectedFile) {
+        finalTitle = finalTitle || selectedFile.name;
+        fileUrl = URL.createObjectURL(selectedFile);
+      }
+
+      if (!finalTitle || !fileUrl) {
+        bookUploadMsg.className = "msg error";
+        bookUploadMsg.textContent = "أدخل اسم الكتاب ومسار/رابط الملف أو اختر ملفاً من جهازك.";
+        return;
+      }
+
+      COURSES_DATA = normalizeCoursesData(COURSES_DATA);
+      COURSES_DATA[courseId].books.push({
+        title: finalTitle,
+        url: fileUrl,
+        isLocalObjectUrl: Boolean(!bookUrlInput.value.trim() && selectedFile)
+      });
+
+      const saved = await persistCoursesData();
+      bookTitleInput.value = "";
+      bookUrlInput.value = "";
+      bookFileInput.value = "";
+      bookUploadMsg.className = saved ? "msg info" : "msg error";
+      bookUploadMsg.textContent = saved
+        ? "تم حفظ الكتاب / الملف وإضافته للمادة بنجاح."
+        : "تم الحفظ محلياً، لكن تعذر الاتصال بـ Firebase.";
+    });
 
     loginForm.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -681,8 +920,14 @@
     async function initHomeSync() {
       renderHomeState();
       const cloudState = await loadCloudState();
-      if (cloudState && typeof cloudState === "object" && Array.isArray(cloudState.studentsLog)) {
-        localStorage.setItem(STUDENTS_LOG_KEY, JSON.stringify(cloudState.studentsLog));
+      if (cloudState && typeof cloudState === "object") {
+        if (Array.isArray(cloudState.studentsLog)) {
+          localStorage.setItem(STUDENTS_LOG_KEY, JSON.stringify(cloudState.studentsLog));
+        }
+        if (cloudState.coursesData && typeof cloudState.coursesData === "object") {
+          COURSES_DATA = normalizeCoursesData(cloudState.coursesData);
+          localStorage.setItem(COURSES_CACHE_KEY, JSON.stringify(COURSES_DATA));
+        }
         renderHomeState();
       }
     }
