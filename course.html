@@ -200,4 +200,744 @@
       margin-top: 10px;
       padding: 10px 12px;
       border-radius: 8px;
-      background-color: #ffffff
+      background-color: #ffffff;
+      border: 1px dashed #93c5fd;
+      color: #1e3a8a;
+      font-size: 0.88rem;
+    }
+
+    .meta-bar {
+      background-color: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      font-size: 0.9rem;
+      color: #1e3a8a;
+    }
+
+    .admin-panel {
+      background-color: #eff6ff;
+      border: 2px solid #2563eb;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .log-table-wrap {
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #ffffff;
+      font-size: 0.88rem;
+    }
+
+    th, td {
+      border: 1px solid #bfdbfe;
+      padding: 8px 10px;
+      text-align: right;
+    }
+
+    th {
+      background-color: #dbeafe;
+      color: #1e3a8a;
+    }
+
+    .msg {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .msg.error {
+      color: #dc2626;
+    }
+
+    .msg.info {
+      color: #1d4ed8;
+    }
+
+    .owner-footer {
+      text-align: center;
+      padding: 18px 14px;
+      margin-top: 24px;
+      background-color: #eff6ff;
+      border-top: 2px solid #2563eb;
+      color: #1e3a8a;
+      font-size: 0.9rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="watermark" aria-hidden="true">عبد الرحمن مجدي</div>
+
+  <header class="navbar">
+    <strong>منصة الحريف — البشمندس بوده</strong>
+    <div class="nav-actions">
+      <span id="studentBadge"></span>
+      <a href="index.html" class="btn btn-secondary btn-sm">المواد الدراسية</a>
+      <button type="button" id="openAdminBtn" class="btn btn-secondary btn-sm">لوحة التحكم</button>
+      <button type="button" id="logoutBtn" class="btn btn-danger btn-sm hidden">تسجيل خروج</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- نافذة كود لوحة التحكم -->
+    <section id="adminAuthSection" class="card admin-panel hidden">
+      <h3>دخول لوحة التحكم</h3>
+      <label for="adminCodeInput">أدخل كود الأدمن</label>
+      <input type="password" id="adminCodeInput" placeholder="اكتب كود التحكم">
+      <div class="admin-actions">
+        <button type="button" id="verifyAdminBtn" class="btn btn-sm">فتح لوحة التحكم</button>
+        <button type="button" id="closeAdminAuthBtn" class="btn btn-secondary btn-sm">إلغاء</button>
+      </div>
+      <div id="adminAuthMsg" class="msg"></div>
+    </section>
+
+    <!-- لوحة التحكم وسجل الطلاب -->
+    <section id="adminDashboardSection" class="card admin-panel hidden">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+        <h3>لوحة التحكم — سجل الطلاب</h3>
+        <button type="button" id="lockAdminBtn" class="btn btn-danger btn-sm">إغلاق لوحة التحكم</button>
+      </div>
+      <p id="studentsCountText" style="margin:8px 0 0; color:#1e3a8a;"></p>
+
+      <div class="admin-actions">
+        <button type="button" id="exportCodesBtn" class="btn btn-secondary btn-sm">تصدير 20,000 كود TXT</button>
+        <button type="button" id="exportLogBtn" class="btn btn-sm">تصدير سجل الطلاب JSON</button>
+        <button type="button" id="clearLogBtn" class="btn btn-danger btn-sm">مسح سجل الطلاب</button>
+      </div>
+      <div id="adminDashboardMsg" class="msg"></div>
+
+      <div class="log-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>اسم الطالب</th>
+              <th>كود الطالب</th>
+              <th>رقم الهاتف</th>
+              <th>العنوان</th>
+              <th>وقت الدخول</th>
+            </tr>
+          </thead>
+          <tbody id="studentsLogBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- تنبيه عدم وجود جلسة صالحة -->
+    <section id="unauthorizedSection" class="card hidden">
+      <h2>تنبيه الدخول</h2>
+      <p id="unauthorizedReason">يلزم تسجيل الدخول بكود الطالب المعتمد من صفحة المنصة الرئيسية أولاً.</p>
+      <div class="admin-actions">
+        <a href="index.html" class="btn">العودة إلى صفحة تسجيل الدخول</a>
+      </div>
+    </section>
+
+    <!-- محتوى المادة الدراسية -->
+    <section id="courseContentSection" class="hidden">
+      <div class="card">
+        <div id="studentSessionInfo" class="meta-bar"></div>
+        <h1 id="courseTitle">المادة الدراسية</h1>
+        <p id="courseDescription"></p>
+      </div>
+
+      <div class="card">
+        <h2>محاور ودروس المادة</h2>
+        <ul id="lessonsList" class="lesson-list"></ul>
+      </div>
+
+      <div class="card">
+        <h2>ملاحظاتك على المادة (جلسة حالية)</h2>
+        <label for="courseNoteInput">اكتب ملخصاً أو نقطة مهمة للمراجعة</label>
+        <textarea id="courseNoteInput" placeholder="اكتب ملاحظاتك هنا..."></textarea>
+        <div class="admin-actions">
+          <button type="button" id="saveNoteBtn" class="btn btn-sm">حفظ ملاحظة الجلسة</button>
+          <button type="button" id="clearNoteBtn" class="btn btn-secondary btn-sm">مسح الملاحظة</button>
+        </div>
+        <div id="noteMsg" class="msg"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="owner-footer">
+    <div><strong>منصة الحريف — البشمندس بوده</strong> | إعداد وتطوير: <strong>عبد الرحمن مجدي</strong></div>
+    <div style="margin-top:6px;">رقم التواصل: <a href="tel:01145332036" style="color:#1d4ed8; font-weight:bold;">01145332036</a></div>
+  </footer>
+
+  <script>
+    const FIREBASE_DB_URL = "https://al7ref-platform-default-rtdb.firebaseio.com";
+    const SYNC_NODE = "al7ref_platform_state";
+
+    const ADMIN_CODE = "M2601820";
+    const ADMIN_SESSION_KEY = "eduPlatformAdminUnlocked";
+    const STUDENTS_LOG_KEY = "eduPlatformStudentsLog";
+    const TOTAL_CODES = 20000;
+
+    const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+    const SYMBOLS = "#@%$!*-_";
+
+    function generateComplexCodes(count) {
+      const codes = [];
+      const seen = new Set();
+      let seed = 987654321;
+
+      function nextRand() {
+        seed = (seed * 1664525 + 1013904223) >>> 0;
+        return seed;
+      }
+
+      while (codes.length < count) {
+        let part = "";
+        for (let i = 0; i < 8; i++) {
+          part += ALPHABET[nextRand() % ALPHABET.length];
+        }
+        const sym1 = SYMBOLS[nextRand() % SYMBOLS.length];
+        const sym2 = SYMBOLS[nextRand() % SYMBOLS.length];
+        const num = String(1000 + (nextRand() % 9000));
+        const candidate = "HRF-" + part.slice(0, 4) + sym1 + part.slice(4) + sym2 + num;
+
+        if (!seen.has(candidate)) {
+          seen.add(candidate);
+          codes.push(candidate);
+        }
+      }
+      return codes;
+    }
+
+    const ALLOWED_CODES_LIST = generateComplexCodes(TOTAL_CODES);
+    const ALLOWED_CODES_SET = new Set(ALLOWED_CODES_LIST);
+
+    function isValidCode(code) {
+      return ALLOWED_CODES_SET.has((code || "").trim());
+    }
+
+    function parseYouTubeVideo(urlOrId) {
+      const raw = (urlOrId || "").trim();
+      if (!raw) return null;
+
+      if (/^[A-Za-z0-9_-]{11}$/.test(raw)) {
+        return {
+          id: raw,
+          embedUrl: "https://www.youtube.com/embed/" + raw,
+          watchUrl: "https://www.youtube.com/watch?v=" + raw
+        };
+      }
+
+      try {
+        const parsed = new URL(raw);
+        const host = parsed.hostname.replace(/^www\./, "").replace(/^m\./, "");
+        let videoId = "";
+
+        if (host === "youtu.be") {
+          videoId = parsed.pathname.split("/").filter(Boolean)[0] || "";
+        } else if (host === "youtube.com" || host === "youtube-nocookie.com") {
+          if (parsed.pathname === "/watch") {
+            videoId = parsed.searchParams.get("v") || "";
+          } else {
+            const parts = parsed.pathname.split("/").filter(Boolean);
+            const idx = parts.findIndex((p) => p === "embed" || p === "shorts" || p === "live" || p === "v");
+            if (idx !== -1 && parts[idx + 1]) {
+              videoId = parts[idx + 1];
+            }
+          }
+        }
+
+        videoId = videoId.split("?")[0].split("&")[0];
+        if (!/^[A-Za-z0-9_-]{11}$/.test(videoId)) return null;
+
+        return {
+          id: videoId,
+          embedUrl: "https://www.youtube.com/embed/" + videoId,
+          watchUrl: "https://www.youtube.com/watch?v=" + videoId
+        };
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // ضع لينك اليوتيوب الخاص بكل درس داخل حقل youtubeUrl
+    let COURSES_DATA = {
+      "1": {
+        title: "مبادئ القانون",
+        description: "مدخل إلى القاعدة القانونية، مصادر القانون، وتطبيقاته الأساسية في الحياة العملية.",
+        lessons: [
+          {
+            title: "الدرس الأول: مفهوم القاعدة القانونية وخصائصها",
+            summary: "الفرق بين القاعدة القانونية والقواعد الأخلاقية والاجتماعية.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثاني: مصادر القانون وتدرجها",
+            summary: "التشريع، العرف، ومبادئ الشريعة والقانون.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثالث: الأشخاص وحقوقهم والتزاماتهم",
+            summary: "الشخص الطبيعي والشخص المعنوي وأهلية الأداء والوجوب.",
+            youtubeUrl: ""
+          }
+        ]
+      },
+      "2": {
+        title: "مبادئ الاقتصاد",
+        description: "فهم المشكلة الاقتصادية، ندرة الموارد، وآليات السوق والعرض والطلب.",
+        lessons: [
+          {
+            title: "الدرس الأول: المشكلة الاقتصادية والندرة",
+            summary: "اختيار البدائل وتكلفة الفرصة البديلة وإنتاجية الموارد.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثاني: الطلب والعرض وتوازن السوق",
+            summary: "العلاقة بين السعر والكمية المطلوبة والمعروضة.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثالث: النشاط الاقتصادي والسياسات العامة",
+            summary: "الناتج المحلي، التضخم، ودور الدولة في استقرار السوق.",
+            youtubeUrl: ""
+          }
+        ]
+      },
+      "3": {
+        title: "لغة أجنبية",
+        description: "تنمية الحصيلة اللغوية، القواعد الأساسية، وفهم النصوص والتواصل.",
+        lessons: [
+          {
+            title: "الدرس الأول: المفردات الأساسية والمصطلحات",
+            summary: "الكلمات الأكثر استخداماً في القراءة والمحادثة اليومية.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثاني: الأزمنة وتركيب الجملة",
+            summary: "بناء الجمل الصحيحة في المضارع والماضي والمستقبل.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثالث: الفهم القرائي والكتابة المختصرة",
+            summary: "استخراج الفكرة الرئيسية وصياغة فقرات واضحة.",
+            youtubeUrl: ""
+          }
+        ]
+      },
+      "4": {
+        title: "مبادئ المحاسبة المالية",
+        description: "أسس الدورة المحاسبية، قيود اليومية، إعداد ميزان المراجعة والقوائم المالية.",
+        lessons: [
+          {
+            title: "الدرس الأول: المعادلة المحاسبية والحسابات",
+            summary: "الأصول = الخصوم + حقوق الملكية، وتأثير العمليات المالية.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثاني: دفتر اليومية ودفتر الأستاذ",
+            summary: "تسجيل القيود المحاسبية والترحيل إلى الحسابات المختصة.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثالث: ميزان المراجعة والقوائم الختامية",
+            summary: "التحقق من التوازن وإعداد قائمة الدخل والمركز المالي.",
+            youtubeUrl: ""
+          }
+        ]
+      },
+      "5": {
+        title: "مبادئ إدارة الأعمال",
+        description: "دراسة وظائف الإدارة الحديثة واتخاذ القرار وتنظيم فرق العمل وتحقيق الأهداف.",
+        lessons: [
+          {
+            title: "الدرس الأول: التخطيط وتحديد الأهداف",
+            summary: "وضع الخطط قصيرة وطويلة المدى وتحديد الأولويات.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثاني: التنظيم وتوزيع المسؤوليات",
+            summary: "الهياكل التنظيمية وتفويض الصلاحيات وتنسيق الأقسام.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثالث: القيادة والرقابة وتحسين الأداء",
+            summary: "تحفيز العاملين وقياس النتائج ومعالجة الانحرافات.",
+            youtubeUrl: ""
+          }
+        ]
+      }
+    };
+
+    const studentBadge = document.getElementById("studentBadge");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const unauthorizedSection = document.getElementById("unauthorizedSection");
+    const unauthorizedReason = document.getElementById("unauthorizedReason");
+    const courseContentSection = document.getElementById("courseContentSection");
+    const studentSessionInfo = document.getElementById("studentSessionInfo");
+    const courseTitle = document.getElementById("courseTitle");
+    const courseDescription = document.getElementById("courseDescription");
+    const lessonsList = document.getElementById("lessonsList");
+    const courseNoteInput = document.getElementById("courseNoteInput");
+    const saveNoteBtn = document.getElementById("saveNoteBtn");
+    const clearNoteBtn = document.getElementById("clearNoteBtn");
+    const noteMsg = document.getElementById("noteMsg");
+
+    const openAdminBtn = document.getElementById("openAdminBtn");
+    const adminAuthSection = document.getElementById("adminAuthSection");
+    const adminCodeInput = document.getElementById("adminCodeInput");
+    const verifyAdminBtn = document.getElementById("verifyAdminBtn");
+    const closeAdminAuthBtn = document.getElementById("closeAdminAuthBtn");
+    const adminAuthMsg = document.getElementById("adminAuthMsg");
+
+    const adminDashboardSection = document.getElementById("adminDashboardSection");
+    const lockAdminBtn = document.getElementById("lockAdminBtn");
+    const studentsCountText = document.getElementById("studentsCountText");
+    const studentsLogBody = document.getElementById("studentsLogBody");
+    const exportCodesBtn = document.getElementById("exportCodesBtn");
+    const exportLogBtn = document.getElementById("exportLogBtn");
+    const clearLogBtn = document.getElementById("clearLogBtn");
+    const adminDashboardMsg = document.getElementById("adminDashboardMsg");
+
+    async function loadCloudState() {
+      try {
+        const res = await fetch(`${FIREBASE_DB_URL}/${SYNC_NODE}.json`);
+        if (!res.ok) return null;
+        return await res.json();
+      } catch (err) {
+        console.warn("تعذر جلب البيانات من Firebase، سيتم الاعتماد على التخزين المحلي:", err);
+        return null;
+      }
+    }
+
+    async function saveCloudState(partialPayload) {
+      try {
+        const current = await loadCloudState();
+        const merged = {
+          ...(current && typeof current === "object" ? current : {}),
+          ...partialPayload,
+          updatedAt: Date.now()
+        };
+
+        const res = await fetch(`${FIREBASE_DB_URL}/${SYNC_NODE}.json`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(merged)
+        });
+        return res.ok;
+      } catch (err) {
+        console.warn("تعذر حفظ البيانات في Firebase:", err);
+        return false;
+      }
+    }
+
+    function getCourseId() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+      return COURSES_DATA[id] ? id : "1";
+    }
+
+    function loadStudentsLog() {
+      try {
+        const raw = localStorage.getItem(STUDENTS_LOG_KEY);
+        const list = raw ? JSON.parse(raw) : [];
+        return Array.isArray(list) ? list : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveStudentsLog(list) {
+      localStorage.setItem(STUDENTS_LOG_KEY, JSON.stringify(list));
+      saveCloudState({ studentsLog: list });
+    }
+
+    function renderStudentsLog() {
+      const list = loadStudentsLog();
+      studentsCountText.textContent =
+        "إجمالي تسجيلات الدخول المسجلة: " + list.length + " | عدد الأكواد المفعّلة: " + ALLOWED_CODES_LIST.length;
+      studentsLogBody.innerHTML = "";
+
+      if (list.length === 0) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 6;
+        td.style.textAlign = "center";
+        td.textContent = "لا يوجد طلاب مسجلون في السجل حتى الآن.";
+        tr.appendChild(td);
+        studentsLogBody.appendChild(tr);
+        return;
+      }
+
+      list.forEach((entry, idx) => {
+        const tr = document.createElement("tr");
+
+        const numTd = document.createElement("td");
+        numTd.textContent = String(idx + 1);
+
+        const nameTd = document.createElement("td");
+        nameTd.textContent = entry.name || "";
+
+        const codeTd = document.createElement("td");
+        codeTd.textContent = entry.code || "";
+
+        const phoneTd = document.createElement("td");
+        phoneTd.textContent = entry.phone || "";
+
+        const addressTd = document.createElement("td");
+        addressTd.textContent = entry.address || "";
+
+        const timeTd = document.createElement("td");
+        timeTd.textContent = entry.time || "";
+
+        tr.appendChild(numTd);
+        tr.appendChild(nameTd);
+        tr.appendChild(codeTd);
+        tr.appendChild(phoneTd);
+        tr.appendChild(addressTd);
+        tr.appendChild(timeTd);
+        studentsLogBody.appendChild(tr);
+      });
+    }
+
+    function refreshAdminView() {
+      const unlocked = sessionStorage.getItem(ADMIN_SESSION_KEY) === "true";
+      if (unlocked) {
+        adminAuthSection.classList.add("hidden");
+        adminDashboardSection.classList.remove("hidden");
+        renderStudentsLog();
+      } else {
+        adminDashboardSection.classList.add("hidden");
+      }
+    }
+
+    function renderCoursePage() {
+      localStorage.removeItem("studentAccess");
+      localStorage.removeItem("studentName");
+      localStorage.removeItem("studentCode");
+      localStorage.removeItem("studentPhone");
+      localStorage.removeItem("studentAddress");
+
+      const name = sessionStorage.getItem("studentName");
+      const code = sessionStorage.getItem("studentCode");
+      const phone = sessionStorage.getItem("studentPhone");
+      const address = sessionStorage.getItem("studentAddress");
+      const access = sessionStorage.getItem("studentAccess") === "granted";
+
+      if (!name || !code || !access) {
+        studentBadge.textContent = "";
+        logoutBtn.classList.add("hidden");
+        courseContentSection.classList.add("hidden");
+        unauthorizedSection.classList.remove("hidden");
+        unauthorizedReason.textContent = "يلزم تسجيل الدخول أولاً من الصفحة الرئيسية لفتح المواد الدراسية.";
+        refreshAdminView();
+        return;
+      }
+
+      if (!isValidCode(code)) {
+        studentBadge.textContent = "";
+        logoutBtn.classList.add("hidden");
+        courseContentSection.classList.add("hidden");
+        unauthorizedSection.classList.remove("hidden");
+        unauthorizedReason.textContent = "كود الطالب الحالي غير معتمد ضمن قائمة الأكواد المسموحة.";
+        refreshAdminView();
+        return;
+      }
+
+      unauthorizedSection.classList.add("hidden");
+      courseContentSection.classList.remove("hidden");
+      logoutBtn.classList.remove("hidden");
+      studentBadge.textContent = "أهلاً، " + name;
+
+      const courseId = getCourseId();
+      const course = COURSES_DATA[courseId];
+      document.title = course.title + " — منصة الحريف — البشمندس بوده";
+      courseTitle.textContent = course.title;
+      courseDescription.textContent = course.description;
+
+      studentSessionInfo.textContent =
+        "الطالب: " + name +
+        (phone ? " | الهاتف: " + phone : "") +
+        (address ? " | العنوان: " + address : "");
+
+      lessonsList.innerHTML = "";
+      course.lessons.forEach((lesson) => {
+        const li = document.createElement("li");
+        li.className = "lesson-item";
+
+        const strong = document.createElement("strong");
+        strong.textContent = lesson.title;
+
+        const p = document.createElement("p");
+        p.style.margin = "0";
+        p.textContent = lesson.summary;
+
+        li.appendChild(strong);
+        li.appendChild(p);
+
+        const yt = parseYouTubeVideo(lesson.youtubeUrl);
+        if (yt) {
+          const box = document.createElement("div");
+          box.className = "video-box";
+
+          const iframe = document.createElement("iframe");
+          iframe.src = yt.embedUrl;
+          iframe.title = lesson.title;
+          iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+          iframe.allowFullscreen = true;
+          iframe.loading = "lazy";
+
+          box.appendChild(iframe);
+          li.appendChild(box);
+
+          const actions = document.createElement("div");
+          actions.className = "video-actions";
+
+          const watchLink = document.createElement("a");
+          watchLink.href = yt.watchUrl;
+          watchLink.target = "_blank";
+          watchLink.rel = "noopener noreferrer";
+          watchLink.className = "btn btn-sm";
+          watchLink.textContent = "فتح الفيديو على يوتيوب";
+
+          actions.appendChild(watchLink);
+          li.appendChild(actions);
+        } else {
+          const missing = document.createElement("div");
+          missing.className = "video-missing";
+          missing.textContent = "لم يتم إضافة رابط فيديو يوتيوب لهذا الدرس بعد في COURSES_DATA.";
+          li.appendChild(missing);
+        }
+
+        lessonsList.appendChild(li);
+      });
+
+      const savedNote = sessionStorage.getItem("courseNote_" + courseId) || "";
+      courseNoteInput.value = savedNote;
+      noteMsg.textContent = "";
+
+      refreshAdminView();
+    }
+
+    saveNoteBtn.addEventListener("click", function () {
+      const courseId = getCourseId();
+      sessionStorage.setItem("courseNote_" + courseId, courseNoteInput.value);
+      noteMsg.className = "msg info";
+      noteMsg.textContent = "تم حفظ ملاحظة الجلسة لهذه المادة.";
+    });
+
+    clearNoteBtn.addEventListener("click", function () {
+      const courseId = getCourseId();
+      sessionStorage.removeItem("courseNote_" + courseId);
+      courseNoteInput.value = "";
+      noteMsg.className = "msg info";
+      noteMsg.textContent = "تم مسح ملاحظة الجلسة.";
+    });
+
+    openAdminBtn.addEventListener("click", function () {
+      if (sessionStorage.getItem(ADMIN_SESSION_KEY) === "true") {
+        refreshAdminView();
+        return;
+      }
+      adminAuthSection.classList.remove("hidden");
+      adminAuthMsg.textContent = "";
+      adminCodeInput.value = "";
+      adminCodeInput.focus();
+    });
+
+    closeAdminAuthBtn.addEventListener("click", function () {
+      adminAuthSection.classList.add("hidden");
+      adminAuthMsg.textContent = "";
+    });
+
+    verifyAdminBtn.addEventListener("click", function () {
+      if (adminCodeInput.value.trim() === ADMIN_CODE) {
+        sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
+        adminAuthSection.classList.add("hidden");
+        adminAuthMsg.textContent = "";
+        refreshAdminView();
+      } else {
+        adminAuthMsg.className = "msg error";
+        adminAuthMsg.textContent = "كود لوحة التحكم غير صحيح.";
+      }
+    });
+
+    lockAdminBtn.addEventListener("click", function () {
+      sessionStorage.removeItem(ADMIN_SESSION_KEY);
+      refreshAdminView();
+    });
+
+    exportCodesBtn.addEventListener("click", function () {
+      const blob = new Blob([ALLOWED_CODES_LIST.join("\n")], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "student-codes-20000.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+      adminDashboardMsg.className = "msg info";
+      adminDashboardMsg.textContent = "تم تصدير قائمة الـ 20,000 كود بنجاح.";
+    });
+
+    exportLogBtn.addEventListener("click", function () {
+      const list = loadStudentsLog();
+      const blob = new Blob([JSON.stringify(list, null, 2)], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "students-log.json";
+      a.click();
+      URL.revokeObjectURL(url);
+      adminDashboardMsg.className = "msg info";
+      adminDashboardMsg.textContent = "تم تصدير سجل الطلاب.";
+    });
+
+    clearLogBtn.addEventListener("click", function () {
+      saveStudentsLog([]);
+      renderStudentsLog();
+      adminDashboardMsg.className = "msg info";
+      adminDashboardMsg.textContent = "تم مسح سجل الطلاب.";
+    });
+
+    logoutBtn.addEventListener("click", function () {
+      sessionStorage.removeItem("studentName");
+      sessionStorage.removeItem("studentCode");
+      sessionStorage.removeItem("studentPhone");
+      sessionStorage.removeItem("studentAddress");
+      sessionStorage.removeItem("studentAccess");
+      sessionStorage.removeItem(ADMIN_SESSION_KEY);
+      window.location.href = "index.html";
+    });
+
+    async function initCourseSync() {
+      renderCoursePage();
+      const cloudState = await loadCloudState();
+      if (cloudState && typeof cloudState === "object") {
+        if (Array.isArray(cloudState.studentsLog)) {
+          localStorage.setItem(STUDENTS_LOG_KEY, JSON.stringify(cloudState.studentsLog));
+        }
+        if (cloudState.coursesData && typeof cloudState.coursesData === "object") {
+          COURSES_DATA = cloudState.coursesData;
+        }
+        renderCoursePage();
+      }
+    }
+
+    initCourseSync();
+  </script>
+
+</body>
+</html>
