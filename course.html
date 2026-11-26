@@ -3,15 +3,121 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تفاصيل الكورس - منصة الحريف — البشمحاسب بوده</title>
+  <title>المادة الدراسية — منصة الحريف — البشمندس بوده</title>
   <link rel="stylesheet" href="style.css">
   <style>
+    body {
+      background-color: #f8fafc;
+      color: #0f172a;
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    .watermark {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-18deg);
+      font-size: clamp(2.2rem, 7vw, 5.2rem);
+      font-weight: bold;
+      color: rgba(37, 99, 235, 0.06);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+    }
+
+    .navbar,
+    .container,
+    .owner-footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    .navbar {
+      background-color: #1e3a8a;
+      color: #ffffff;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 0 14px;
+    }
+
+    .card {
+      background-color: rgba(255, 255, 255, 0.96);
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.06);
+    }
+
+    h1, h2, h3, h4 {
+      color: #1e3a8a;
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 6px;
+      font-weight: bold;
+      color: #1e3a8a;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      border: 1px solid #93c5fd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background-color: #ffffff;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 95px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: 2px solid #2563eb;
+      border-color: #2563eb;
+    }
+
     .btn,
     a.btn,
     button.btn {
+      display: inline-block;
       background-color: #2563eb;
       color: #ffffff;
-      border-color: #2563eb;
+      border: 1px solid #2563eb;
+      border-radius: 8px;
+      padding: 9px 15px;
+      font-size: 0.92rem;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
     }
 
     .btn:hover,
@@ -24,57 +130,59 @@
     .btn-secondary {
       background-color: #3b82f6;
       border-color: #3b82f6;
-      color: #ffffff;
     }
 
-    .btn-secondary:hover {
-      background-color: #1d4ed8;
-      border-color: #1d4ed8;
+    .btn-danger {
+      background-color: #dc2626;
+      border-color: #dc2626;
     }
 
-    .admin-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-      padding: 10px 14px;
+    .btn-danger:hover {
+      background-color: #b91c1c;
+      border-color: #b91c1c;
+    }
+
+    .btn-sm {
+      padding: 7px 12px;
+      font-size: 0.85rem;
+    }
+
+    .lesson-list {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0;
+    }
+
+    .lesson-item {
       background-color: #eff6ff;
-      border: 1px solid #93c5fd;
+      border: 1px solid #bfdbfe;
       border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
     }
 
-    .admin-panel {
-      background-color: #f8fafc;
-      border: 2px solid #2563eb;
-      border-radius: 12px;
-      padding: 18px;
-      margin: 16px 0 20px;
+    .lesson-item strong {
+      color: #1e3a8a;
+      display: block;
+      margin-bottom: 4px;
     }
 
-    .admin-panel h3,
-    .admin-panel h4 {
-      margin-top: 0;
+    .meta-bar {
+      background-color: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      font-size: 0.9rem;
       color: #1e3a8a;
     }
 
-    textarea,
-    select {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #93c5fd;
-      border-radius: 8px;
-      font-family: Tahoma, Arial, sans-serif;
-      font-size: 0.95rem;
-      background-color: #ffffff;
-    }
-
-    textarea:focus,
-    select:focus,
-    input:focus {
-      outline: 2px solid #2563eb;
-      border-color: #2563eb;
+    .admin-panel {
+      background-color: #eff6ff;
+      border: 2px solid #2563eb;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
     }
 
     .admin-actions {
@@ -84,381 +192,523 @@
       margin-top: 12px;
     }
 
-    .btn-success {
-      background-color: #2563eb;
-    }
-
-    .btn-success:hover {
-      background-color: #1d4ed8;
-    }
-
-    .btn-danger {
-      background-color: #dc2626;
-    }
-
-    .btn-danger:hover {
-      background-color: #b91c1c;
-    }
-
-    .btn-sm {
-      padding: 7px 12px;
-      font-size: 0.85rem;
-    }
-
-    .lesson-admin-btns {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .books-list {
+    .log-table-wrap {
+      overflow-x: auto;
       margin-top: 12px;
-      margin-bottom: 18px;
     }
 
-    .book-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      border: 1px solid #bfdbfe;
-      border-radius: 10px;
-      padding: 12px 14px;
-      margin-top: 10px;
+    table {
+      width: 100%;
+      border-collapse: collapse;
       background-color: #ffffff;
+      font-size: 0.88rem;
     }
 
-    .book-title {
-      margin: 0;
-      font-size: 0.98rem;
+    th, td {
+      border: 1px solid #bfdbfe;
+      padding: 8px 10px;
+      text-align: right;
+    }
+
+    th {
+      background-color: #dbeafe;
       color: #1e3a8a;
+    }
+
+    .msg {
+      margin-top: 10px;
+      font-size: 0.9rem;
       font-weight: bold;
     }
 
-    .book-meta {
-      margin: 4px 0 0;
-      font-size: 0.85rem;
-      color: #64748b;
-      word-break: break-all;
+    .msg.error {
+      color: #dc2626;
+    }
+
+    .msg.info {
+      color: #1d4ed8;
+    }
+
+    .owner-footer {
+      text-align: center;
+      padding: 18px 14px;
+      margin-top: 24px;
+      background-color: #eff6ff;
+      border-top: 2px solid #2563eb;
+      color: #1e3a8a;
+      font-size: 0.9rem;
+    }
+
+    .hidden {
+      display: none !important;
     }
   </style>
 </head>
 <body>
 
+  <div class="watermark" aria-hidden="true">عبد الرحمن مجدي</div>
+
   <header class="navbar">
-    <strong>منصة الحريف — البشمحاسب بوده</strong>
+    <strong>منصة الحريف — البشمندس بوده</strong>
     <div class="nav-actions">
       <span id="studentBadge"></span>
-      <button type="button" id="logoutBtn" class="btn btn-logout hidden">تسجيل خروج</button>
-      <button type="button" id="menuToggle" class="menu-btn hidden" aria-expanded="false" aria-controls="mobileMenu">القائمة</button>
+      <a href="index.html" class="btn btn-secondary btn-sm">المواد الدراسية</a>
+      <button type="button" id="openAdminBtn" class="btn btn-secondary btn-sm">لوحة التحكم</button>
+      <button type="button" id="logoutBtn" class="btn btn-danger btn-sm hidden">تسجيل خروج</button>
     </div>
   </header>
 
-  <nav id="mobileMenu" aria-label="القائمة الجانبية">
-    <a href="index.html">الرئيسية</a>
-    <a href="course.html?id=1">مبادئ القانون</a>
-    <a href="course.html?id=2">مبادئ الاقتصاد</a>
-    <a href="course.html?id=3">لغة أجنبية</a>
-    <a href="course.html?id=4">مبادئ المحاسبة المالية</a>
-    <a href="course.html?id=5">مبادئ إدارة الأعمال</a>
-  </nav>
-
   <main class="container">
-    <div id="lockedBox" class="card hidden">
-      <h2>يلزم تسجيل الدخول أولاً</h2>
-      <p>للوصول إلى محتوى الكورس، يرجى تسجيل الدخول من الصفحة الرئيسية بكود صحيح.</p>
-      <a href="index.html" class="btn">الذهاب لتسجيل الدخول</a>
-    </div>
+    <!-- نافذة كود لوحة التحكم -->
+    <section id="adminAuthSection" class="card admin-panel hidden">
+      <h3>دخول لوحة التحكم</h3>
+      <label for="adminCodeInput">أدخل كود الأدمن</label>
+      <input type="password" id="adminCodeInput" placeholder="اكتب كود التحكم">
+      <div class="admin-actions">
+        <button type="button" id="verifyAdminBtn" class="btn btn-sm">فتح لوحة التحكم</button>
+        <button type="button" id="closeAdminAuthBtn" class="btn btn-secondary btn-sm">إلغاء</button>
+      </div>
+      <div id="adminAuthMsg" class="msg"></div>
+    </section>
 
-    <div id="courseBox" class="card hidden">
-      <div class="admin-bar">
-        <span id="adminStatusText">وضع الطالب</span>
-        <div class="quick-actions">
-          <button type="button" id="toggleAdminBtn" class="btn btn-sm">وضع التحكم</button>
-          <button type="button" id="lockAdminBtn" class="btn btn-danger btn-sm hidden">إنهاء التحكم</button>
-        </div>
+    <!-- لوحة التحكم وسجل الطلاب -->
+    <section id="adminDashboardSection" class="card admin-panel hidden">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+        <h3>لوحة التحكم — سجل الطلاب</h3>
+        <button type="button" id="lockAdminBtn" class="btn btn-danger btn-sm">إغلاق لوحة التحكم</button>
+      </div>
+      <p id="studentsCountText" style="margin:8px 0 0; color:#1e3a8a;"></p>
+
+      <div class="admin-actions">
+        <button type="button" id="exportCodesBtn" class="btn btn-secondary btn-sm">تصدير 20,000 كود TXT</button>
+        <button type="button" id="exportLogBtn" class="btn btn-sm">تصدير سجل الطلاب JSON</button>
+        <button type="button" id="clearLogBtn" class="btn btn-danger btn-sm">مسح سجل الطلاب</button>
+      </div>
+      <div id="adminDashboardMsg" class="msg"></div>
+
+      <div class="log-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>اسم الطالب</th>
+              <th>كود الطالب</th>
+              <th>رقم الهاتف</th>
+              <th>العنوان</th>
+              <th>وقت الدخول</th>
+            </tr>
+          </thead>
+          <tbody id="studentsLogBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- تنبيه عدم وجود جلسة صالحة -->
+    <section id="unauthorizedSection" class="card hidden">
+      <h2>تنبيه الدخول</h2>
+      <p id="unauthorizedReason">يلزم تسجيل الدخول بكود الطالب المعتمد من صفحة المنصة الرئيسية أولاً.</p>
+      <div class="admin-actions">
+        <a href="index.html" class="btn">العودة إلى صفحة تسجيل الدخول</a>
+      </div>
+    </section>
+
+    <!-- محتوى المادة الدراسية -->
+    <section id="courseContentSection" class="hidden">
+      <div class="card">
+        <div id="studentSessionInfo" class="meta-bar"></div>
+        <h1 id="courseTitle">المادة الدراسية</h1>
+        <p id="courseDescription"></p>
       </div>
 
-      <!-- نافذة إدخال كود التحكم -->
-      <div id="adminAuthBox" class="admin-panel hidden">
-        <h4>دخول وضع التحكم</h4>
-        <label for="adminCodeInput">أدخل كود التحكم الخاص بك</label>
-        <input type="password" id="adminCodeInput" placeholder="اكتب كود التحكم">
-        <div class="admin-actions">
-          <button type="button" id="verifyAdminBtn" class="btn btn-sm">تفعيل التحكم</button>
-          <button type="button" id="cancelAdminAuthBtn" class="btn btn-secondary btn-sm">إلغاء</button>
-        </div>
-        <div id="adminAuthMsg" class="msg"></div>
+      <div class="card">
+        <h2>محاور ودروس المادة</h2>
+        <ul id="lessonsList" class="lesson-list"></ul>
       </div>
 
-      <!-- لوحة التحكم الكاملة -->
-      <div id="adminPanel" class="admin-panel hidden">
-        <h3>لوحة التحكم بالمادة والدروس وملفات PDF</h3>
-
-        <h4>1. بيانات المادة الحالية</h4>
-        <label for="editCourseTitle">اسم المادة</label>
-        <input type="text" id="editCourseTitle">
-
-        <label for="editCourseDesc">وصف المادة</label>
-        <textarea id="editCourseDesc" rows="2"></textarea>
-
+      <div class="card">
+        <h2>ملاحظاتك على المادة (جلسة حالية)</h2>
+        <label for="courseNoteInput">اكتب ملخصاً أو نقطة مهمة للمراجعة</label>
+        <textarea id="courseNoteInput" placeholder="اكتب ملاحظاتك هنا..."></textarea>
         <div class="admin-actions">
-          <button type="button" id="saveCourseMetaBtn" class="btn btn-success btn-sm">حفظ بيانات المادة</button>
+          <button type="button" id="saveNoteBtn" class="btn btn-sm">حفظ ملاحظة الجلسة</button>
+          <button type="button" id="clearNoteBtn" class="btn btn-secondary btn-sm">مسح الملاحظة</button>
         </div>
-
-        <hr style="margin: 18px 0;">
-
-        <h4>2. إضافة أو تعديل درس وفيديو يوتيوب</h4>
-        <label for="lessonSelect">اختر درساً لتعديله (أو اختر "درس جديد")</label>
-        <select id="lessonSelect"></select>
-
-        <label for="lessonTitleInput">عنوان الدرس</label>
-        <input type="text" id="lessonTitleInput" placeholder="مثال: 1. مقدمة في الموضوع">
-
-        <label for="lessonNotesInput">ملخص / شرح الدرس</label>
-        <textarea id="lessonNotesInput" rows="3" placeholder="اكتب ملخص الدرس أو النقاط المهمة"></textarea>
-
-        <label for="lessonYoutubeInput">رابط فيديو يوتيوب أو الـ ID الخاص به</label>
-        <input type="text" id="lessonYoutubeInput" placeholder="مثال: https://youtu.be/xxxxxxxxxxx أو xxxxxxxxxxx">
-
-        <div class="admin-actions">
-          <button type="button" id="saveLessonBtn" class="btn btn-success btn-sm">حفظ الدرس</button>
-          <button type="button" id="newLessonBtn" class="btn btn-sm">درس جديد</button>
-          <button type="button" id="deleteLessonBtn" class="btn btn-danger btn-sm">حذف الدرس المحدد</button>
-        </div>
-
-        <hr style="margin: 18px 0;">
-
-        <h4>3. إضافة كتاب أو ملف PDF للمادة</h4>
-        <label for="bookTitleInput">اسم الكتاب أو المذكرة</label>
-        <input type="text" id="bookTitleInput" placeholder="مثال: كتاب مبادئ القانون - الترم الأول">
-
-        <label for="bookUrlInput">رابط ملف PDF أو مساره (مثال: books/law.pdf أو رابط مباشر)</label>
-        <input type="text" id="bookUrlInput" placeholder="books/example.pdf أو https://...">
-
-        <div class="admin-actions">
-          <button type="button" id="addBookBtn" class="btn btn-success btn-sm">إضافة ملف PDF</button>
-        </div>
-
-        <hr style="margin: 18px 0;">
-
-        <h4>4. النسخ الاحتياطي وإدارة البيانات</h4>
-        <div class="admin-actions">
-          <button type="button" id="exportJsonBtn" class="btn btn-sm">تصدير نسخة JSON</button>
-          <button type="button" id="importJsonBtn" class="btn btn-secondary btn-sm">استيراد JSON</button>
-          <button type="button" id="copyCodeBtn" class="btn btn-secondary btn-sm">نسخ كود المنهج</button>
-          <button type="button" id="resetDefaultBtn" class="btn btn-danger btn-sm">استعادة الافتراضي</button>
-        </div>
-        <input type="file" id="importFileInput" accept=".json,application/json" class="hidden">
-        <div id="adminMsg" class="msg"></div>
+        <div id="noteMsg" class="msg"></div>
       </div>
-
-      <h1 id="courseTitle"></h1>
-      <p id="courseDesc"></p>
-
-      <hr>
-      <h3>الكتب وملفات PDF للمادة</h3>
-      <div id="booksList" class="books-list"></div>
-
-      <hr>
-      <h3>المنهج الدراسي وفيديوهات الشرح</h3>
-      <div id="lessonsList"></div>
-
-      <div class="quick-actions" style="margin-top: 18px;">
-        <a href="index.html" class="btn btn-secondary">العودة للرئيسية</a>
-      </div>
-    </div>
+    </section>
   </main>
 
-  <footer style="text-align:center; padding:18px 14px; color:#64748b; font-size:0.88rem;">
-    منصة الحريف — البشمحاسب بوده | إعداد وتطوير: <strong>عبد الرحمن مجدي</strong>
+  <footer class="owner-footer">
+    <div><strong>منصة الحريف — البشمندس بوده</strong> | إعداد وتطوير: <strong>عبد الرحمن مجدي</strong></div>
+    <div style="margin-top:6px;">رقم التواصل: <a href="tel:01145332036" style="color:#1d4ed8; font-weight:bold;">01145332036</a></div>
   </footer>
 
   <script>
     const ADMIN_CODE = "M2601820";
     const ADMIN_SESSION_KEY = "eduPlatformAdminUnlocked";
-    const COURSES_STORAGE_KEY = "eduPlatformCoursesCustomData";
+    const STUDENTS_LOG_KEY = "eduPlatformStudentsLog";
+    const TOTAL_CODES = 20000;
 
-    const DEFAULT_COURSES = {
+    const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+    const SYMBOLS = "#@%$!*-_";
+
+    function generateComplexCodes(count) {
+      const codes = [];
+      const seen = new Set();
+      let seed = 987654321;
+
+      function nextRand() {
+        seed = (seed * 1664525 + 1013904223) >>> 0;
+        return seed;
+      }
+
+      while (codes.length < count) {
+        let part = "";
+        for (let i = 0; i < 8; i++) {
+          part += ALPHABET[nextRand() % ALPHABET.length];
+        }
+        const sym1 = SYMBOLS[nextRand() % SYMBOLS.length];
+        const sym2 = SYMBOLS[nextRand() % SYMBOLS.length];
+        const num = String(1000 + (nextRand() % 9000));
+        const candidate = "HRF-" + part.slice(0, 4) + sym1 + part.slice(4) + sym2 + num;
+
+        if (!seen.has(candidate)) {
+          seen.add(candidate);
+          codes.push(candidate);
+        }
+      }
+      return codes;
+    }
+
+    const ALLOWED_CODES_LIST = generateComplexCodes(TOTAL_CODES);
+    const ALLOWED_CODES_SET = new Set(ALLOWED_CODES_LIST);
+
+    function isValidCode(code) {
+      return ALLOWED_CODES_SET.has((code || "").trim());
+    }
+
+    const COURSES_DATA = {
       "1": {
         title: "مبادئ القانون",
-        desc: "منهج متكامل يشرح القاعدة القانونية، مصادر القانون، الحقوق والالتزامات، وتطبيق القانون من حيث الزمان والمكان.",
-        books: [],
+        description: "مدخل إلى القاعدة القانونية، مصادر القانون، وتطبيقاته الأساسية في الحياة العملية.",
         lessons: [
-          {
-            title: "1. مفهوم القانون وخصائص القاعدة القانونية",
-            notes: "تعريف القانون والتمييز بينه وبين قواعد الأخلاق والدين والمجاملات، وخصائص القاعدة القانونية: عامة ومجردة، قاعدة سلوك اجتماعي، وملزمة ومصحوبة بجزاء.",
-            youtubeId: ""
-          },
-          {
-            title: "2. أقسام القانون (العام والخاص) وفروعه",
-            notes: "الفرق بين القانون العام (الدستوري، الإداري، المالي، الجنائي، الدولي العام) والقانون الخاص (المدني، التجاري، البحري، المرافعات، العمل).",
-            youtubeId: ""
-          },
-          {
-            title: "3. المصادر الرسمية والمصادر التفسيرية للقانون",
-            notes: "التشريع (الدستوري، العادي، الفرعي/اللوائح)، العرف وأركانه، مبادئ الشريعة الإسلامية، وقواعد العدالة ومبادئ القانون الطبيعي.",
-            youtubeId: ""
-          },
-          {
-            title: "4. نفاذ القانون وتطبيقه من حيث الزمان والمكان",
-            notes: "إصدار ونشر القانون وسريانه، مبدأ عدم رجعية القوانين واستثناءاته، ومبدأ إقليمية القوانين ومبدأ شخصية القوانين.",
-            youtubeId: ""
-          },
-          {
-            title: "5. الأشخاص: الشخص الطبيعي والشخص الاعتباري",
-            notes: "بداية الشخصية القانونية ونهايتها، الأهلية (التمييز والأداء) وعوارضها، وخصائص الشخص الاعتباري (الشركات، الجمعيات، الهيئات العامة).",
-            youtubeId: ""
-          },
-          {
-            title: "6. نظرية الحق: أنواع الحقوق ومصادرها",
-            notes: "الحقوق السياسية والمدنية، الحقوق العينية (الأصلية والتبعية) والحقوق الشخصية والذهنية، ومصادر الالتزام (العقد، الإرادة المنفردة، العمل غير المشروع، الإثراء بلا سبب، القانون).",
-            youtubeId: ""
-          }
+          { title: "الدرس الأول: مفهوم القاعدة القانونية وخصائصها", summary: "الفرق بين القاعدة القانونية والقواعد الأخلاقية والاجتماعية." },
+          { title: "الدرس الثاني: مصادر القانون وتدرجها", summary: "التشريع، العرف، ومبادئ الشريعة والقانون." },
+          { title: "الدرس الثالث: الأشخاص وحقوقهم والتزاماتهم", summary: "الشخص الطبيعي والشخص المعنوي وأهلية الأداء والوجوب." }
         ]
       },
       "2": {
         title: "مبادئ الاقتصاد",
-        desc: "منهج شامل يغطي الاقتصاد الجزئي والكلي: الندرة، العرض والطلب، سلوك المستهلك والمنتج، والنقود والسياسات الاقتصادية.",
-        books: [],
+        description: "فهم المشكلة الاقتصادية، ندرة الموارد، وآليات السوق والعرض والطلب.",
         lessons: [
-          {
-            title: "1. المشكلة الاقتصادية والندرة واختيار الموارد",
-            notes: "تعدد الحاجات الإنسانية وندرة الموارد الاقتصادية، مفهوم تكلفة الفرصة البديلة، ومنحنى إمكانات الإنتاج والكفاءة الاقتصادية.",
-            youtubeId: ""
-          },
-          {
-            title: "2. نظرية الطلب والعرض وتوازن السوق",
-            notes: "محددات الطلب وقانون الطلب، محددات العرض وقانون العرض، تحديد السعر والكمية التوازنية، وأثر تغير العوامل على التوازن.",
-            youtubeId: ""
-          },
-          {
-            title: "3. مرونة الطلب ومرونة العرض",
-            notes: "مرونة الطلب السعرية والدخلية والتقاطعية، العوامل المؤثرة في المرونة، وعلاقتها بالإيراد الكلي للبائع.",
-            youtubeId: ""
-          },
-          {
-            title: "4. سلوك المستهلك ونظرية الإنتاج والتكاليف",
-            notes: "المنفعة الحدية وتوازن المستهلك، مراحل الإنتاج، والفرق بين التكاليف الثابتة والمتغيرة والحدية في الأجل القصير والطويل.",
-            youtubeId: ""
-          },
-          {
-            title: "5. أشكال الأسواق والمنافسة",
-            notes: "المنافسة الكاملة، الاحتكار التام، الاحتكار القليل، والمنافسة الاحتكارية، وكيفية تحديد الأسعار والإنتاج في كل سوق.",
-            youtubeId: ""
-          },
-          {
-            title: "6. الاقتصاد الكلي: الناتج المحلي، التضخم، والسياسة المالية والنقدية",
-            notes: "قياس الناتج المحلي الإجمالي (GDP)، البطالة والتضخم وأنواعهما، ودور البنوك والسياسة المالية والنقدية في استقرار الاقتصاد.",
-            youtubeId: ""
-          }
+          { title: "الدرس الأول: المشكلة الاقتصادية والندرة", summary: "اختيار البدائل وتكلفة الفرصة البديلة وإنتاجية الموارد." },
+          { title: "الدرس الثاني: الطلب والعرض وتوازن السوق", summary: "العلاقة بين السعر والكمية المطلوبة والمعروضة." },
+          { title: "الدرس الثالث: النشاط الاقتصادي والسياسات العامة", summary: "الناتج المحلي، التضخم، ودور الدولة في استقرار السوق." }
         ]
       },
       "3": {
         title: "لغة أجنبية",
-        desc: "منهج تأسيسي وتطبيقي لتقوية المفردات، القواعد الأساسية، تكوين الجمل، وفهم النصوص والرسائل المهنية.",
-        books: [],
+        description: "تنمية الحصيلة اللغوية، القواعد الأساسية، وفهم النصوص والتواصل.",
         lessons: [
-          {
-            title: "1. المفردات الأساسية والمصطلحات اليومية والأكاديمية",
-            notes: "اكتساب الكلمات الأكثر شيوعاً، المترادفات والمتضادات، والتعبيرات الاصطلاحية المستخدمة في الدراسة والحياة العملية.",
-            youtubeId: ""
-          },
-          {
-            title: "2. أقسام الكلام وبناء الجملة الصحيحة",
-            notes: "الأسماء والضمائر والصفات والأحوال وحروف الجر وأدوات الربط، وكيفية تكوين جملة سليمة (Subject + Verb + Object).",
-            youtubeId: ""
-          },
-          {
-            title: "3. الأزمنة الأساسية واستخداماتها الزمنية",
-            notes: "المضارع البسيط والمستمر، الماضي البسيط والمستمر، والمستقبل، مع الكلمات الدالة والتمييز بين المواقف المختلفة.",
-            youtubeId: ""
-          },
-          {
-            title: "4. الأسئلة، النفي، والمقارنة والتفضيل",
-            notes: "صياغة الأسئلة المباشرة وأدوات الاستفهام، النفي الصحيح، وصيغ المقارنة (Comparative) والتفضيل (Superlative).",
-            youtubeId: ""
-          },
-          {
-            title: "5. مهارات القراءة والفهم (Reading Comprehension)",
-            notes: "قراءة سريعة لأخذ الفكرة العامة (Skimming)، البحث عن معلومة محددة (Scanning)، واستنتاج المعنى من السياق.",
-            youtubeId: ""
-          },
-          {
-            title: "6. الكتابة الأساسية والترجمة والمصطلحات العملية",
-            notes: "كتابة فقرات قصيرة مترابطة، ترجمة الجمل البسيطة بدقة، ومصطلحات أساسية في الإدارة والمحاسبة والاقتصاد.",
-            youtubeId: ""
-          }
+          { title: "الدرس الأول: المفردات الأساسية والمصطلحات", summary: "الكلمات الأكثر استخداماً في القراءة والمحادثة اليومية." },
+          { title: "الدرس الثاني: الأزمنة وتركيب الجملة", summary: "بناء الجمل الصحيحة في المضارع والماضي والمستقبل." },
+          { title: "الدرس الثالث: الفهم القرائي والكتابة المختصرة", summary: "استخراج الفكرة الرئيسية وصياغة فقرات واضحة." }
         ]
       },
       "4": {
         title: "مبادئ المحاسبة المالية",
-        desc: "منهج عملي يبدأ من المعادلة المحاسبية والقيود اليومية حتى ميزان المراجعة والقوائم المالية والتسويات.",
-        books: [],
+        description: "أسس الدورة المحاسبية، قيود اليومية، إعداد ميزان المراجعة والقوائم المالية.",
         lessons: [
-          {
-            title: "1. المفاهيم والمبادئ المحاسبية والمعادلة المحاسبية",
-            notes: "تعريف المحاسبة المالية، الفروض والمبادئ المحاسبية الأساسية، ومعادلة الميزانية: الأصول = الخصوم + حقوق الملكية.",
-            youtubeId: ""
-          },
-          {
-            title: "2. تحليل العمليات المالية ونظرية القيد المزدوج",
-            notes: "تحديد الحسابات المتأثرة (أصول، التزامات، حقوق ملكية، إيرادات، مصروفات)، وقاعدة المدين والدائن لكل نوع حساب.",
-            youtubeId: ""
-          },
-          {
-            title: "3. دفتر اليومية العامة والترحيل إلى دفتر الأستاذ",
-            notes: "تسجيل القيود المحاسبية بالتسلسل الزمني في دفتر اليومية، وترحيلها إلى حسابات الأستاذ واستخراج الرصيد (مدين أو دائن).",
-            youtubeId: ""
-          },
-          {
-            title: "4. ميزان المراجعة واكتشاف وتصحيح الأخطاء المحاسبية",
-            notes: "إعداد ميزان المراجعة بالأرصدة أو بالمجاميع، والتحقق من توازن الجانبين، ومعالجة الأخطاء المحاسبية الشائعة.",
-            youtubeId: ""
-          },
-          {
-            title: "5. التسويات الجردية في نهاية الفترة المالية",
-            notes: "المصروفات المستحقة والمقدمة، الإيرادات المستحقة والمقدمة، وإهلاك الأصول الثابتة وتأثيره على الحسابات.",
-            youtubeId: ""
-          },
-          {
-            title: "6. إعداد القوائم المالية الختامية",
-            notes: "إعداد قائمة الدخل (الإيرادات والمصروفات وصافي الربح أو الخسارة) وقائمة المركز المالي (الميزانية العمومية).",
-            youtubeId: ""
-          }
+          { title: "الدرس الأول: المعادلة المحاسبية والحسابات", summary: "الأصول = الخصوم + حقوق الملكية، وتأثير العمليات المالية." },
+          { title: "الدرس الثاني: دفتر اليومية ودفتر الأستاذ", summary: "تسجيل القيود المحاسبية والترحيل إلى الحسابات المختصة." },
+          { title: "الدرس الثالث: ميزان المراجعة والقوائم الختامية", summary: "التحقق من التوازن وإعداد قائمة الدخل والمركز المالي." }
         ]
       },
       "5": {
         title: "مبادئ إدارة الأعمال",
-        desc: "منهج شامل يغطي وظائف الإدارة الأربع، اتخاذ القرار، التنظيم، القيادة والتحفيز، والرقابة والأداء المؤسسي.",
-        books: [],
+        description: "دراسة وظائف الإدارة الحديثة واتخاذ القرار وتنظيم فرق العمل وتحقيق الأهداف.",
         lessons: [
-          {
-            title: "1. مدخل إلى إدارة الأعمال ومستوياتها",
-            notes: "مفهوم الإدارة وأهميتها للمنظمات، المستويات الإدارية (العليا، الوسطى، التنفيذية)، والمهارات الفنية والإنسانية والفكرية للمدير.",
-            youtubeId: ""
-          },
-          {
-            title: "2. التخطيط وتحديد الأهداف واتخاذ القرار",
-            notes: "أنواع الخطط (استراتيجية، تكتيكية، تشغيلية)، خطوات التخطيط الفعال، ومراحل اتخاذ القرار الإداري وحل المشكلات.",
-            youtubeId: ""
-          },
-          {
-            title: "3. التنظيم والهياكل التنظيمية وتفويض السلطة",
-            notes: "تقسيم العمل، نطاق الإشراف، المركزية واللامركزية، السلطة والمسؤولية، وأشكال الهياكل التنظيمية.",
-            youtubeId: ""
-          },
-          {
-            title: "4. التوجيه والقيادة والتحفيز والاتصال الإداري",
-            notes: "الفرق بين الإدارة والقيادة، أنماط القيادة، نظريات تحفيز العاملين، وعناصر وموانع الاتصال داخل المنظمة.",
-            youtubeId: ""
-          },
-          {
-            title: "5. الرقابة وتقييم الأداء الإداري",
-            notes: "خطوات العملية الرقابية (وضع المعايير، قياس الأداء الفعلي، مقارنة الأداء بالمعايير، واتخاذ الإجراءات التصحيحية).",
-            youtubeId: ""
-          },
-          {
-            title: "6. الوظائف الأساسية للمنظمة وأخلاقيات الأعمال",
-            notes: "لمحة عن إدارة التسويق، إدارة الموارد البشرية، الإدارة المالية، والإنتاج، مع أهمية المسؤولية الاجتماعية وأخلاقيات العمل
+          { title: "الدرس الأول: التخطيط وتحديد الأهداف", summary: "وضع الخطط قصيرة وطويلة المدى وتحديد الأولويات." },
+          { title: "الدرس الثاني: التنظيم وتوزيع المسؤوليات", summary: "الهياكل التنظيمية وتفويض الصلاحيات وتنسيق الأقسام." },
+          { title: "الدرس الثالث: القيادة والرقابة وتحسين الأداء", summary: "تحفيز العاملين وقياس النتائج ومعالجة الانحرافات." }
+        ]
+      }
+    };
+
+    const studentBadge = document.getElementById("studentBadge");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const unauthorizedSection = document.getElementById("unauthorizedSection");
+    const unauthorizedReason = document.getElementById("unauthorizedReason");
+    const courseContentSection = document.getElementById("courseContentSection");
+    const studentSessionInfo = document.getElementById("studentSessionInfo");
+    const courseTitle = document.getElementById("courseTitle");
+    const courseDescription = document.getElementById("courseDescription");
+    const lessonsList = document.getElementById("lessonsList");
+    const courseNoteInput = document.getElementById("courseNoteInput");
+    const saveNoteBtn = document.getElementById("saveNoteBtn");
+    const clearNoteBtn = document.getElementById("clearNoteBtn");
+    const noteMsg = document.getElementById("noteMsg");
+
+    const openAdminBtn = document.getElementById("openAdminBtn");
+    const adminAuthSection = document.getElementById("adminAuthSection");
+    const adminCodeInput = document.getElementById("adminCodeInput");
+    const verifyAdminBtn = document.getElementById("verifyAdminBtn");
+    const closeAdminAuthBtn = document.getElementById("closeAdminAuthBtn");
+    const adminAuthMsg = document.getElementById("adminAuthMsg");
+
+    const adminDashboardSection = document.getElementById("adminDashboardSection");
+    const lockAdminBtn = document.getElementById("lockAdminBtn");
+    const studentsCountText = document.getElementById("studentsCountText");
+    const studentsLogBody = document.getElementById("studentsLogBody");
+    const exportCodesBtn = document.getElementById("exportCodesBtn");
+    const exportLogBtn = document.getElementById("exportLogBtn");
+    const clearLogBtn = document.getElementById("clearLogBtn");
+    const adminDashboardMsg = document.getElementById("adminDashboardMsg");
+
+    function getCourseId() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+      return COURSES_DATA[id] ? id : "1";
+    }
+
+    function loadStudentsLog() {
+      try {
+        const raw = localStorage.getItem(STUDENTS_LOG_KEY);
+        const list = raw ? JSON.parse(raw) : [];
+        return Array.isArray(list) ? list : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveStudentsLog(list) {
+      localStorage.setItem(STUDENTS_LOG_KEY, JSON.stringify(list));
+    }
+
+    function renderStudentsLog() {
+      const list = loadStudentsLog();
+      studentsCountText.textContent =
+        "إجمالي تسجيلات الدخول المسجلة: " + list.length + " | عدد الأكواد المفعّلة: " + ALLOWED_CODES_LIST.length;
+      studentsLogBody.innerHTML = "";
+
+      if (list.length === 0) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 6;
+        td.style.textAlign = "center";
+        td.textContent = "لا يوجد طلاب مسجلون في السجل حتى الآن.";
+        tr.appendChild(td);
+        studentsLogBody.appendChild(tr);
+        return;
+      }
+
+      list.forEach((entry, idx) => {
+        const tr = document.createElement("tr");
+
+        const numTd = document.createElement("td");
+        numTd.textContent = String(idx + 1);
+
+        const nameTd = document.createElement("td");
+        nameTd.textContent = entry.name || "";
+
+        const codeTd = document.createElement("td");
+        codeTd.textContent = entry.code || "";
+
+        const phoneTd = document.createElement("td");
+        phoneTd.textContent = entry.phone || "";
+
+        const addressTd = document.createElement("td");
+        addressTd.textContent = entry.address || "";
+
+        const timeTd = document.createElement("td");
+        timeTd.textContent = entry.time || "";
+
+        tr.appendChild(numTd);
+        tr.appendChild(nameTd);
+        tr.appendChild(codeTd);
+        tr.appendChild(phoneTd);
+        tr.appendChild(addressTd);
+        tr.appendChild(timeTd);
+        studentsLogBody.appendChild(tr);
+      });
+    }
+
+    function refreshAdminView() {
+      const unlocked = sessionStorage.getItem(ADMIN_SESSION_KEY) === "true";
+      if (unlocked) {
+        adminAuthSection.classList.add("hidden");
+        adminDashboardSection.classList.remove("hidden");
+        renderStudentsLog();
+      } else {
+        adminDashboardSection.classList.add("hidden");
+      }
+    }
+
+    function renderCoursePage() {
+      localStorage.removeItem("studentAccess");
+      localStorage.removeItem("studentName");
+      localStorage.removeItem("studentCode");
+      localStorage.removeItem("studentPhone");
+      localStorage.removeItem("studentAddress");
+
+      const name = sessionStorage.getItem("studentName");
+      const code = sessionStorage.getItem("studentCode");
+      const phone = sessionStorage.getItem("studentPhone");
+      const address = sessionStorage.getItem("studentAddress");
+      const access = sessionStorage.getItem("studentAccess") === "granted";
+
+      if (!name || !code || !access) {
+        studentBadge.textContent = "";
+        logoutBtn.classList.add("hidden");
+        courseContentSection.classList.add("hidden");
+        unauthorizedSection.classList.remove("hidden");
+        unauthorizedReason.textContent = "يلزم تسجيل الدخول أولاً من الصفحة الرئيسية لفتح المواد الدراسية.";
+        refreshAdminView();
+        return;
+      }
+
+      if (!isValidCode(code)) {
+        studentBadge.textContent = "";
+        logoutBtn.classList.add("hidden");
+        courseContentSection.classList.add("hidden");
+        unauthorizedSection.classList.remove("hidden");
+        unauthorizedReason.textContent = "كود الطالب الحالي غير معتمد ضمن قائمة الأكواد المسموحة.";
+        refreshAdminView();
+        return;
+      }
+
+      unauthorizedSection.classList.add("hidden");
+      courseContentSection.classList.remove("hidden");
+      logoutBtn.classList.remove("hidden");
+      studentBadge.textContent = "أهلاً، " + name;
+
+      const courseId = getCourseId();
+      const course = COURSES_DATA[courseId];
+      document.title = course.title + " — منصة الحريف — البشمندس بوده";
+      courseTitle.textContent = course.title;
+      courseDescription.textContent = course.description;
+
+      studentSessionInfo.textContent =
+        "الطالب: " + name +
+        (phone ? " | الهاتف: " + phone : "") +
+        (address ? " | العنوان: " + address : "");
+
+      lessonsList.innerHTML = "";
+      course.lessons.forEach((lesson) => {
+        const li = document.createElement("li");
+        li.className = "lesson-item";
+
+        const strong = document.createElement("strong");
+        strong.textContent = lesson.title;
+
+        const p = document.createElement("p");
+        p.style.margin = "0";
+        p.textContent = lesson.summary;
+
+        li.appendChild(strong);
+        li.appendChild(p);
+        lessonsList.appendChild(li);
+      });
+
+      const savedNote = sessionStorage.getItem("courseNote_" + courseId) || "";
+      courseNoteInput.value = savedNote;
+      noteMsg.textContent = "";
+
+      refreshAdminView();
+    }
+
+    saveNoteBtn.addEventListener("click", function () {
+      const courseId = getCourseId();
+      sessionStorage.setItem("courseNote_" + courseId, courseNoteInput.value);
+      noteMsg.className = "msg info";
+      noteMsg.textContent = "تم حفظ ملاحظة الجلسة لهذه المادة.";
+    });
+
+    clearNoteBtn.addEventListener("click", function () {
+      const courseId = getCourseId();
+      sessionStorage.removeItem("courseNote_" + courseId);
+      courseNoteInput.value = "";
+      noteMsg.className = "msg info";
+      noteMsg.textContent = "تم مسح ملاحظة الجلسة.";
+    });
+
+    openAdminBtn.addEventListener("click", function () {
+      if (sessionStorage.getItem(ADMIN_SESSION_KEY) === "true") {
+        refreshAdminView();
+        return;
+      }
+      adminAuthSection.classList.remove("hidden");
+      adminAuthMsg.textContent = "";
+      adminCodeInput.value = "";
+      adminCodeInput.focus();
+    });
+
+    closeAdminAuthBtn.addEventListener("click", function () {
+      adminAuthSection.classList.add("hidden");
+      adminAuthMsg.textContent = "";
+    });
+
+    verifyAdminBtn.addEventListener("click", function () {
+      if (adminCodeInput.value.trim() === ADMIN_CODE) {
+        sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
+        adminAuthSection.classList.add("hidden");
+        adminAuthMsg.textContent = "";
+        refreshAdminView();
+      } else {
+        adminAuthMsg.className = "msg error";
+        adminAuthMsg.textContent = "كود لوحة التحكم غير صحيح.";
+      }
+    });
+
+    lockAdminBtn.addEventListener("click", function () {
+      sessionStorage.removeItem(ADMIN_SESSION_KEY);
+      refreshAdminView();
+    });
+
+    exportCodesBtn.addEventListener("click", function () {
+      const blob = new Blob([ALLOWED_CODES_LIST.join("\n")], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "student-codes-20000.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+      adminDashboardMsg.className = "msg info";
+      adminDashboardMsg.textContent = "تم تصدير قائمة الـ 20,000 كود بنجاح.";
+    });
+
+    exportLogBtn.addEventListener("click", function () {
+      const list = loadStudentsLog();
+      const blob = new Blob([JSON.stringify(list, null, 2)], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "students-log.json";
+      a.click();
+      URL.revokeObjectURL(url);
+      adminDashboardMsg.className = "msg info";
+      adminDashboardMsg.textContent = "تم تصدير سجل الطلاب.";
+    });
+
+    clearLogBtn.addEventListener("click", function () {
+      saveStudentsLog([]);
+      renderStudentsLog();
+      adminDashboardMsg.className = "msg info";
+      adminDashboardMsg.textContent = "تم مسح سجل الطلاب.";
+    });
+
+    logoutBtn.addEventListener("click", function () {
+      sessionStorage.removeItem("studentName");
+      sessionStorage.removeItem("studentCode");
+      sessionStorage.removeItem("studentPhone");
+      sessionStorage.removeItem("studentAddress");
+      sessionStorage.removeItem("studentAccess");
+      sessionStorage.removeItem(ADMIN_SESSION_KEY);
+      window.location.href = "index.html";
+    });
+
+    renderCoursePage();
+  </script>
+
+</body>
+</html>
