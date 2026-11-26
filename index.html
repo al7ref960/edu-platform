@@ -39,7 +39,7 @@
     }
 
     .navbar {
-      background-color: #1e3a8a;
+      background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
       color: #ffffff;
       padding: 12px 16px;
       display: flex;
@@ -48,6 +48,7 @@
       gap: 10px;
       flex-wrap: wrap;
       z-index: 20;
+      box-shadow: 0 2px 10px rgba(30, 58, 138, 0.18);
     }
 
     .nav-actions {
@@ -64,12 +65,12 @@
     }
 
     .card {
-      background-color: rgba(255, 255, 255, 0.96);
+      background-color: rgba(255, 255, 255, 0.97);
       border: 1px solid #bfdbfe;
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 18px;
       margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.06);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.06);
     }
 
     h1, h2, h3, h4 {
@@ -82,6 +83,7 @@
       margin: 10px 0 6px;
       font-weight: bold;
       color: #1e3a8a;
+      font-size: 0.92rem;
     }
 
     input[type="text"],
@@ -95,10 +97,11 @@
       box-sizing: border-box;
       padding: 10px 12px;
       border: 1px solid #93c5fd;
-      border-radius: 8px;
-      font-size: 0.95rem;
+      border-radius: 10px;
+      font-size: 0.94rem;
       background-color: #ffffff;
       font-family: inherit;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     textarea {
@@ -109,8 +112,9 @@
     input:focus,
     select:focus,
     textarea:focus {
-      outline: 2px solid #2563eb;
+      outline: none;
       border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
     }
 
     .btn,
@@ -120,12 +124,13 @@
       background-color: #2563eb;
       color: #ffffff;
       border: 1px solid #2563eb;
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 9px 15px;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: bold;
       text-decoration: none;
       cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
     }
 
     .btn:hover,
@@ -133,6 +138,12 @@
     button.btn:hover {
       background-color: #1d4ed8;
       border-color: #1d4ed8;
+    }
+
+    .btn:active,
+    a.btn:active,
+    button.btn:active {
+      transform: scale(0.98);
     }
 
     .btn-secondary {
@@ -152,14 +163,15 @@
 
     .btn-sm {
       padding: 7px 12px;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
     }
 
-    /* القائمة الجانبية */
+    /* القائمة الجانبية المرتبة */
     .drawer-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.45);
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(2px);
       z-index: 40;
     }
 
@@ -167,34 +179,90 @@
       position: fixed;
       top: 0;
       right: 0;
-      width: min(460px, 94vw);
+      width: min(470px, 95vw);
       height: 100vh;
-      background: #eff6ff;
+      background: #f8fafc;
       border-left: 2px solid #2563eb;
-      box-shadow: -8px 0 24px rgba(15, 23, 42, 0.18);
+      box-shadow: -10px 0 30px rgba(15, 23, 42, 0.2);
       padding: 16px;
       overflow-y: auto;
       z-index: 50;
       transition: transform 0.25s ease;
     }
 
+    html[dir="ltr"] .side-drawer {
+      right: auto;
+      left: 0;
+      border-left: 0;
+      border-right: 2px solid #2563eb;
+      box-shadow: 10px 0 30px rgba(15, 23, 42, 0.2);
+    }
+
     .side-drawer.closed {
       transform: translateX(100%);
     }
 
-    .drawer-tabs {
+    html[dir="ltr"] .side-drawer.closed {
+      transform: translateX(-100%);
+    }
+
+    .drawer-header {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 12px 14px;
       display: flex;
+      justify-content: space-between;
+      align-items: center;
       gap: 8px;
-      margin: 12px 0;
-      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .drawer-header h3 {
+      color: #ffffff;
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .drawer-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 10px 0 12px;
+    }
+
+    .drawer-tab-btn.active {
+      background-color: #1e3a8a;
+      border-color: #1e3a8a;
     }
 
     .admin-subbox {
       background-color: #ffffff;
-      border: 1px solid #bfdbfe;
-      border-radius: 10px;
+      border: 1px solid #dbeafe;
+      border-radius: 12px;
       padding: 14px;
-      margin-top: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(30, 58, 138, 0.04);
+    }
+
+    .admin-subbox h4 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.95rem;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eff6ff;
+      margin-bottom: 10px;
+    }
+
+    .badge-pill {
+      background-color: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      padding: 2px 9px;
+      font-size: 0.75rem;
+      font-weight: bold;
     }
 
     .admin-actions {
@@ -207,29 +275,32 @@
     .log-table-wrap {
       overflow-x: auto;
       margin-top: 12px;
+      border-radius: 10px;
+      border: 1px solid #bfdbfe;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       background-color: #ffffff;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
     }
 
     th, td {
-      border: 1px solid #bfdbfe;
-      padding: 7px 9px;
-      text-align: right;
+      border: 1px solid #dbeafe;
+      padding: 8px 9px;
+      text-align: start;
     }
 
     th {
-      background-color: #dbeafe;
+      background-color: #eff6ff;
       color: #1e3a8a;
+      font-weight: bold;
     }
 
     .msg {
       margin-top: 10px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: bold;
     }
 
@@ -261,8 +332,12 @@
   <div class="watermark" aria-hidden="true">عبد الرحمن مجدي</div>
 
   <header class="navbar">
-    <strong>منصة الحريف — البشمندس بوده</strong>
+    <strong id="brandTitle">منصة الحريف — البشمندس بوده</strong>
     <div class="nav-actions">
+      <select id="langSelect" aria-label="Language" style="width:auto; padding:6px 10px; border-radius:8px; font-size:0.84rem; font-weight:bold; color:#1e3a8a;">
+        <option value="ar">العربية (AR)</option>
+        <option value="en">English (EN)</option>
+      </select>
       <span id="studentBadge"></span>
       <button type="button" id="openAdminBtn" class="btn btn-secondary btn-sm">القائمة الجانبية والتحكم</button>
       <button type="button" id="logoutBtn" class="btn btn-danger btn-sm hidden">تسجيل خروج</button>
@@ -272,14 +347,14 @@
   <div id="drawerBackdrop" class="drawer-backdrop hidden"></div>
 
   <aside id="sideDrawer" class="side-drawer closed" aria-label="قائمة التحكم والطلاب المسجلين">
-    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-      <h3 style="margin:0;">القائمة الجانبية</h3>
+    <div class="drawer-header">
+      <h3 id="drawerTitle">القائمة الجانبية</h3>
       <button type="button" id="closeDrawerBtn" class="btn btn-danger btn-sm">إغلاق</button>
     </div>
 
-    <!-- نافذة كود لوحة التحكم -->
+    <!-- دخول لوحة التحكم -->
     <div id="adminAuthSection" class="admin-subbox">
-      <h4>دخول لوحة التحكم</h4>
+      <h4><span>دخول لوحة التحكم</span><span class="badge-pill">Admin</span></h4>
       <label for="adminCodeInput">أدخل كود الأدمن</label>
       <input type="password" id="adminCodeInput" placeholder="اكتب كود التحكم">
       <div class="admin-actions">
@@ -291,21 +366,21 @@
     <!-- محتوى لوحة التحكم والصفحة الجانبية للمسجلين -->
     <div id="adminDashboardSection" class="hidden">
       <div class="drawer-tabs">
-        <button type="button" id="tabManageBtn" class="btn btn-sm">إدارة المحتوى والاختبارات</button>
-        <button type="button" id="tabRegisteredBtn" class="btn btn-secondary btn-sm">الطلاب المسجلون</button>
+        <button type="button" id="tabManageBtn" class="btn btn-sm drawer-tab-btn active">إدارة المحتوى والاختبارات</button>
+        <button type="button" id="tabRegisteredBtn" class="btn btn-secondary btn-sm drawer-tab-btn">الطلاب المسجلون</button>
+      </div>
+
+      <div class="admin-actions" style="margin-top:0; margin-bottom:10px;">
+        <button type="button" id="exportCodesBtn" class="btn btn-secondary btn-sm">تصدير 20,000 كود TXT</button>
         <button type="button" id="lockAdminBtn" class="btn btn-danger btn-sm">قفل اللوحة</button>
       </div>
       <div id="adminDashboardMsg" class="msg"></div>
 
       <!-- تبويب 1: إدارة المحتوى والاختبارات -->
       <div id="manageTabPanel">
-        <div class="admin-actions">
-          <button type="button" id="exportCodesBtn" class="btn btn-secondary btn-sm">تصدير 20,000 كود TXT</button>
-        </div>
-
-        <!-- 1. رفع درس جديد بعدة روابط فيديو -->
+        <!-- 1. رفع درس جديد أو إضافة رابط لدرس -->
         <div class="admin-subbox">
-          <h4>رفع درس جديد (يدعم أكثر من رابط فيديو)</h4>
+          <h4><span>الدروس والفيديوهات</span><span class="badge-pill">Multi-Link</span></h4>
           <label for="uploadCourseSelect">اختر المادة الدراسية</label>
           <select id="uploadCourseSelect">
             <option value="1">مبادئ القانون</option>
@@ -315,24 +390,24 @@
             <option value="5">مبادئ إدارة الأعمال</option>
           </select>
 
-          <label for="lessonTitleInput">عنوان الدرس</label>
-          <input type="text" id="lessonTitleInput" placeholder="مثال: الدرس الرابع — تطبيقات عملية">
+          <label for="lessonTitleInput">عنوان الدرس (اكتب نفس العنوان لإضافة لينك لنفس الدرس)</label>
+          <input type="text" id="lessonTitleInput" placeholder="مثال: الدرس الأول: التخطيط وتحديد الأهداف">
 
           <label for="lessonSummaryInput">ملخص الدرس</label>
           <textarea id="lessonSummaryInput" placeholder="اكتب ملخصاً مختصراً للدرس..."></textarea>
 
           <label for="lessonYoutubeInput">روابط أو معرفات فيديوهات يوتيوب (افصل بفاصلة أو سطر جديد)</label>
-          <textarea id="lessonYoutubeInput" placeholder="مثال:&#10;https://youtu.be/VIDEO_ID_1&#10;https://youtu.be/VIDEO_ID_2"></textarea>
+          <textarea id="lessonYoutubeInput" placeholder="https://youtu.be/VIDEO_ID_1&#10;https://youtu.be/VIDEO_ID_2"></textarea>
 
           <div class="admin-actions">
-            <button type="button" id="publishLessonBtn" class="btn btn-sm">رفع الدرس إلى قاعدة البيانات</button>
+            <button type="button" id="publishLessonBtn" class="btn btn-sm">حفظ الدرس / إضافة اللينك</button>
           </div>
           <div id="lessonUploadMsg" class="msg"></div>
         </div>
 
-        <!-- 2. رفع / إضافة كتاب أو ملف للمادة -->
+        <!-- 2. رفع / إضافة كتاب أو ملف -->
         <div class="admin-subbox">
-          <h4>إضافة كتاب أو ملف (من مجلد books أو رابط أو ملف محلي)</h4>
+          <h4><span>الكتب والملفات</span><span class="badge-pill">PDF / Files</span></h4>
           <label for="bookCourseSelect">اختر المادة الدراسية</label>
           <select id="bookCourseSelect">
             <option value="1">مبادئ القانون</option>
@@ -348,7 +423,7 @@
           <label for="bookUrlInput">مسار أو رابط الملف (مثال: books/accounting.pdf)</label>
           <input type="text" id="bookUrlInput" placeholder="books/file.pdf أو رابط مباشر">
 
-          <label for="bookFileInput">أو اختر ملفاً من جهازك (PDF أو مستند)</label>
+          <label for="bookFileInput">أو اختر ملفاً من جهازك</label>
           <input type="file" id="bookFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip">
 
           <div class="admin-actions">
@@ -357,9 +432,9 @@
           <div id="bookUploadMsg" class="msg"></div>
         </div>
 
-        <!-- 3. إنشاء ورفع اختبار (بابل شيت + مقالي) -->
+        <!-- 3. إنشاء ورفع اختبار بمؤقت زمني -->
         <div class="admin-subbox">
-          <h4>إنشاء ورفع اختبار (بابل شيت / مقالي)</h4>
+          <h4><span>إنشاء اختبار بمؤقت</span><span class="badge-pill">Timer + Single Attempt</span></h4>
           <label for="quizCourseSelect">اختر المادة الدراسية</label>
           <select id="quizCourseSelect">
             <option value="1">مبادئ القانون</option>
@@ -369,6 +444,9 @@
             <option value="5">مبادئ إدارة الأعمال</option>
           </select>
 
+          <label for="quizDurationInput">مدة الاختبار بالدقائق (مثال: 15)</label>
+          <input type="number" id="quizDurationInput" min="1" max="300" value="15">
+
           <label for="quizTypeSelect">نوع السؤال</label>
           <select id="quizTypeSelect">
             <option value="mcq">بابل شيت (اختيار من متعدد)</option>
@@ -376,7 +454,7 @@
           </select>
 
           <label for="quizTitleInput">عنوان الاختبار</label>
-          <input type="text" id="quizTitleInput" placeholder="مثال: اختبار شامل — الوحدة الأولى">
+          <input type="text" id="quizTitleInput" placeholder="مثال: اختبار على المحاضرة الأولى">
 
           <label for="quizQuestionInput">نص السؤال</label>
           <input type="text" id="quizQuestionInput" placeholder="اكتب نص السؤال هنا...">
@@ -386,7 +464,7 @@
 
           <div id="mcqFieldsBox">
             <label for="quizOptionsInput">الاختيارات (افصل بينها بفاصلة عادية أو عربية)</label>
-            <input type="text" id="quizOptionsInput" placeholder="مثال: الاختيار الأول، الاختيار الثاني، الاختيار الثالث">
+            <input type="text" id="quizOptionsInput" placeholder="اختيار 1، اختيار 2، اختيار 3، اختيار 4">
 
             <label for="quizCorrectIndexInput">رقم الإجابة الصحيحة (يبدأ من 1)</label>
             <input type="number" id="quizCorrectIndexInput" min="1" value="1">
@@ -405,7 +483,7 @@
 
         <!-- 4. إدارة الكود المؤقت -->
         <div class="admin-subbox">
-          <h4>إدارة الكود المؤقت</h4>
+          <h4><span>إدارة الكود المؤقت</span><span class="badge-pill">Temp Code</span></h4>
           <label for="tempCodeHoursInput">مدة الصلاحية بالساعات</label>
           <input type="number" id="tempCodeHoursInput" min="1" max="720" value="24">
 
@@ -417,10 +495,10 @@
         </div>
       </div>
 
-      <!-- تبويب 2: الصفحة الجانبية للناس اللي سجلت -->
+      <!-- تبويب 2: الصفحة الجانبية للطلاب المسجلين -->
       <div id="registeredTabPanel" class="hidden">
         <div class="admin-subbox">
-          <h4>الطلاب المسجلون في المنصة</h4>
+          <h4><span>الطلاب المسجلون في المنصة</span><span class="badge-pill">Logs</span></h4>
           <p id="studentsCountText" style="margin:6px 0 0; color:#1e3a8a;"></p>
           <div class="admin-actions">
             <button type="button" id="exportLogBtn" class="btn btn-sm">تصدير سجل الطلاب JSON</button>
@@ -449,24 +527,30 @@
   <main class="container">
     <!-- شاشة تسجيل الدخول -->
     <section id="loginSection" class="card">
-      <h1>منصة الحريف — البشمندس بوده</h1>
-      <p>إعداد وتقديم: <strong>عبد الرحمن مجدي</strong> — سجل بياناتك للدخول إلى المواد الدراسية.</p>
+      <h1 id="loginHeading">منصة الحريف — البشمندس بوده</h1>
+      <p id="loginSubtitle">إعداد وتقديم: <strong>عبد الرحمن مجدي</strong> — سجل بياناتك للدخول إلى المواد الدراسية.</p>
 
       <form id="loginForm">
-        <label for="studentNameInput">اسم الطالب</label>
+        <label id="lblStudentName" for="studentNameInput">اسم الطالب</label>
         <input type="text" id="studentNameInput" placeholder="اكتب اسمك بالكامل" required>
 
-        <label for="studentCodeInput">كود الطالب</label>
+        <label id="lblStudentCode" for="studentCodeInput">كود الطالب</label>
         <input type="text" id="studentCodeInput" placeholder="أدخل الكود المخصص لك أو الكود المؤقت" required>
 
-        <label for="studentPhoneInput">رقم هاتف الطالب</label>
+        <label id="lblStudentPhone" for="studentPhoneInput">رقم هاتف الطالب</label>
         <input type="tel" id="studentPhoneInput" placeholder="مثال: 01145332036" required>
 
-        <label for="studentAddressInput">عنوان الطالب</label>
+        <label id="lblStudentAddress" for="studentAddressInput">عنوان الطالب</label>
         <input type="text" id="studentAddressInput" placeholder="اكتب عنوانك بالتفصيل" required>
 
+        <label id="lblStudentLang" for="studentLangSelect">لغة المنصة للطالب / Student Language</label>
+        <select id="studentLangSelect">
+          <option value="ar">العربية (Arabic)</option>
+          <option value="en">الإنجليزية (English)</option>
+        </select>
+
         <div class="admin-actions">
-          <button type="submit" class="btn">دخول إلى المنصة</button>
+          <button type="submit" id="loginSubmitBtn" class="btn">دخول إلى المنصة</button>
         </div>
         <div id="loginMsg" class="msg"></div>
       </form>
@@ -475,38 +559,38 @@
     <!-- شاشة الكورسات الخمسة -->
     <section id="coursesSection" class="hidden">
       <div class="card">
-        <h1>منصة الحريف — البشمندس بوده</h1>
+        <h1 id="coursesHeading">منصة الحريف — البشمندس بوده</h1>
         <p id="welcomeText"></p>
       </div>
 
       <div class="card">
-        <h2>مبادئ القانون</h2>
-        <p>شرح مبسط للقواعد القانونية الأساسية وتطبيقاتها العملية.</p>
-        <a href="course.html?id=1" class="btn">دخول الكورس</a>
+        <h2 id="c1Title">مبادئ القانون</h2>
+        <p id="c1Desc">شرح مبسط للقواعد القانونية الأساسية وتطبيقاتها العملية.</p>
+        <a href="course.html?id=1" class="btn enter-course-btn">دخول الكورس</a>
       </div>
 
       <div class="card">
-        <h2>مبادئ الاقتصاد</h2>
-        <p>فهم أساسيات العرض والطلب والنشاط الاقتصادي والموارد.</p>
-        <a href="course.html?id=2" class="btn">دخول الكورس</a>
+        <h2 id="c2Title">مبادئ الاقتصاد</h2>
+        <p id="c2Desc">فهم أساسيات العرض والطلب والنشاط الاقتصادي والموارد.</p>
+        <a href="course.html?id=2" class="btn enter-course-btn">دخول الكورس</a>
       </div>
 
       <div class="card">
-        <h2>لغة أجنبية</h2>
-        <p>تطوير المفردات والقواعد الأساسية ومهارات القراءة والفهم.</p>
-        <a href="course.html?id=3" class="btn">دخول الكورس</a>
+        <h2 id="c3Title">لغة أجنبية</h2>
+        <p id="c3Desc">تطوير المفردات والقواعد الأساسية ومهارات القراءة والفهم.</p>
+        <a href="course.html?id=3" class="btn enter-course-btn">دخول الكورس</a>
       </div>
 
       <div class="card">
-        <h2>مبادئ المحاسبة المالية</h2>
-        <p>أسس التسجيل المحاسبي وإعداد القوائم المالية خطوة بخطوة.</p>
-        <a href="course.html?id=4" class="btn">دخول الكورس</a>
+        <h2 id="c4Title">مبادئ المحاسبة المالية</h2>
+        <p id="c4Desc">أسس التسجيل المحاسبي وإعداد القوائم المالية خطوة بخطوة.</p>
+        <a href="course.html?id=4" class="btn enter-course-btn">دخول الكورس</a>
       </div>
 
       <div class="card">
-        <h2>مبادئ إدارة الأعمال</h2>
-        <p>التعرف على وظائف الإدارة والتخطيط والتنظيم والقيادة والرقابة.</p>
-        <a href="course.html?id=5" class="btn">دخول الكورس</a>
+        <h2 id="c5Title">مبادئ إدارة الأعمال</h2>
+        <p id="c5Desc">التعرف على وظائف الإدارة والتخطيط والتنظيم والقيادة والرقابة.</p>
+        <a href="course.html?id=5" class="btn enter-course-btn">دخول الكورس</a>
       </div>
     </section>
   </main>
@@ -521,11 +605,113 @@
     const SYNC_NODE = "al7ref_platform_state";
     const COURSES_CACHE_KEY = "al7refCoursesDataCache";
     const TEMP_CODE_CACHE_KEY = "al7refTempAccessCode";
+    const STUDENT_LANG_KEY = "al7refStudentLang";
 
     const ADMIN_CODE = "M2601820";
     const ADMIN_SESSION_KEY = "eduPlatformAdminUnlocked";
     const STUDENTS_LOG_KEY = "eduPlatformStudentsLog";
     const TOTAL_CODES = 20000;
+
+    const UI_TEXT = {
+      ar: {
+        dir: "rtl",
+        lang: "ar",
+        brand: "منصة الحريف — البشمندس بوده",
+        openAdmin: "القائمة الجانبية والتحكم",
+        logout: "تسجيل خروج",
+        loginHeading: "منصة الحريف — البشمندس بوده",
+        loginSubtitle: "إعداد وتقديم: <strong>عبد الرحمن مجدي</strong> — سجل بياناتك للدخول إلى المواد الدراسية.",
+        lblName: "اسم الطالب",
+        phName: "اكتب اسمك بالكامل",
+        lblCode: "كود الطالب",
+        phCode: "أدخل الكود المخصص لك أو الكود المؤقت",
+        lblPhone: "رقم هاتف الطالب",
+        phPhone: "مثال: 01145332036",
+        lblAddress: "عنوان الطالب",
+        phAddress: "اكتب عنوانك بالتفصيل",
+        lblLang: "لغة المنصة للطالب",
+        loginBtn: "دخول إلى المنصة",
+        enterCourse: "دخول الكورس",
+        c1: ["مبادئ القانون", "شرح مبسط للقواعد القانونية الأساسية وتطبيقاتها العملية."],
+        c2: ["مبادئ الاقتصاد", "فهم أساسيات العرض والطلب والنشاط الاقتصادي والموارد."],
+        c3: ["لغة أجنبية", "تطوير المفردات والقواعد الأساسية ومهارات القراءة والفهم."],
+        c4: ["مبادئ المحاسبة المالية", "أسس التسجيل المحاسبي وإعداد القوائم المالية خطوة بخطوة."],
+        c5: ["مبادئ إدارة الأعمال", "التعرف على وظائف الإدارة والتخطيط والتنظيم والقيادة والرقابة."]
+      },
+      en: {
+        dir: "ltr",
+        lang: "en",
+        brand: "Al-Hareef Platform — Eng. Bouda",
+        openAdmin: "Side Panel & Admin",
+        logout: "Logout",
+        loginHeading: "Al-Hareef Platform — Eng. Bouda",
+        loginSubtitle: "Created by: <strong>Abdelrahman Magdy</strong> — Enter your details to access your courses.",
+        lblName: "Student Name",
+        phName: "Enter your full name",
+        lblCode: "Student Code",
+        phCode: "Enter your assigned or temporary code",
+        lblPhone: "Phone Number",
+        phPhone: "e.g. 01145332036",
+        lblAddress: "Address",
+        phAddress: "Enter your address",
+        lblLang: "Student Platform Language",
+        loginBtn: "Enter Platform",
+        enterCourse: "Open Course",
+        c1: ["Principles of Law", "Clear explanation of core legal rules and practical applications."],
+        c2: ["Principles of Economics", "Understanding supply, demand, scarcity, and market activity."],
+        c3: ["Foreign Language", "Building vocabulary, core grammar, reading, and comprehension skills."],
+        c4: ["Principles of Financial Accounting", "Accounting cycle basics, journal entries, and financial statements."],
+        c5: ["Principles of Business Management", "Planning, organizing, leading, and controlling in organizations."]
+      }
+    };
+
+    function getStudentLang() {
+      const saved = sessionStorage.getItem(STUDENT_LANG_KEY) || localStorage.getItem(STUDENT_LANG_KEY);
+      return saved === "en" ? "en" : "ar";
+    }
+
+    function applyStudentLanguage(lang) {
+      const cleanLang = lang === "en" ? "en" : "ar";
+      const t = UI_TEXT[cleanLang];
+      document.documentElement.lang = t.lang;
+      document.documentElement.dir = t.dir;
+
+      document.getElementById("brandTitle").textContent = t.brand;
+      document.getElementById("openAdminBtn").textContent = t.openAdmin;
+      document.getElementById("logoutBtn").textContent = t.logout;
+      document.getElementById("loginHeading").textContent = t.loginHeading;
+      document.getElementById("loginSubtitle").innerHTML = t.loginSubtitle;
+      document.getElementById("lblStudentName").textContent = t.lblName;
+      document.getElementById("studentNameInput").placeholder = t.phName;
+      document.getElementById("lblStudentCode").textContent = t.lblCode;
+      document.getElementById("studentCodeInput").placeholder = t.phCode;
+      document.getElementById("lblStudentPhone").textContent = t.lblPhone;
+      document.getElementById("studentPhoneInput").placeholder = t.phPhone;
+      document.getElementById("lblStudentAddress").textContent = t.lblAddress;
+      document.getElementById("studentAddressInput").placeholder = t.phAddress;
+      document.getElementById("lblStudentLang").textContent = t.lblLang;
+      document.getElementById("loginSubmitBtn").textContent = t.loginBtn;
+      document.getElementById("coursesHeading").textContent = t.loginHeading;
+
+      const courseMap = [
+        ["c1Title", "c1Desc", t.c1],
+        ["c2Title", "c2Desc", t.c2],
+        ["c3Title", "c3Desc", t.c3],
+        ["c4Title", "c4Desc", t.c4],
+        ["c5Title", "c5Desc", t.c5]
+      ];
+      courseMap.forEach(([titleId, descId, pair]) => {
+        document.getElementById(titleId).textContent = pair[0];
+        document.getElementById(descId).textContent = pair[1];
+      });
+
+      document.querySelectorAll(".enter-course-btn").forEach((btn) => {
+        btn.textContent = t.enterCourse;
+      });
+
+      document.getElementById("langSelect").value = cleanLang;
+      document.getElementById("studentLangSelect").value = cleanLang;
+    }
 
     const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
     const SYMBOLS = "#@%$!*-_";
@@ -601,6 +787,7 @@
       "1": {
         title: "مبادئ القانون",
         description: "مدخل إلى القاعدة القانونية، مصادر القانون، وتطبيقاته الأساسية في الحياة العملية.",
+        quizDurationMinutes: 15,
         lessons: [
           { title: "الدرس الأول: مفهوم القاعدة القانونية وخصائصها", summary: "الفرق بين القاعدة القانونية والقواعد الأخلاقية والاجتماعية.", youtubeUrls: [] },
           { title: "الدرس الثاني: مصادر القانون وتدرجها", summary: "التشريع، العرف، ومبادئ الشريعة والقانون.", youtubeUrls: [] },
@@ -612,6 +799,7 @@
       "2": {
         title: "مبادئ الاقتصاد",
         description: "فهم المشكلة الاقتصادية، ندرة الموارد، وآليات السوق والعرض والطلب.",
+        quizDurationMinutes: 15,
         lessons: [
           { title: "الدرس الأول: المشكلة الاقتصادية والندرة", summary: "اختيار البدائل وتكلفة الفرصة البديلة وإنتاجية الموارد.", youtubeUrls: [] },
           { title: "الدرس الثاني: الطلب والعرض وتوازن السوق", summary: "العلاقة بين السعر والكمية المطلوبة والمعروضة.", youtubeUrls: [] },
@@ -623,6 +811,7 @@
       "3": {
         title: "لغة أجنبية",
         description: "تنمية الحصيلة اللغوية، القواعد الأساسية، وفهم النصوص والتواصل.",
+        quizDurationMinutes: 15,
         lessons: [
           { title: "الدرس الأول: المفردات الأساسية والمصطلحات", summary: "الكلمات الأكثر استخداماً في القراءة والمحادثة اليومية.", youtubeUrls: [] },
           { title: "الدرس الثاني: الأزمنة وتركيب الجملة", summary: "بناء الجمل الصحيحة في المضارع والماضي والمستقبل.", youtubeUrls: [] },
@@ -634,6 +823,7 @@
       "4": {
         title: "مبادئ المحاسبة المالية",
         description: "أسس الدورة المحاسبية، قيود اليومية، إعداد ميزان المراجعة والقوائم المالية.",
+        quizDurationMinutes: 15,
         lessons: [
           { title: "الدرس الأول: المعادلة المحاسبية والحسابات", summary: "الأصول = الخصوم + حقوق الملكية، وتأثير العمليات المالية.", youtubeUrls: [] },
           { title: "الدرس الثاني: دفتر اليومية ودفتر الأستاذ", summary: "تسجيل القيود المحاسبية والترحيل إلى الحسابات المختصة.", youtubeUrls: [] },
@@ -645,6 +835,7 @@
       "5": {
         title: "مبادئ إدارة الأعمال",
         description: "دراسة وظائف الإدارة الحديثة واتخاذ القرار وتنظيم فرق العمل وتحقيق الأهداف.",
+        quizDurationMinutes: 15,
         lessons: [
           { title: "الدرس الأول: التخطيط وتحديد الأهداف", summary: "وضع الخطط قصيرة وطويلة المدى وتحديد الأولويات.", youtubeUrls: [] },
           { title: "الدرس الثاني: التنظيم وتوزيع المسؤوليات", summary: "الهياكل التنظيمية وتفويض الصلاحيات وتنسيق الأقسام.", youtubeUrls: [] },
@@ -680,6 +871,9 @@
         if (incoming && typeof incoming === "object") {
           if (incoming.title) base[courseId].title = incoming.title;
           if (incoming.description) base[courseId].description = incoming.description;
+          if (Number(incoming.quizDurationMinutes) > 0) {
+            base[courseId].quizDurationMinutes = Number(incoming.quizDurationMinutes);
+          }
           if (Array.isArray(incoming.lessons)) {
             base[courseId].lessons = incoming.lessons.map(normalizeLesson);
           }
@@ -697,6 +891,8 @@
       if (cached) COURSES_DATA = normalizeCoursesData(JSON.parse(cached));
     } catch (e) {}
 
+    const langSelect = document.getElementById("langSelect");
+    const studentLangSelect = document.getElementById("studentLangSelect");
     const loginSection = document.getElementById("loginSection");
     const coursesSection = document.getElementById("coursesSection");
     const loginForm = document.getElementById("loginForm");
@@ -747,6 +943,7 @@
     const bookUploadMsg = document.getElementById("bookUploadMsg");
 
     const quizCourseSelect = document.getElementById("quizCourseSelect");
+    const quizDurationInput = document.getElementById("quizDurationInput");
     const quizTypeSelect = document.getElementById("quizTypeSelect");
     const quizTitleInput = document.getElementById("quizTitleInput");
     const quizQuestionInput = document.getElementById("quizQuestionInput");
@@ -780,6 +977,8 @@
       const isRegistered = tab === "registered";
       manageTabPanel.classList.toggle("hidden", isRegistered);
       registeredTabPanel.classList.toggle("hidden", !isRegistered);
+      tabManageBtn.classList.toggle("active", !isRegistered);
+      tabRegisteredBtn.classList.toggle("active", isRegistered);
       if (isRegistered) {
         renderStudentsLog();
       }
@@ -791,7 +990,7 @@
         if (!res.ok) return null;
         return await res.json();
       } catch (err) {
-        console.warn("تعذر جلب البيانات من Firebase، سيتم الاعتماد على التخزين المحلي:", err);
+        console.warn("تعذر جلب البيانات من Firebase:", err);
         return null;
       }
     }
@@ -878,31 +1077,18 @@
 
       list.forEach((entry, idx) => {
         const tr = document.createElement("tr");
-
-        const numTd = document.createElement("td");
-        numTd.textContent = String(idx + 1);
-
-        const nameTd = document.createElement("td");
-        nameTd.textContent = entry.name || "";
-
-        const codeTd = document.createElement("td");
-        codeTd.textContent = entry.code || "";
-
-        const phoneTd = document.createElement("td");
-        phoneTd.textContent = entry.phone || "";
-
-        const addressTd = document.createElement("td");
-        addressTd.textContent = entry.address || "";
-
-        const timeTd = document.createElement("td");
-        timeTd.textContent = entry.time || "";
-
-        tr.appendChild(numTd);
-        tr.appendChild(nameTd);
-        tr.appendChild(codeTd);
-        tr.appendChild(phoneTd);
-        tr.appendChild(addressTd);
-        tr.appendChild(timeTd);
+        [
+          String(idx + 1),
+          entry.name || "",
+          entry.code || "",
+          entry.phone || "",
+          entry.address || "",
+          entry.time || ""
+        ].forEach((val) => {
+          const td = document.createElement("td");
+          td.textContent = val;
+          tr.appendChild(td);
+        });
         studentsLogBody.appendChild(tr);
       });
     }
@@ -921,6 +1107,9 @@
     }
 
     function renderHomeState() {
+      const lang = getStudentLang();
+      applyStudentLanguage(lang);
+
       localStorage.removeItem("studentAccess");
       localStorage.removeItem("studentName");
       localStorage.removeItem("studentCode");
@@ -937,11 +1126,11 @@
         loginSection.classList.add("hidden");
         coursesSection.classList.remove("hidden");
         logoutBtn.classList.remove("hidden");
-        studentBadge.textContent = "أهلاً، " + name;
+        studentBadge.textContent = lang === "en" ? ("Hi, " + name) : ("أهلاً، " + name);
         welcomeText.textContent =
-          "إعداد وتقديم: عبد الرحمن مجدي — أهلاً بك يا " + name +
-          (phone ? " | هاتف: " + phone : "") +
-          (address ? " | العنوان: " + address : "");
+          (lang === "en" ? "Welcome, " : "أهلاً بك يا ") + name +
+          (phone ? (" | " + (lang === "en" ? "Phone: " : "هاتف: ") + phone) : "") +
+          (address ? (" | " + (lang === "en" ? "Address: " : "العنوان: ") + address) : "");
       } else {
         loginSection.classList.remove("hidden");
         coursesSection.classList.add("hidden");
@@ -951,6 +1140,18 @@
 
       refreshAdminView();
     }
+
+    langSelect.addEventListener("change", function () {
+      sessionStorage.setItem(STUDENT_LANG_KEY, langSelect.value);
+      localStorage.setItem(STUDENT_LANG_KEY, langSelect.value);
+      renderHomeState();
+    });
+
+    studentLangSelect.addEventListener("change", function () {
+      sessionStorage.setItem(STUDENT_LANG_KEY, studentLangSelect.value);
+      localStorage.setItem(STUDENT_LANG_KEY, studentLangSelect.value);
+      applyStudentLanguage(studentLangSelect.value);
+    });
 
     quizTypeSelect.addEventListener("change", function () {
       const isEssay = quizTypeSelect.value === "essay";
@@ -971,11 +1172,25 @@
       }
 
       COURSES_DATA = normalizeCoursesData(COURSES_DATA);
-      COURSES_DATA[courseId].lessons.push({
-        title: title,
-        summary: summary || "درس مضاف من لوحة التحكم.",
-        youtubeUrls: youtubeUrls
-      });
+      const targetLessons = COURSES_DATA[courseId].lessons;
+      const existingIndex = targetLessons.findIndex(
+        (item) => (item.title || "").trim().toLowerCase() === title.toLowerCase()
+      );
+
+      if (existingIndex !== -1) {
+        const currentLesson = normalizeLesson(targetLessons[existingIndex]);
+        targetLessons[existingIndex] = {
+          title: currentLesson.title,
+          summary: summary || currentLesson.summary,
+          youtubeUrls: Array.from(new Set([...currentLesson.youtubeUrls, ...youtubeUrls]))
+        };
+      } else {
+        targetLessons.push({
+          title: title,
+          summary: summary || "درس مضاف من لوحة التحكم.",
+          youtubeUrls: youtubeUrls
+        });
+      }
 
       const saved = await persistCoursesData();
       lessonTitleInput.value = "";
@@ -983,8 +1198,8 @@
       lessonYoutubeInput.value = "";
       lessonUploadMsg.className = saved ? "msg info" : "msg error";
       lessonUploadMsg.textContent = saved
-        ? "تم رفع الدرس وروابط الفيديو وحفظها على Firebase بنجاح."
-        : "تم الحفظ محلياً، لكن تعذر الاتصال بـ Firebase.";
+        ? "تم حفظ الدرس / إضافة الروابط بنجاح."
+        : "تم الحفظ محلياً، وتعذر الاتصال بـ Firebase.";
     });
 
     publishBookBtn.addEventListener("click", async function () {
@@ -1008,7 +1223,7 @@
 
       if (!finalTitle || !fileUrl) {
         bookUploadMsg.className = "msg error";
-        bookUploadMsg.textContent = "أدخل اسم الملف ومسار/رابط الملف أو اختر ملفاً من جهازك.";
+        bookUploadMsg.textContent = "أدخل اسم الملف ومسار/رابط الملف أو اختر ملفاً.";
         return;
       }
 
@@ -1026,12 +1241,13 @@
       bookFileInput.value = "";
       bookUploadMsg.className = saved ? "msg info" : "msg error";
       bookUploadMsg.textContent = saved
-        ? "تم حفظ الملف وإضافته للمادة بنجاح."
-        : "تم الحفظ محلياً؛ لو حجم الملف كبير يُفضّل رفعه داخل مجلد books في GitHub وربط مساره.";
+        ? "تم حفظ الكتاب / الملف بنجاح."
+        : "تم الحفظ محلياً، وتعذر الاتصال بـ Firebase.";
     });
 
     publishQuizBtn.addEventListener("click", async function () {
       const courseId = quizCourseSelect.value;
+      const durationMinutes = Math.max(1, Math.min(300, Number(quizDurationInput.value) || 15));
       const type = quizTypeSelect.value === "essay" ? "essay" : "mcq";
       const title = quizTitleInput.value.trim() || "اختبار المادة";
       const question = quizQuestionInput.value.trim();
@@ -1044,6 +1260,7 @@
       }
 
       COURSES_DATA = normalizeCoursesData(COURSES_DATA);
+      COURSES_DATA[courseId].quizDurationMinutes = durationMinutes;
       if (!Array.isArray(COURSES_DATA[courseId].quizzes)) {
         COURSES_DATA[courseId].quizzes = [];
       }
@@ -1057,10 +1274,9 @@
 
         if (options.length < 2) {
           quizUploadMsg.className = "msg error";
-          quizUploadMsg.textContent = "اكتب اختيارين على الأقل مفصولين بفاصلة لسؤال البابل شيت.";
+          quizUploadMsg.textContent = "اكتب اختيارين على الأقل مفصولين بفاصلة.";
           return;
         }
-
         if (correctIndex < 0 || correctIndex >= options.length) {
           quizUploadMsg.className = "msg error";
           quizUploadMsg.textContent = "رقم الإجابة الصحيحة خارج نطاق الاختيارات.";
@@ -1095,8 +1311,8 @@
       quizModelAnswerInput.value = "";
       quizUploadMsg.className = saved ? "msg info" : "msg error";
       quizUploadMsg.textContent = saved
-        ? "تم رفع السؤال وحفظه في Firebase بنجاح."
-        : "تم الحفظ محلياً، لكن تعذر الاتصال بـ Firebase.";
+        ? `تم حفظ السؤال وتحديث مدة الاختبار (${durationMinutes} دقيقة) بنجاح.`
+        : "تم الحفظ محلياً، وتعذر الاتصال بـ Firebase.";
     });
 
     generateTempCodeBtn.addEventListener("click", async function () {
@@ -1126,28 +1342,13 @@
       const code = studentCodeInput.value.trim();
       const phone = studentPhoneInput.value.trim();
       const address = studentAddressInput.value.trim();
+      const lang = studentLangSelect.value === "en" ? "en" : "ar";
 
-      if (!name) {
+      if (!name || !isValidCode(code) || !isValidPhone(phone) || !address) {
         loginMsg.className = "msg error";
-        loginMsg.textContent = "من فضلك أدخل اسم الطالب.";
-        return;
-      }
-
-      if (!isValidCode(code)) {
-        loginMsg.className = "msg error";
-        loginMsg.textContent = "كود الطالب غير صحيح أو منتهي الصلاحية.";
-        return;
-      }
-
-      if (!isValidPhone(phone)) {
-        loginMsg.className = "msg error";
-        loginMsg.textContent = "من فضلك أدخل رقم هاتف صحيح للطالب.";
-        return;
-      }
-
-      if (!address) {
-        loginMsg.className = "msg error";
-        loginMsg.textContent = "من فضلك أدخل عنوان الطالب.";
+        loginMsg.textContent = lang === "en"
+          ? "Please check your name, valid code, phone number, and address."
+          : "تأكد من صحة الاسم، كود الطالب، رقم الهاتف، والعنوان.";
         return;
       }
 
@@ -1156,13 +1357,16 @@
       sessionStorage.setItem("studentPhone", phone);
       sessionStorage.setItem("studentAddress", address);
       sessionStorage.setItem("studentAccess", "granted");
+      sessionStorage.setItem(STUDENT_LANG_KEY, lang);
+      localStorage.setItem(STUDENT_LANG_KEY, lang);
 
       const log = loadStudentsLog();
       log.push({
-        name: name,
-        code: code,
-        phone: phone,
-        address: address,
+        name,
+        code,
+        phone,
+        address,
+        lang,
         time: new Date().toLocaleString("ar-EG")
       });
       saveStudentsLog(log);
@@ -1174,12 +1378,8 @@
     openAdminBtn.addEventListener("click", openDrawer);
     closeDrawerBtn.addEventListener("click", closeDrawer);
     drawerBackdrop.addEventListener("click", closeDrawer);
-    tabManageBtn.addEventListener("click", function () {
-      switchDrawerTab("manage");
-    });
-    tabRegisteredBtn.addEventListener("click", function () {
-      switchDrawerTab("registered");
-    });
+    tabManageBtn.addEventListener("click", () => switchDrawerTab("manage"));
+    tabRegisteredBtn.addEventListener("click", () => switchDrawerTab("registered"));
 
     verifyAdminBtn.addEventListener("click", function () {
       if (adminCodeInput.value.trim() === ADMIN_CODE) {
