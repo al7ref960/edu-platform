@@ -335,6 +335,9 @@
   </footer>
 
   <script>
+    const FIREBASE_DB_URL = "https://al7ref-platform-default-rtdb.firebaseio.com";
+    const SYNC_NODE = "al7ref_platform_state";
+
     const ADMIN_CODE = "M2601820";
     const ADMIN_SESSION_KEY = "eduPlatformAdminUnlocked";
     const STUDENTS_LOG_KEY = "eduPlatformStudentsLog";
@@ -411,6 +414,38 @@
     const clearLogBtn = document.getElementById("clearLogBtn");
     const adminDashboardMsg = document.getElementById("adminDashboardMsg");
 
+    async function loadCloudState() {
+      try {
+        const res = await fetch(`${FIREBASE_DB_URL}/${SYNC_NODE}.json`);
+        if (!res.ok) return null;
+        return await res.json();
+      } catch (err) {
+        console.warn("تعذر جلب البيانات من Firebase، سيتم الاعتماد على التخزين المحلي:", err);
+        return null;
+      }
+    }
+
+    async function saveCloudState(partialPayload) {
+      try {
+        const current = await loadCloudState();
+        const merged = {
+          ...(current && typeof current === "object" ? current : {}),
+          ...partialPayload,
+          updatedAt: Date.now()
+        };
+
+        const res = await fetch(`${FIREBASE_DB_URL}/${SYNC_NODE}.json`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(merged)
+        });
+        return res.ok;
+      } catch (err) {
+        console.warn("تعذر حفظ البيانات في Firebase:", err);
+        return false;
+      }
+    }
+
     function loadStudentsLog() {
       try {
         const raw = localStorage.getItem(STUDENTS_LOG_KEY);
@@ -423,6 +458,7 @@
 
     function saveStudentsLog(list) {
       localStorage.setItem(STUDENTS_LOG_KEY, JSON.stringify(list));
+      saveCloudState({ studentsLog: list });
     }
 
     function renderStudentsLog() {
@@ -642,7 +678,16 @@
       renderHomeState();
     });
 
-    renderHomeState();
+    async function initHomeSync() {
+      renderHomeState();
+      const cloudState = await loadCloudState();
+      if (cloudState && typeof cloudState === "object" && Array.isArray(cloudState.studentsLog)) {
+        localStorage.setItem(STUDENTS_LOG_KEY, JSON.stringify(cloudState.studentsLog));
+        renderHomeState();
+      }
+    }
+
+    initHomeSync();
   </script>
 
 </body>
