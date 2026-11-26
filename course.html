@@ -39,7 +39,7 @@
     }
 
     .navbar {
-      background-color: #1e3a8a;
+      background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
       color: #ffffff;
       padding: 12px 16px;
       display: flex;
@@ -48,6 +48,7 @@
       gap: 10px;
       flex-wrap: wrap;
       z-index: 20;
+      box-shadow: 0 2px 10px rgba(30, 58, 138, 0.18);
     }
 
     .nav-actions {
@@ -64,12 +65,12 @@
     }
 
     .card {
-      background-color: rgba(255, 255, 255, 0.96);
+      background-color: rgba(255, 255, 255, 0.97);
       border: 1px solid #bfdbfe;
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 18px;
       margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.06);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.06);
     }
 
     h1, h2, h3, h4 {
@@ -91,7 +92,7 @@
       box-sizing: border-box;
       padding: 10px 12px;
       border: 1px solid #93c5fd;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 0.95rem;
       background-color: #ffffff;
       font-family: inherit;
@@ -102,12 +103,6 @@
       resize: vertical;
     }
 
-    input:focus,
-    textarea:focus {
-      outline: 2px solid #2563eb;
-      border-color: #2563eb;
-    }
-
     .btn,
     a.btn,
     button.btn {
@@ -115,9 +110,9 @@
       background-color: #2563eb;
       color: #ffffff;
       border: 1px solid #2563eb;
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 9px 15px;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: bold;
       text-decoration: none;
       cursor: pointer;
@@ -147,7 +142,7 @@
 
     .btn-sm {
       padding: 7px 12px;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
     }
 
     .lesson-list {
@@ -159,16 +154,83 @@
     .lesson-item {
       background-color: #eff6ff;
       border: 1px solid #bfdbfe;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 14px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
-    .lesson-item strong {
+    .accordion-header {
+      width: 100%;
+      background: transparent;
+      border: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      text-align: start;
+      font-family: inherit;
+    }
+
+    .accordion-title {
       color: #1e3a8a;
-      display: block;
-      margin-bottom: 6px;
+      font-weight: bold;
       font-size: 1rem;
+    }
+
+    .accordion-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background-color: #dbeafe;
+      color: #1e3a8a;
+      font-weight: bold;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .lesson-item.open .accordion-arrow {
+      transform: rotate(180deg);
+      background-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .accordion-body {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #bfdbfe;
+    }
+
+    .timer-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      background-color: #eff6ff;
+      border: 1px solid #93c5fd;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      font-weight: bold;
+      color: #1e3a8a;
+    }
+
+    .timer-badge {
+      background-color: #1e3a8a;
+      color: #ffffff;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+    }
+
+    .timer-badge.urgent {
+      background-color: #dc2626;
     }
 
     .video-box {
@@ -231,7 +293,7 @@
     .drawer-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.45);
+      background: rgba(15, 23, 42, 0.5);
       z-index: 40;
     }
 
@@ -239,27 +301,57 @@
       position: fixed;
       top: 0;
       right: 0;
-      width: min(460px, 94vw);
+      width: min(470px, 95vw);
       height: 100vh;
-      background: #eff6ff;
+      background: #f8fafc;
       border-left: 2px solid #2563eb;
-      box-shadow: -8px 0 24px rgba(15, 23, 42, 0.18);
+      box-shadow: -10px 0 30px rgba(15, 23, 42, 0.2);
       padding: 16px;
       overflow-y: auto;
       z-index: 50;
       transition: transform 0.25s ease;
     }
 
+    html[dir="ltr"] .side-drawer {
+      right: auto;
+      left: 0;
+      border-left: 0;
+      border-right: 2px solid #2563eb;
+      box-shadow: 10px 0 30px rgba(15, 23, 42, 0.2);
+    }
+
     .side-drawer.closed {
       transform: translateX(100%);
     }
 
+    html[dir="ltr"] .side-drawer.closed {
+      transform: translateX(-100%);
+    }
+
+    .drawer-header {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .drawer-header h3 {
+      color: #ffffff;
+      margin: 0;
+      font-size: 1rem;
+    }
+
     .admin-subbox {
       background-color: #ffffff;
-      border: 1px solid #bfdbfe;
-      border-radius: 10px;
+      border: 1px solid #dbeafe;
+      border-radius: 12px;
       padding: 14px;
-      margin-top: 14px;
+      margin-bottom: 12px;
     }
 
     .admin-actions {
@@ -272,29 +364,31 @@
     .log-table-wrap {
       overflow-x: auto;
       margin-top: 12px;
+      border-radius: 10px;
+      border: 1px solid #bfdbfe;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       background-color: #ffffff;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
     }
 
     th, td {
-      border: 1px solid #bfdbfe;
-      padding: 7px 9px;
-      text-align: right;
+      border: 1px solid #dbeafe;
+      padding: 8px 9px;
+      text-align: start;
     }
 
     th {
-      background-color: #dbeafe;
+      background-color: #eff6ff;
       color: #1e3a8a;
     }
 
     .msg {
       margin-top: 10px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: bold;
     }
 
@@ -326,10 +420,14 @@
   <div class="watermark" aria-hidden="true">عبد الرحمن مجدي</div>
 
   <header class="navbar">
-    <strong>منصة الحريف — البشمندس بوده</strong>
+    <strong id="brandTitle">منصة الحريف — البشمندس بوده</strong>
     <div class="nav-actions">
+      <select id="langSelect" aria-label="Language" style="width:auto; padding:6px 10px; border-radius:8px; font-size:0.84rem; font-weight:bold; color:#1e3a8a;">
+        <option value="ar">العربية (AR)</option>
+        <option value="en">English (EN)</option>
+      </select>
       <span id="studentBadge"></span>
-      <a href="index.html" class="btn btn-secondary btn-sm">المواد الدراسية</a>
+      <a href="index.html" id="backCoursesBtn" class="btn btn-secondary btn-sm">المواد الدراسية</a>
       <button type="button" id="openAdminBtn" class="btn btn-secondary btn-sm">القائمة الجانبية للمسجلين</button>
       <button type="button" id="logoutBtn" class="btn btn-danger btn-sm hidden">تسجيل خروج</button>
     </div>
@@ -338,12 +436,11 @@
   <div id="drawerBackdrop" class="drawer-backdrop hidden"></div>
 
   <aside id="sideDrawer" class="side-drawer closed" aria-label="قائمة الطلاب المسجلين والتحكم">
-    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-      <h3 style="margin:0;">الطلاب المسجلون والتحكم</h3>
+    <div class="drawer-header">
+      <h3>الطلاب المسجلون والتحكم</h3>
       <button type="button" id="closeDrawerBtn" class="btn btn-danger btn-sm">إغلاق</button>
     </div>
 
-    <!-- نافذة كود لوحة التحكم -->
     <div id="adminAuthSection" class="admin-subbox">
       <h4>دخول لوحة التحكم</h4>
       <label for="adminCodeInput">أدخل كود الأدمن</label>
@@ -354,7 +451,6 @@
       <div id="adminAuthMsg" class="msg"></div>
     </div>
 
-    <!-- سجل الطلاب المسجلين -->
     <div id="adminDashboardSection" class="hidden">
       <div class="admin-subbox">
         <h4>الطلاب المسجلون في المنصة</h4>
@@ -386,16 +482,14 @@
   </aside>
 
   <main class="container">
-    <!-- تنبيه عدم وجود جلسة صالحة -->
     <section id="unauthorizedSection" class="card hidden">
-      <h2>تنبيه الدخول</h2>
+      <h2 id="unauthTitle">تنبيه الدخول</h2>
       <p id="unauthorizedReason">يلزم تسجيل الدخول بكود الطالب المعتمد من صفحة المنصة الرئيسية أولاً.</p>
       <div class="admin-actions">
-        <a href="index.html" class="btn">العودة إلى صفحة تسجيل الدخول</a>
+        <a href="index.html" id="backLoginBtn" class="btn">العودة إلى صفحة تسجيل الدخول</a>
       </div>
     </section>
 
-    <!-- محتوى المادة الدراسية -->
     <section id="courseContentSection" class="hidden">
       <div class="card">
         <div id="studentSessionInfo" class="meta-bar"></div>
@@ -404,26 +498,26 @@
       </div>
 
       <div class="card">
-        <h2>محاور ودروس المادة</h2>
+        <h2 id="lessonsHeading">محاور ودروس المادة</h2>
         <ul id="lessonsList" class="lesson-list"></ul>
       </div>
 
       <div class="card">
-        <h2>الكتب والملفات المرفقة</h2>
+        <h2 id="booksHeading">الكتب والملفات المرفقة</h2>
         <ul id="booksList" class="lesson-list"></ul>
       </div>
 
       <div class="card">
-        <h2>اختبارات المادة</h2>
+        <h2 id="quizzesHeading">اختبار المادة</h2>
         <div id="quizzesContainer"></div>
       </div>
 
       <div class="card">
-        <h2>ملاحظاتك على المادة (جلسة حالية)</h2>
-        <label for="courseNoteInput">اكتب ملخصاً أو نقطة مهمة للمراجعة</label>
+        <h2 id="notesHeading">ملاحظاتك على المادة</h2>
+        <label id="noteLabel" for="courseNoteInput">اكتب ملخصاً أو نقطة مهمة للمراجعة</label>
         <textarea id="courseNoteInput" placeholder="اكتب ملاحظاتك هنا..."></textarea>
         <div class="admin-actions">
-          <button type="button" id="saveNoteBtn" class="btn btn-sm">حفظ ملاحظة الجلسة</button>
+          <button type="button" id="saveNoteBtn" class="btn btn-sm">حفظ الملاحظة</button>
           <button type="button" id="clearNoteBtn" class="btn btn-secondary btn-sm">مسح الملاحظة</button>
         </div>
         <div id="noteMsg" class="msg"></div>
@@ -441,11 +535,40 @@
     const SYNC_NODE = "al7ref_platform_state";
     const COURSES_CACHE_KEY = "al7refCoursesDataCache";
     const TEMP_CODE_CACHE_KEY = "al7refTempAccessCode";
+    const STUDENT_LANG_KEY = "al7refStudentLang";
+    const EXAM_ATTEMPTS_KEY = "al7refExamAttempts";
 
     const ADMIN_CODE = "M2601820";
     const ADMIN_SESSION_KEY = "eduPlatformAdminUnlocked";
     const STUDENTS_LOG_KEY = "eduPlatformStudentsLog";
     const TOTAL_CODES = 20000;
+
+    let examCountdownInterval = null;
+
+    function getStudentLang() {
+      const saved = sessionStorage.getItem(STUDENT_LANG_KEY) || localStorage.getItem(STUDENT_LANG_KEY);
+      return saved === "en" ? "en" : "ar";
+    }
+
+    function applyStudentLanguage(lang) {
+      const cleanLang = lang === "en" ? "en" : "ar";
+      const isEn = cleanLang === "en";
+      document.documentElement.lang = cleanLang;
+      document.documentElement.dir = isEn ? "ltr" : "rtl";
+
+      document.getElementById("brandTitle").textContent = isEn ? "Al-Hareef Platform — Eng. Bouda" : "منصة الحريف — البشمندس بوده";
+      document.getElementById("backCoursesBtn").textContent = isEn ? "Courses" : "المواد الدراسية";
+      document.getElementById("openAdminBtn").textContent = isEn ? "Registered Students" : "القائمة الجانبية للمسجلين";
+      document.getElementById("logoutBtn").textContent = isEn ? "Logout" : "تسجيل خروج";
+      document.getElementById("lessonsHeading").textContent = isEn ? "Course Lessons" : "محاور ودروس المادة";
+      document.getElementById("booksHeading").textContent = isEn ? "Books & Attachments" : "الكتب والملفات المرفقة";
+      document.getElementById("quizzesHeading").textContent = isEn ? "Course Exam" : "اختبار المادة";
+      document.getElementById("notesHeading").textContent = isEn ? "Your Study Notes" : "ملاحظاتك على المادة";
+      document.getElementById("noteLabel").textContent = isEn ? "Write a summary or key point" : "اكتب ملخصاً أو نقطة مهمة للمراجعة";
+      document.getElementById("saveNoteBtn").textContent = isEn ? "Save Note" : "حفظ الملاحظة";
+      document.getElementById("clearNoteBtn").textContent = isEn ? "Clear Note" : "مسح الملاحظة";
+      document.getElementById("langSelect").value = cleanLang;
+    }
 
     const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
     const SYMBOLS = "#@%$!*-_";
@@ -545,6 +668,7 @@
       "1": {
         title: "مبادئ القانون",
         description: "مدخل إلى القاعدة القانونية، مصادر القانون، وتطبيقاته الأساسية في الحياة العملية.",
+        quizDurationMinutes: 15,
         lessons: [
           { title: "الدرس الأول: مفهوم القاعدة القانونية وخصائصها", summary: "الفرق بين القاعدة القانونية والقواعد الأخلاقية والاجتماعية.", youtubeUrls: [] },
           { title: "الدرس الثاني: مصادر القانون وتدرجها", summary: "التشريع، العرف، ومبادئ الشريعة والقانون.", youtubeUrls: [] },
@@ -556,6 +680,7 @@
       "2": {
         title: "مبادئ الاقتصاد",
         description: "فهم المشكلة الاقتصادية، ندرة الموارد، وآليات السوق والعرض والطلب.",
+        quizDurationMinutes: 15,
         lessons: [
           { title: "الدرس الأول: المشكلة الاقتصادية والندرة", summary: "اختيار البدائل وتكلفة الفرصة البديلة وإنتاجية الموارد.", youtubeUrls: [] },
           { title: "الدرس الثاني: الطلب والعرض وتوازن السوق", summary: "العلاقة بين السعر والكمية المطلوبة والمعروضة.", youtubeUrls: [] },
@@ -567,6 +692,7 @@
       "3": {
         title: "لغة أجنبية",
         description: "تنمية الحصيلة اللغوية، القواعد الأساسية، وفهم النصوص والتواصل.",
+        quizDurationMinutes: 15,
         lessons: [
           { title: "الدرس الأول: المفردات الأساسية والمصطلحات", summary: "الكلمات الأكثر استخداماً في القراءة والمحادثة اليومية.", youtubeUrls: [] },
           { title: "الدرس الثاني: الأزمنة وتركيب الجملة", summary: "بناء الجمل الصحيحة في المضارع والماضي والمستقبل.", youtubeUrls: [] },
@@ -578,6 +704,7 @@
       "4": {
         title: "مبادئ المحاسبة المالية",
         description: "أسس الدورة المحاسبية، قيود اليومية، إعداد ميزان المراجعة والقوائم المالية.",
+        quizDurationMinutes: 15,
         lessons: [
           { title: "الدرس الأول: المعادلة المحاسبية والحسابات", summary: "الأصول = الخصوم + حقوق الملكية، وتأثير العمليات المالية.", youtubeUrls: [] },
           { title: "الدرس الثاني: دفتر اليومية ودفتر الأستاذ", summary: "تسجيل القيود المحاسبية والترحيل إلى الحسابات المختصة.", youtubeUrls: [] },
@@ -589,6 +716,7 @@
       "5": {
         title: "مبادئ إدارة الأعمال",
         description: "دراسة وظائف الإدارة الحديثة واتخاذ القرار وتنظيم فرق العمل وتحقيق الأهداف.",
+        quizDurationMinutes: 15,
         lessons: [
           { title: "الدرس الأول: التخطيط وتحديد الأهداف", summary: "وضع الخطط قصيرة وطويلة المدى وتحديد الأولويات.", youtubeUrls: [] },
           { title: "الدرس الثاني: التنظيم وتوزيع المسؤوليات", summary: "الهياكل التنظيمية وتفويض الصلاحيات وتنسيق الأقسام.", youtubeUrls: [] },
@@ -620,6 +748,9 @@
         if (incoming && typeof incoming === "object") {
           if (incoming.title) base[courseId].title = incoming.title;
           if (incoming.description) base[courseId].description = incoming.description;
+          if (Number(incoming.quizDurationMinutes) > 0) {
+            base[courseId].quizDurationMinutes = Number(incoming.quizDurationMinutes);
+          }
           if (Array.isArray(incoming.lessons)) {
             base[courseId].lessons = incoming.lessons.map(normalizeLesson);
           }
@@ -637,6 +768,41 @@
       if (cached) COURSES_DATA = normalizeCoursesData(JSON.parse(cached));
     } catch (e) {}
 
+    function loadExamAttempts() {
+      try {
+        const raw = localStorage.getItem(EXAM_ATTEMPTS_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveExamAttempts(attempts) {
+      localStorage.setItem(EXAM_ATTEMPTS_KEY, JSON.stringify(attempts));
+      saveCloudState({ examAttempts: attempts });
+    }
+
+    function getAttemptKey(studentCode, courseId, quizzesCount) {
+      return `${String(studentCode || "").trim().toUpperCase()}__course_${courseId}__q${quizzesCount}`;
+    }
+
+    function hasTakenExam(studentCode, courseId, quizzesCount) {
+      const attempts = loadExamAttempts();
+      return Boolean(attempts[getAttemptKey(studentCode, courseId, quizzesCount)]);
+    }
+
+    function markExamCompleted(studentCode, courseId, quizzesCount, resultSummary) {
+      const attempts = loadExamAttempts();
+      const key = getAttemptKey(studentCode, courseId, quizzesCount);
+      attempts[key] = {
+        completedAt: Date.now(),
+        timeText: new Date().toLocaleString("ar-EG"),
+        summary: resultSummary
+      };
+      saveExamAttempts(attempts);
+    }
+
+    const langSelect = document.getElementById("langSelect");
     const studentBadge = document.getElementById("studentBadge");
     const logoutBtn = document.getElementById("logoutBtn");
     const unauthorizedSection = document.getElementById("unauthorizedSection");
@@ -690,7 +856,7 @@
         if (!res.ok) return null;
         return await res.json();
       } catch (err) {
-        console.warn("تعذر جلب البيانات من Firebase، سيتم الاعتماد على التخزين المحلي:", err);
+        console.warn("تعذر جلب البيانات من Firebase:", err);
         return null;
       }
     }
@@ -756,31 +922,18 @@
 
       list.forEach((entry, idx) => {
         const tr = document.createElement("tr");
-
-        const numTd = document.createElement("td");
-        numTd.textContent = String(idx + 1);
-
-        const nameTd = document.createElement("td");
-        nameTd.textContent = entry.name || "";
-
-        const codeTd = document.createElement("td");
-        codeTd.textContent = entry.code || "";
-
-        const phoneTd = document.createElement("td");
-        phoneTd.textContent = entry.phone || "";
-
-        const addressTd = document.createElement("td");
-        addressTd.textContent = entry.address || "";
-
-        const timeTd = document.createElement("td");
-        timeTd.textContent = entry.time || "";
-
-        tr.appendChild(numTd);
-        tr.appendChild(nameTd);
-        tr.appendChild(codeTd);
-        tr.appendChild(phoneTd);
-        tr.appendChild(addressTd);
-        tr.appendChild(timeTd);
+        [
+          String(idx + 1),
+          entry.name || "",
+          entry.code || "",
+          entry.phone || "",
+          entry.address || "",
+          entry.time || ""
+        ].forEach((val) => {
+          const td = document.createElement("td");
+          td.textContent = val;
+          tr.appendChild(td);
+        });
         studentsLogBody.appendChild(tr);
       });
     }
@@ -797,7 +950,216 @@
       }
     }
 
+    function formatRemainingTime(totalSeconds) {
+      const safe = Math.max(0, Number(totalSeconds) || 0);
+      const mins = Math.floor(safe / 60);
+      const secs = safe % 60;
+      return String(mins).padStart(2, "0") + ":" + String(secs).padStart(2, "0");
+    }
+
+    function renderQuizzesSection(courseId, course, studentCode, isEn) {
+      if (examCountdownInterval) {
+        clearInterval(examCountdownInterval);
+        examCountdownInterval = null;
+      }
+
+      quizzesContainer.innerHTML = "";
+      const quizzes = Array.isArray(course.quizzes) ? course.quizzes : [];
+
+      if (quizzes.length === 0) {
+        const emptyQuiz = document.createElement("div");
+        emptyQuiz.className = "video-missing";
+        emptyQuiz.textContent = isEn
+          ? "No exam questions added for this course yet."
+          : "لا توجد اختبارات مضافة لهذه المادة حتى الآن.";
+        quizzesContainer.appendChild(emptyQuiz);
+        return;
+      }
+
+      const attempts = loadExamAttempts();
+      const attemptKey = getAttemptKey(studentCode, courseId, quizzes.length);
+      const existingAttempt = attempts[attemptKey];
+
+      if (existingAttempt) {
+        const lockedBox = document.createElement("div");
+        lockedBox.className = "video-missing";
+        lockedBox.innerHTML =
+          "<strong>" + (isEn ? "Exam Completed (Single Attempt Only)" : "تم أداء وتسليم الاختبار (مسموح بمحاولة واحدة فقط)") + "</strong><br>" +
+          (isEn ? "Completed at: " : "وقت التسليم: ") + (existingAttempt.timeText || "") + "<br>" +
+          (existingAttempt.summary ? (isEn ? "Summary: " : "النتيجة: ") + existingAttempt.summary : "");
+        quizzesContainer.appendChild(lockedBox);
+        return;
+      }
+
+      const durationMinutes = Math.max(1, Number(course.quizDurationMinutes) || 15);
+      const startKey = "examStart__" + attemptKey;
+      let startTimestamp = Number(sessionStorage.getItem(startKey) || 0);
+      if (!startTimestamp) {
+        startTimestamp = Date.now();
+        sessionStorage.setItem(startKey, String(startTimestamp));
+      }
+
+      const deadlineTimestamp = startTimestamp + durationMinutes * 60 * 1000;
+
+      const timerBanner = document.createElement("div");
+      timerBanner.className = "timer-banner";
+
+      const timerLabel = document.createElement("span");
+      timerLabel.textContent = isEn
+        ? "Remaining Exam Time (Single attempt — do not leave/logout):"
+        : "الوقت المتبقي للاختبار (محاولة واحدة فقط — لا تخرج من الصفحة):";
+
+      const timerBadge = document.createElement("span");
+      timerBadge.className = "timer-badge";
+
+      timerBanner.appendChild(timerLabel);
+      timerBanner.appendChild(timerBadge);
+      quizzesContainer.appendChild(timerBanner);
+
+      const formBox = document.createElement("div");
+      const questionRefs = [];
+
+      quizzes.forEach((quiz, qIdx) => {
+        const isEssay = quiz.type === "essay";
+        const points = Math.max(1, Number(quiz.points) || 5);
+        const box = document.createElement("div");
+        box.className = "lesson-item";
+
+        const badgeText = isEssay
+          ? (isEn ? ` [Essay — ${points} pts]` : ` [مقالي — ${points} درجات]`)
+          : (isEn ? ` [Bubble Sheet — ${points} pts]` : ` [بابل شيت — ${points} درجات]`);
+
+        const qTitle = document.createElement("strong");
+        qTitle.textContent = (qIdx + 1) + "- " + (quiz.title || "") + badgeText + ": " + quiz.question;
+        box.appendChild(qTitle);
+
+        if (!isEssay) {
+          const groupName = "quiz_" + courseId + "_" + qIdx;
+          (quiz.options || []).forEach((optText, oIdx) => {
+            const optLabel = document.createElement("label");
+            optLabel.style.fontWeight = "normal";
+            optLabel.style.cursor = "pointer";
+
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = groupName;
+            radio.value = String(oIdx);
+            radio.style.width = "auto";
+            radio.style.marginInlineEnd = "8px";
+
+            optLabel.appendChild(radio);
+            optLabel.appendChild(document.createTextNode(optText));
+            box.appendChild(optLabel);
+          });
+
+          const itemFeedback = document.createElement("div");
+          itemFeedback.className = "msg";
+          box.appendChild(itemFeedback);
+          questionRefs.push({ type: "mcq", quiz, groupName, points, itemFeedback });
+        } else {
+          const essayArea = document.createElement("textarea");
+          essayArea.placeholder = isEn ? "Write your essay answer here..." : "اكتب إجابتك المقالية هنا...";
+          essayArea.style.marginTop = "8px";
+          box.appendChild(essayArea);
+
+          const itemFeedback = document.createElement("div");
+          itemFeedback.className = "msg";
+          box.appendChild(itemFeedback);
+          questionRefs.push({ type: "essay", quiz, essayArea, points, itemFeedback });
+        }
+
+        formBox.appendChild(box);
+      });
+
+      const submitExamBtn = document.createElement("button");
+      submitExamBtn.type = "button";
+      submitExamBtn.className = "btn btn-sm";
+      submitExamBtn.textContent = isEn ? "Submit Exam" : "تسليم الاختبار وحساب النتيجة";
+
+      const summaryMsg = document.createElement("div");
+      summaryMsg.className = "msg info";
+
+      let submitted = false;
+
+      function finalizeExam(autoSubmitted) {
+        if (submitted) return;
+        submitted = true;
+        if (examCountdownInterval) {
+          clearInterval(examCountdownInterval);
+          examCountdownInterval = null;
+        }
+
+        let mcqEarned = 0;
+        let mcqTotal = 0;
+        let essayTotal = 0;
+        let answeredEssayCount = 0;
+
+        questionRefs.forEach((ref) => {
+          if (ref.type === "mcq") {
+            mcqTotal += ref.points;
+            const selected = formBox.querySelector(`input[name="${ref.groupName}"]:checked`);
+            const radios = formBox.querySelectorAll(`input[name="${ref.groupName}"]`);
+            radios.forEach((r) => { r.disabled = true; });
+
+            if (selected && Number(selected.value) === Number(ref.quiz.correctIndex)) {
+              mcqEarned += ref.points;
+              ref.itemFeedback.className = "msg info";
+              ref.itemFeedback.textContent = isEn ? `Correct (+${ref.points})` : `إجابة صحيحة (+${ref.points})`;
+            } else {
+              const correctText = (ref.quiz.options && ref.quiz.options[ref.quiz.correctIndex]) || "";
+              ref.itemFeedback.className = "msg error";
+              ref.itemFeedback.textContent = isEn
+                ? `Incorrect (0/${ref.points})${correctText ? " — Answer: " + correctText : ""}`
+                : `إجابة غير صحيحة (0 / ${ref.points})${correctText ? " — الإجابة الصحيحة: " + correctText : ""}`;
+            }
+          } else {
+            essayTotal += ref.points;
+            ref.essayArea.disabled = true;
+            const studentAnswer = ref.essayArea.value.trim();
+            if (studentAnswer) answeredEssayCount += 1;
+
+            ref.itemFeedback.className = "msg info";
+            ref.itemFeedback.textContent = isEn
+              ? `Recorded (${ref.points} pts)${ref.quiz.modelAnswer ? " | Model: " + ref.quiz.modelAnswer : ""}`
+              : `تم تسجيل إجابتك (درجة السؤال: ${ref.points})${ref.quiz.modelAnswer ? " | النموذج: " + ref.quiz.modelAnswer : ""}`;
+          }
+        });
+
+        submitExamBtn.disabled = true;
+        const totalMarks = mcqTotal + essayTotal;
+        const summaryText = isEn
+          ? `${autoSubmitted ? "Time expired — Auto-submitted. " : ""}MCQ: ${mcqEarned}/${mcqTotal} | Essay answered: ${answeredEssayCount}/${essayTotal} | Total: ${totalMarks}`
+          : `${autoSubmitted ? "انتهى الوقت وتم التسليم تلقائياً. " : ""}درجة البابل شيت: ${mcqEarned} من ${mcqTotal} | المقالي المجاب: ${answeredEssayCount} (من ${essayTotal}) | الإجمالي: ${totalMarks}`;
+
+        summaryMsg.className = "msg info";
+        summaryMsg.textContent = summaryText;
+        markExamCompleted(studentCode, courseId, quizzes.length, summaryText);
+      }
+
+      submitExamBtn.addEventListener("click", () => finalizeExam(false));
+
+      function updateTimerDisplay() {
+        const remainingSec = Math.ceil((deadlineTimestamp - Date.now()) / 1000);
+        timerBadge.textContent = formatRemainingTime(remainingSec);
+        timerBadge.classList.toggle("urgent", remainingSec <= 60);
+        if (remainingSec <= 0) {
+          finalizeExam(true);
+        }
+      }
+
+      updateTimerDisplay();
+      examCountdownInterval = setInterval(updateTimerDisplay, 1000);
+
+      formBox.appendChild(submitExamBtn);
+      formBox.appendChild(summaryMsg);
+      quizzesContainer.appendChild(formBox);
+    }
+
     function renderCoursePage() {
+      const lang = getStudentLang();
+      const isEn = lang === "en";
+      applyStudentLanguage(lang);
+
       localStorage.removeItem("studentAccess");
       localStorage.removeItem("studentName");
       localStorage.removeItem("studentCode");
@@ -810,22 +1172,14 @@
       const address = sessionStorage.getItem("studentAddress");
       const access = sessionStorage.getItem("studentAccess") === "granted";
 
-      if (!name || !code || !access) {
+      if (!name || !code || !access || !isValidCode(code)) {
         studentBadge.textContent = "";
         logoutBtn.classList.add("hidden");
         courseContentSection.classList.add("hidden");
         unauthorizedSection.classList.remove("hidden");
-        unauthorizedReason.textContent = "يلزم تسجيل الدخول أولاً من الصفحة الرئيسية لفتح المواد الدراسية.";
-        refreshAdminView();
-        return;
-      }
-
-      if (!isValidCode(code)) {
-        studentBadge.textContent = "";
-        logoutBtn.classList.add("hidden");
-        courseContentSection.classList.add("hidden");
-        unauthorizedSection.classList.remove("hidden");
-        unauthorizedReason.textContent = "كود الطالب الحالي غير معتمد أو انتهت صلاحية الكود المؤقت.";
+        unauthorizedReason.textContent = isEn
+          ? "Please sign in with a valid student code from the home page first."
+          : "يلزم تسجيل الدخول بكود الطالب المعتمد من صفحة المنصة الرئيسية أولاً.";
         refreshAdminView();
         return;
       }
@@ -833,18 +1187,18 @@
       unauthorizedSection.classList.add("hidden");
       courseContentSection.classList.remove("hidden");
       logoutBtn.classList.remove("hidden");
-      studentBadge.textContent = "أهلاً، " + name;
+      studentBadge.textContent = isEn ? ("Hi, " + name) : ("أهلاً، " + name);
 
       const courseId = getCourseId();
       const course = COURSES_DATA[courseId];
-      document.title = course.title + " — منصة الحريف — البشمندس بوده";
+      document.title = course.title + " — " + (isEn ? "Al-Hareef Platform" : "منصة الحريف");
       courseTitle.textContent = course.title;
       courseDescription.textContent = course.description;
 
       studentSessionInfo.textContent =
-        "الطالب: " + name +
-        (phone ? " | الهاتف: " + phone : "") +
-        (address ? " | العنوان: " + address : "");
+        (isEn ? "Student: " : "الطالب: ") + name +
+        (phone ? (" | " + (isEn ? "Phone: " : "الهاتف: ") + phone) : "") +
+        (address ? (" | " + (isEn ? "Address: " : "العنوان: ") + address) : "");
 
       lessonsList.innerHTML = "";
       course.lessons.forEach((lesson) => {
@@ -852,15 +1206,29 @@
         const li = document.createElement("li");
         li.className = "lesson-item";
 
-        const strong = document.createElement("strong");
-        strong.textContent = normalized.title;
+        const headerBtn = document.createElement("button");
+        headerBtn.type = "button";
+        headerBtn.className = "accordion-header";
+        headerBtn.setAttribute("aria-expanded", "false");
+
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "accordion-title";
+        titleSpan.textContent = normalized.title;
+
+        const arrowSpan = document.createElement("span");
+        arrowSpan.className = "accordion-arrow";
+        arrowSpan.textContent = "▾";
+
+        headerBtn.appendChild(titleSpan);
+        headerBtn.appendChild(arrowSpan);
+
+        const bodyDiv = document.createElement("div");
+        bodyDiv.className = "accordion-body hidden";
 
         const p = document.createElement("p");
         p.style.margin = "0";
         p.textContent = normalized.summary;
-
-        li.appendChild(strong);
-        li.appendChild(p);
+        bodyDiv.appendChild(p);
 
         const validEmbeds = normalized.youtubeUrls
           .map((item) => parseYouTubeEmbedUrl(item))
@@ -872,29 +1240,42 @@
             vidLabel.style.marginTop = "10px";
             vidLabel.style.fontWeight = "bold";
             vidLabel.style.color = "#1e3a8a";
-            vidLabel.textContent = "فيديو الدرس (" + (vidIdx + 1) + ") — تشغيل داخل المنصة";
-            li.appendChild(vidLabel);
+            vidLabel.textContent = isEn
+              ? `Lesson Video (${vidIdx + 1}) — In-Platform Player`
+              : `فيديو الدرس (${vidIdx + 1}) — تشغيل داخل المنصة`;
+            bodyDiv.appendChild(vidLabel);
 
             const box = document.createElement("div");
             box.className = "video-box";
 
             const iframe = document.createElement("iframe");
             iframe.src = embedUrl;
-            iframe.title = normalized.title + " - فيديو " + (vidIdx + 1);
+            iframe.title = normalized.title + " - Video " + (vidIdx + 1);
             iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
             iframe.allowFullscreen = true;
             iframe.loading = "lazy";
 
             box.appendChild(iframe);
-            li.appendChild(box);
+            bodyDiv.appendChild(box);
           });
         } else {
           const missing = document.createElement("div");
           missing.className = "video-missing";
-          missing.textContent = "لم يتم إضافة فيديوهات لهذا الدرس بعد.";
-          li.appendChild(missing);
+          missing.textContent = isEn
+            ? "No videos added for this lesson yet."
+            : "لم يتم إضافة فيديوهات لهذا الدرس بعد.";
+          bodyDiv.appendChild(missing);
         }
 
+        headerBtn.addEventListener("click", function () {
+          const isOpen = !bodyDiv.classList.contains("hidden");
+          bodyDiv.classList.toggle("hidden", isOpen);
+          li.classList.toggle("open", !isOpen);
+          headerBtn.setAttribute("aria-expanded", String(!isOpen));
+        });
+
+        li.appendChild(headerBtn);
+        li.appendChild(bodyDiv);
         lessonsList.appendChild(li);
       });
 
@@ -903,7 +1284,7 @@
       if (books.length === 0) {
         const emptyBook = document.createElement("li");
         emptyBook.className = "video-missing";
-        emptyBook.textContent = "لا توجد كتب أو ملفات مرفقة لهذه المادة حتى الآن.";
+        emptyBook.textContent = isEn ? "No books or files attached yet." : "لا توجد كتب أو ملفات مرفقة لهذه المادة حتى الآن.";
         booksList.appendChild(emptyBook);
       } else {
         books.forEach((book) => {
@@ -923,7 +1304,7 @@
             const frame = document.createElement("iframe");
             frame.src = book.url;
             frame.className = "pdf-frame";
-            frame.title = book.title || "معاينة ملف PDF";
+            frame.title = book.title || "PDF Preview";
             frame.loading = "lazy";
             li.appendChild(frame);
           }
@@ -937,7 +1318,7 @@
           link.target = "_blank";
           link.rel = "noopener noreferrer";
           link.className = "btn btn-sm";
-          link.textContent = "تحميل / فتح الملف";
+          link.textContent = isEn ? "Download / Open File" : "تحميل / فتح الملف";
 
           actions.appendChild(link);
           li.appendChild(actions);
@@ -945,135 +1326,25 @@
         });
       }
 
-      quizzesContainer.innerHTML = "";
-      const quizzes = Array.isArray(course.quizzes) ? course.quizzes : [];
-      if (quizzes.length === 0) {
-        const emptyQuiz = document.createElement("div");
-        emptyQuiz.className = "video-missing";
-        emptyQuiz.textContent = "لا توجد اختبارات مضافة لهذه المادة حتى الآن.";
-        quizzesContainer.appendChild(emptyQuiz);
-      } else {
-        const formBox = document.createElement("div");
-        const questionRefs = [];
-
-        quizzes.forEach((quiz, qIdx) => {
-          const isEssay = quiz.type === "essay";
-          const points = Math.max(1, Number(quiz.points) || 5);
-          const box = document.createElement("div");
-          box.className = "lesson-item";
-
-          const badgeText = isEssay ? " [مقالي — " + points + " درجات]" : " [بابل شيت — " + points + " درجات]";
-          const qTitle = document.createElement("strong");
-          qTitle.textContent = (qIdx + 1) + "- " + (quiz.title || "سؤال") + badgeText + ": " + quiz.question;
-          box.appendChild(qTitle);
-
-          if (!isEssay) {
-            const groupName = "quiz_" + courseId + "_" + qIdx;
-            (quiz.options || []).forEach((optText, oIdx) => {
-              const optLabel = document.createElement("label");
-              optLabel.style.fontWeight = "normal";
-              optLabel.style.cursor = "pointer";
-
-              const radio = document.createElement("input");
-              radio.type = "radio";
-              radio.name = groupName;
-              radio.value = String(oIdx);
-              radio.style.width = "auto";
-              radio.style.marginLeft = "8px";
-
-              optLabel.appendChild(radio);
-              optLabel.appendChild(document.createTextNode(optText));
-              box.appendChild(optLabel);
-            });
-
-            const itemFeedback = document.createElement("div");
-            itemFeedback.className = "msg";
-            box.appendChild(itemFeedback);
-
-            questionRefs.push({ type: "mcq", quiz, groupName, points, itemFeedback });
-          } else {
-            const essayArea = document.createElement("textarea");
-            essayArea.placeholder = "اكتب إجابتك المقالية هنا...";
-            essayArea.style.marginTop = "8px";
-            box.appendChild(essayArea);
-
-            const itemFeedback = document.createElement("div");
-            itemFeedback.className = "msg";
-            box.appendChild(itemFeedback);
-
-            questionRefs.push({ type: "essay", quiz, essayArea, points, itemFeedback });
-          }
-
-          formBox.appendChild(box);
-        });
-
-        const submitExamBtn = document.createElement("button");
-        submitExamBtn.type = "button";
-        submitExamBtn.className = "btn btn-sm";
-        submitExamBtn.textContent = "تسليم الاختبار وحساب النتيجة";
-
-        const summaryMsg = document.createElement("div");
-        summaryMsg.className = "msg info";
-
-        submitExamBtn.addEventListener("click", function () {
-          let mcqEarned = 0;
-          let mcqTotal = 0;
-          let essayTotal = 0;
-          let answeredEssayCount = 0;
-
-          questionRefs.forEach((ref) => {
-            if (ref.type === "mcq") {
-              mcqTotal += ref.points;
-              const selected = formBox.querySelector(`input[name="${ref.groupName}"]:checked`);
-              if (selected && Number(selected.value) === Number(ref.quiz.correctIndex)) {
-                mcqEarned += ref.points;
-                ref.itemFeedback.className = "msg info";
-                ref.itemFeedback.textContent = "إجابة صحيحة (+" + ref.points + " درجات).";
-              } else {
-                const correctText = (ref.quiz.options && ref.quiz.options[ref.quiz.correctIndex]) || "";
-                ref.itemFeedback.className = "msg error";
-                ref.itemFeedback.textContent =
-                  "إجابة غير صحيحة (0 / " + ref.points + ")" +
-                  (correctText ? " — الإجابة الصحيحة: " + correctText : "");
-              }
-            } else {
-              essayTotal += ref.points;
-              const studentAnswer = ref.essayArea.value.trim();
-              if (studentAnswer) answeredEssayCount += 1;
-
-              ref.itemFeedback.className = "msg info";
-              ref.itemFeedback.textContent =
-                (studentAnswer ? "تم تسجيل إجابتك المقالية" : "لم تكتب إجابة مقالية") +
-                " (درجة السؤال: " + ref.points + ")" +
-                (ref.quiz.modelAnswer ? " | النموذج الاسترشادي: " + ref.quiz.modelAnswer : "");
-            }
-          });
-
-          const totalMarks = mcqTotal + essayTotal;
-          summaryMsg.className = "msg info";
-          summaryMsg.textContent =
-            "درجة البابل شيت التلقائية: " + mcqEarned + " من " + mcqTotal +
-            " | الأسئلة المقالية المجاب عنها: " + answeredEssayCount + " (من " + essayTotal + " درجات)" +
-            " | إجمالي درجات الاختبار: " + totalMarks;
-        });
-
-        formBox.appendChild(submitExamBtn);
-        formBox.appendChild(summaryMsg);
-        quizzesContainer.appendChild(formBox);
-      }
+      renderQuizzesSection(courseId, course, code, isEn);
 
       const savedNote = sessionStorage.getItem("courseNote_" + courseId) || "";
       courseNoteInput.value = savedNote;
       noteMsg.textContent = "";
-
       refreshAdminView();
     }
+
+    langSelect.addEventListener("change", function () {
+      sessionStorage.setItem(STUDENT_LANG_KEY, langSelect.value);
+      localStorage.setItem(STUDENT_LANG_KEY, langSelect.value);
+      renderCoursePage();
+    });
 
     saveNoteBtn.addEventListener("click", function () {
       const courseId = getCourseId();
       sessionStorage.setItem("courseNote_" + courseId, courseNoteInput.value);
       noteMsg.className = "msg info";
-      noteMsg.textContent = "تم حفظ ملاحظة الجلسة لهذه المادة.";
+      noteMsg.textContent = getStudentLang() === "en" ? "Note saved." : "تم حفظ الملاحظة.";
     });
 
     clearNoteBtn.addEventListener("click", function () {
@@ -1081,7 +1352,7 @@
       sessionStorage.removeItem("courseNote_" + courseId);
       courseNoteInput.value = "";
       noteMsg.className = "msg info";
-      noteMsg.textContent = "تم مسح ملاحظة الجلسة.";
+      noteMsg.textContent = getStudentLang() === "en" ? "Note cleared." : "تم مسح الملاحظة.";
     });
 
     openAdminBtn.addEventListener("click", openDrawer);
@@ -1163,6 +1434,10 @@
         } else if (cloudState.tempAccessCode === null) {
           TEMP_ACCESS_CODE = null;
           localStorage.removeItem(TEMP_CODE_CACHE_KEY);
+        }
+        if (cloudState.examAttempts && typeof cloudState.examAttempts === "object") {
+          const mergedAttempts = { ...cloudState.examAttempts, ...loadExamAttempts() };
+          localStorage.setItem(EXAM_ATTEMPTS_KEY, JSON.stringify(mergedAttempts));
         }
         renderCoursePage();
       }
