@@ -166,7 +166,6 @@
       font-size: 0.84rem;
     }
 
-    /* القائمة الجانبية المرتبة */
     .drawer-backdrop {
       position: fixed;
       inset: 0;
@@ -352,7 +351,6 @@
       <button type="button" id="closeDrawerBtn" class="btn btn-danger btn-sm">إغلاق</button>
     </div>
 
-    <!-- دخول لوحة التحكم -->
     <div id="adminAuthSection" class="admin-subbox">
       <h4><span>دخول لوحة التحكم</span><span class="badge-pill">Admin</span></h4>
       <label for="adminCodeInput">أدخل كود الأدمن</label>
@@ -363,7 +361,6 @@
       <div id="adminAuthMsg" class="msg"></div>
     </div>
 
-    <!-- محتوى لوحة التحكم والصفحة الجانبية للمسجلين -->
     <div id="adminDashboardSection" class="hidden">
       <div class="drawer-tabs">
         <button type="button" id="tabManageBtn" class="btn btn-sm drawer-tab-btn active">إدارة المحتوى والاختبارات</button>
@@ -376,7 +373,6 @@
       </div>
       <div id="adminDashboardMsg" class="msg"></div>
 
-      <!-- تبويب 1: إدارة المحتوى والاختبارات -->
       <div id="manageTabPanel">
         <!-- 1. رفع درس جديد أو إضافة رابط لدرس -->
         <div class="admin-subbox">
@@ -479,6 +475,20 @@
             <button type="button" id="publishQuizBtn" class="btn btn-sm">حفظ ورفع السؤال للاختبار</button>
           </div>
           <div id="quizUploadMsg" class="msg"></div>
+
+          <hr style="border:0; border-top:1px dashed #93c5fd; margin:16px 0;">
+
+          <h4 style="margin-bottom:6px;">رفع امتحان كامل (حتى 20 سؤال دفعة واحدة)</h4>
+          <label for="bulkQuizTextarea">
+            الصق الـ 20 سؤال هنا (كل سؤال وتحتيه اختياراته ورقم الصح، وبين كل سؤال والتاني سطر فاضي):
+          </label>
+          <textarea id="bulkQuizTextarea" rows="8" placeholder="1- نص السؤال الأول؟&#10;أ) الاختيار الأول&#10;ب) الاختيار الثاني&#10;ج) الاختيار الثالث&#10;د) الاختيار الرابع&#10;الصح: 1"></textarea>
+
+          <div class="admin-actions">
+            <button type="button" id="publishBulkQuizBtn" class="btn btn-sm">رفع الامتحان كاملاً دفعة واحدة</button>
+            <button type="button" id="clearCourseQuizzesBtn" class="btn btn-danger btn-sm">مسح اختبارات المادة الحالية</button>
+          </div>
+          <div id="bulkQuizMsg" class="msg"></div>
         </div>
 
         <!-- 4. إدارة الكود المؤقت -->
@@ -495,7 +505,6 @@
         </div>
       </div>
 
-      <!-- تبويب 2: الصفحة الجانبية للطلاب المسجلين -->
       <div id="registeredTabPanel" class="hidden">
         <div class="admin-subbox">
           <h4><span>الطلاب المسجلون في المنصة</span><span class="badge-pill">Logs</span></h4>
@@ -525,7 +534,6 @@
   </aside>
 
   <main class="container">
-    <!-- شاشة تسجيل الدخول -->
     <section id="loginSection" class="card">
       <h1 id="loginHeading">منصة الحريف — البشمندس بوده</h1>
       <p id="loginSubtitle">إعداد وتقديم: <strong>عبد الرحمن مجدي</strong> — سجل بياناتك للدخول إلى المواد الدراسية.</p>
@@ -556,7 +564,6 @@
       </form>
     </section>
 
-    <!-- شاشة الكورسات الخمسة -->
     <section id="coursesSection" class="hidden">
       <div class="card">
         <h1 id="coursesHeading">منصة الحريف — البشمندس بوده</h1>
@@ -956,6 +963,11 @@
     const publishQuizBtn = document.getElementById("publishQuizBtn");
     const quizUploadMsg = document.getElementById("quizUploadMsg");
 
+    const bulkQuizTextarea = document.getElementById("bulkQuizTextarea");
+    const publishBulkQuizBtn = document.getElementById("publishBulkQuizBtn");
+    const clearCourseQuizzesBtn = document.getElementById("clearCourseQuizzesBtn");
+    const bulkQuizMsg = document.getElementById("bulkQuizMsg");
+
     const tempCodeHoursInput = document.getElementById("tempCodeHoursInput");
     const generateTempCodeBtn = document.getElementById("generateTempCodeBtn");
     const clearTempCodeBtn = document.getElementById("clearTempCodeBtn");
@@ -1303,9 +1315,7 @@
       }
 
       const saved = await persistCoursesData();
-      quizTitleInput.value = "";
       quizQuestionInput.value = "";
-      quizPointsInput.value = "5";
       quizOptionsInput.value = "";
       quizCorrectIndexInput.value = "1";
       quizModelAnswerInput.value = "";
@@ -1313,6 +1323,115 @@
       quizUploadMsg.textContent = saved
         ? `تم حفظ السؤال وتحديث مدة الاختبار (${durationMinutes} دقيقة) بنجاح.`
         : "تم الحفظ محلياً، وتعذر الاتصال بـ Firebase.";
+    });
+
+    function parseBulkExamQuestions(rawText, examTitle, defaultPoints) {
+      const blocks = String(rawText || "")
+        .trim()
+        .split(/\n\s*\n+/)
+        .map((b) => b.trim())
+        .filter(Boolean);
+
+      const parsedQuestions = [];
+
+      for (let idx = 0; idx < blocks.length; idx++) {
+        const lines = blocks[idx]
+          .split("\n")
+          .map((l) => l.trim())
+          .filter(Boolean);
+
+        let questionText = "";
+        let options = [];
+        let correctNumber = 1;
+        let points = defaultPoints;
+
+        for (const line of lines) {
+          if (/^(الصح|الإجابة|اجابة|رقم الإجابة|correct)\s*[:\-]/i.test(line)) {
+            const match = line.match(/\d+/);
+            if (match) correctNumber = Number(match[0]);
+          } else if (/^(الدرجة|درجة|points)\s*[:\-]/i.test(line)) {
+            const match = line.match(/\d+/);
+            if (match) points = Math.max(1, Number(match[0]));
+          } else if (/^([أابجدهـو1-6]|[a-fA-F])\s*[\)\-\.\:]\s*/.test(line) && questionText) {
+            const cleanOpt = line.replace(/^([أابجدهـو1-6]|[a-fA-F])\s*[\)\-\.\:]\s*/, "").trim();
+            if (cleanOpt) options.push(cleanOpt);
+          } else if (/^(خ|الاختيارات)\s*[:\-]/i.test(line)) {
+            const rawOpts = line.replace(/^(خ|الاختيارات)\s*[:\-]\s*/i, "");
+            options = rawOpts.split(/[,،]/).map((o) => o.trim()).filter(Boolean);
+          } else if (!questionText) {
+            questionText = line
+              .replace(/^(س\s*\d*|السؤال\s*\d*|\d+)\s*[\)\-\.\:]\s*/i, "")
+              .trim();
+          } else {
+            options.push(line.trim());
+          }
+        }
+
+        const correctIndex = correctNumber - 1;
+        if (!questionText || options.length < 2 || correctIndex < 0 || correctIndex >= options.length) {
+          return {
+            error: `خطأ في السؤال رقم (${idx + 1}): تأكد من كتابة السؤال، وتحتيه الاختيارات، ثم سطر (الصح: 1).`
+          };
+        }
+
+        parsedQuestions.push({
+          type: "mcq",
+          title: examTitle,
+          question: questionText,
+          points: points,
+          options: options,
+          correctIndex: correctIndex
+        });
+      }
+
+      return { questions: parsedQuestions };
+    }
+
+    publishBulkQuizBtn.addEventListener("click", async function () {
+      const courseId = quizCourseSelect.value;
+      const durationMinutes = Math.max(1, Math.min(300, Number(quizDurationInput.value) || 15));
+      const examTitle = quizTitleInput.value.trim() || "امتحان شامل";
+      const defaultPoints = Math.max(1, Number(quizPointsInput.value) || 5);
+      const rawText = bulkQuizTextarea.value;
+
+      if (!rawText.trim()) {
+        bulkQuizMsg.className = "msg error";
+        bulkQuizMsg.textContent = "الصق أسئلة الامتحان أولاً.";
+        return;
+      }
+
+      const parsed = parseBulkExamQuestions(rawText, examTitle, defaultPoints);
+      if (parsed.error) {
+        bulkQuizMsg.className = "msg error";
+        bulkQuizMsg.textContent = parsed.error;
+        return;
+      }
+
+      COURSES_DATA = normalizeCoursesData(COURSES_DATA);
+      COURSES_DATA[courseId].quizDurationMinutes = durationMinutes;
+      if (!Array.isArray(COURSES_DATA[courseId].quizzes)) {
+        COURSES_DATA[courseId].quizzes = [];
+      }
+
+      COURSES_DATA[courseId].quizzes.push(...parsed.questions);
+      const saved = await persistCoursesData();
+
+      bulkQuizTextarea.value = "";
+      bulkQuizMsg.className = saved ? "msg info" : "msg error";
+      bulkQuizMsg.textContent = saved
+        ? `تم رفع (${parsed.questions.length}) سؤال بنجاح، وكل سؤال هيظهر تحتيه اختياراته مرتبة.`
+        : `تم الحفظ محلياً (${parsed.questions.length} سؤال)، وتعذر الاتصال بـ Firebase.`;
+    });
+
+    clearCourseQuizzesBtn.addEventListener("click", async function () {
+      const courseId = quizCourseSelect.value;
+      COURSES_DATA = normalizeCoursesData(COURSES_DATA);
+      COURSES_DATA[courseId].quizzes = [];
+      const saved = await persistCoursesData();
+      bulkQuizMsg.className = saved ? "msg info" : "msg error";
+      bulkQuizMsg.textContent = saved
+        ? "تم مسح اختبارات المادة الحالية بنجاح."
+        : "تم المسح محلياً فقط.";
     });
 
     generateTempCodeBtn.addEventListener("click", async function () {
