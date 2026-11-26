@@ -365,6 +365,11 @@
       </div>
 
       <div class="card">
+        <h2>الكتب والملفات المرفقة</h2>
+        <ul id="booksList" class="lesson-list"></ul>
+      </div>
+
+      <div class="card">
         <h2>ملاحظاتك على المادة (جلسة حالية)</h2>
         <label for="courseNoteInput">اكتب ملخصاً أو نقطة مهمة للمراجعة</label>
         <textarea id="courseNoteInput" placeholder="اكتب ملاحظاتك هنا..."></textarea>
@@ -385,6 +390,7 @@
   <script>
     const FIREBASE_DB_URL = "https://al7ref-platform-default-rtdb.firebaseio.com";
     const SYNC_NODE = "al7ref_platform_state";
+    const COURSES_CACHE_KEY = "al7refCoursesDataCache";
 
     const ADMIN_CODE = "M2601820";
     const ADMIN_SESSION_KEY = "eduPlatformAdminUnlocked";
@@ -473,114 +479,81 @@
       }
     }
 
-    // ضع لينك اليوتيوب الخاص بكل درس داخل حقل youtubeUrl
-    let COURSES_DATA = {
+    const DEFAULT_COURSES_DATA = {
       "1": {
         title: "مبادئ القانون",
         description: "مدخل إلى القاعدة القانونية، مصادر القانون، وتطبيقاته الأساسية في الحياة العملية.",
         lessons: [
-          {
-            title: "الدرس الأول: مفهوم القاعدة القانونية وخصائصها",
-            summary: "الفرق بين القاعدة القانونية والقواعد الأخلاقية والاجتماعية.",
-            youtubeUrl: ""
-          },
-          {
-            title: "الدرس الثاني: مصادر القانون وتدرجها",
-            summary: "التشريع، العرف، ومبادئ الشريعة والقانون.",
-            youtubeUrl: ""
-          },
-          {
-            title: "الدرس الثالث: الأشخاص وحقوقهم والتزاماتهم",
-            summary: "الشخص الطبيعي والشخص المعنوي وأهلية الأداء والوجوب.",
-            youtubeUrl: ""
-          }
-        ]
+          { title: "الدرس الأول: مفهوم القاعدة القانونية وخصائصها", summary: "الفرق بين القاعدة القانونية والقواعد الأخلاقية والاجتماعية.", youtubeUrl: "" },
+          { title: "الدرس الثاني: مصادر القانون وتدرجها", summary: "التشريع، العرف، ومبادئ الشريعة والقانون.", youtubeUrl: "" },
+          { title: "الدرس الثالث: الأشخاص وحقوقهم والتزاماتهم", summary: "الشخص الطبيعي والشخص المعنوي وأهلية الأداء والوجوب.", youtubeUrl: "" }
+        ],
+        books: []
       },
       "2": {
         title: "مبادئ الاقتصاد",
         description: "فهم المشكلة الاقتصادية، ندرة الموارد، وآليات السوق والعرض والطلب.",
         lessons: [
-          {
-            title: "الدرس الأول: المشكلة الاقتصادية والندرة",
-            summary: "اختيار البدائل وتكلفة الفرصة البديلة وإنتاجية الموارد.",
-            youtubeUrl: ""
-          },
-          {
-            title: "الدرس الثاني: الطلب والعرض وتوازن السوق",
-            summary: "العلاقة بين السعر والكمية المطلوبة والمعروضة.",
-            youtubeUrl: ""
-          },
-          {
-            title: "الدرس الثالث: النشاط الاقتصادي والسياسات العامة",
-            summary: "الناتج المحلي، التضخم، ودور الدولة في استقرار السوق.",
-            youtubeUrl: ""
-          }
-        ]
+          { title: "الدرس الأول: المشكلة الاقتصادية والندرة", summary: "اختيار البدائل وتكلفة الفرصة البديلة وإنتاجية الموارد.", youtubeUrl: "" },
+          { title: "الدرس الثاني: الطلب والعرض وتوازن السوق", summary: "العلاقة بين السعر والكمية المطلوبة والمعروضة.", youtubeUrl: "" },
+          { title: "الدرس الثالث: النشاط الاقتصادي والسياسات العامة", summary: "الناتج المحلي، التضخم، ودور الدولة في استقرار السوق.", youtubeUrl: "" }
+        ],
+        books: []
       },
       "3": {
         title: "لغة أجنبية",
         description: "تنمية الحصيلة اللغوية، القواعد الأساسية، وفهم النصوص والتواصل.",
         lessons: [
-          {
-            title: "الدرس الأول: المفردات الأساسية والمصطلحات",
-            summary: "الكلمات الأكثر استخداماً في القراءة والمحادثة اليومية.",
-            youtubeUrl: ""
-          },
-          {
-            title: "الدرس الثاني: الأزمنة وتركيب الجملة",
-            summary: "بناء الجمل الصحيحة في المضارع والماضي والمستقبل.",
-            youtubeUrl: ""
-          },
-          {
-            title: "الدرس الثالث: الفهم القرائي والكتابة المختصرة",
-            summary: "استخراج الفكرة الرئيسية وصياغة فقرات واضحة.",
-            youtubeUrl: ""
-          }
-        ]
+          { title: "الدرس الأول: المفردات الأساسية والمصطلحات", summary: "الكلمات الأكثر استخداماً في القراءة والمحادثة اليومية.", youtubeUrl: "" },
+          { title: "الدرس الثاني: الأزمنة وتركيب الجملة", summary: "بناء الجمل الصحيحة في المضارع والماضي والمستقبل.", youtubeUrl: "" },
+          { title: "الدرس الثالث: الفهم القرائي والكتابة المختصرة", summary: "استخراج الفكرة الرئيسية وصياغة فقرات واضحة.", youtubeUrl: "" }
+        ],
+        books: []
       },
       "4": {
         title: "مبادئ المحاسبة المالية",
         description: "أسس الدورة المحاسبية، قيود اليومية، إعداد ميزان المراجعة والقوائم المالية.",
         lessons: [
-          {
-            title: "الدرس الأول: المعادلة المحاسبية والحسابات",
-            summary: "الأصول = الخصوم + حقوق الملكية، وتأثير العمليات المالية.",
-            youtubeUrl: ""
-          },
-          {
-            title: "الدرس الثاني: دفتر اليومية ودفتر الأستاذ",
-            summary: "تسجيل القيود المحاسبية والترحيل إلى الحسابات المختصة.",
-            youtubeUrl: ""
-          },
-          {
-            title: "الدرس الثالث: ميزان المراجعة والقوائم الختامية",
-            summary: "التحقق من التوازن وإعداد قائمة الدخل والمركز المالي.",
-            youtubeUrl: ""
-          }
-        ]
+          { title: "الدرس الأول: المعادلة المحاسبية والحسابات", summary: "الأصول = الخصوم + حقوق الملكية، وتأثير العمليات المالية.", youtubeUrl: "" },
+          { title: "الدرس الثاني: دفتر اليومية ودفتر الأستاذ", summary: "تسجيل القيود المحاسبية والترحيل إلى الحسابات المختصة.", youtubeUrl: "" },
+          { title: "الدرس الثالث: ميزان المراجعة والقوائم الختامية", summary: "التحقق من التوازن وإعداد قائمة الدخل والمركز المالي.", youtubeUrl: "" }
+        ],
+        books: []
       },
       "5": {
         title: "مبادئ إدارة الأعمال",
         description: "دراسة وظائف الإدارة الحديثة واتخاذ القرار وتنظيم فرق العمل وتحقيق الأهداف.",
         lessons: [
-          {
-            title: "الدرس الأول: التخطيط وتحديد الأهداف",
-            summary: "وضع الخطط قصيرة وطويلة المدى وتحديد الأولويات.",
-            youtubeUrl: ""
-          },
-          {
-            title: "الدرس الثاني: التنظيم وتوزيع المسؤوليات",
-            summary: "الهياكل التنظيمية وتفويض الصلاحيات وتنسيق الأقسام.",
-            youtubeUrl: ""
-          },
-          {
-            title: "الدرس الثالث: القيادة والرقابة وتحسين الأداء",
-            summary: "تحفيز العاملين وقياس النتائج ومعالجة الانحرافات.",
-            youtubeUrl: ""
-          }
-        ]
+          { title: "الدرس الأول: التخطيط وتحديد الأهداف", summary: "وضع الخطط قصيرة وطويلة المدى وتحديد الأولويات.", youtubeUrl: "" },
+          { title: "الدرس الثاني: التنظيم وتوزيع المسؤوليات", summary: "الهياكل التنظيمية وتفويض الصلاحيات وتنسيق الأقسام.", youtubeUrl: "" },
+          { title: "الدرس الثالث: القيادة والرقابة وتحسين الأداء", summary: "تحفيز العاملين وقياس النتائج ومعالجة الانحرافات.", youtubeUrl: "" }
+        ],
+        books: []
       }
     };
+
+    function normalizeCoursesData(rawCourses) {
+      const base = JSON.parse(JSON.stringify(DEFAULT_COURSES_DATA));
+      if (!rawCourses || typeof rawCourses !== "object") return base;
+
+      Object.keys(base).forEach((courseId) => {
+        const incoming = rawCourses[courseId];
+        if (incoming && typeof incoming === "object") {
+          if (incoming.title) base[courseId].title = incoming.title;
+          if (incoming.description) base[courseId].description = incoming.description;
+          if (Array.isArray(incoming.lessons)) base[courseId].lessons = incoming.lessons;
+          if (Array.isArray(incoming.books)) base[courseId].books = incoming.books;
+        }
+      });
+
+      return base;
+    }
+
+    let COURSES_DATA = JSON.parse(JSON.stringify(DEFAULT_COURSES_DATA));
+    try {
+      const cached = localStorage.getItem(COURSES_CACHE_KEY);
+      if (cached) COURSES_DATA = normalizeCoursesData(JSON.parse(cached));
+    } catch (e) {}
 
     const studentBadge = document.getElementById("studentBadge");
     const logoutBtn = document.getElementById("logoutBtn");
@@ -591,6 +564,7 @@
     const courseTitle = document.getElementById("courseTitle");
     const courseDescription = document.getElementById("courseDescription");
     const lessonsList = document.getElementById("lessonsList");
+    const booksList = document.getElementById("booksList");
     const courseNoteInput = document.getElementById("courseNoteInput");
     const saveNoteBtn = document.getElementById("saveNoteBtn");
     const clearNoteBtn = document.getElementById("clearNoteBtn");
@@ -818,12 +792,44 @@
         } else {
           const missing = document.createElement("div");
           missing.className = "video-missing";
-          missing.textContent = "لم يتم إضافة رابط فيديو يوتيوب لهذا الدرس بعد في COURSES_DATA.";
+          missing.textContent = "لم يتم إضافة رابط فيديو يوتيوب لهذا الدرس بعد.";
           li.appendChild(missing);
         }
 
         lessonsList.appendChild(li);
       });
+
+      booksList.innerHTML = "";
+      const books = Array.isArray(course.books) ? course.books : [];
+      if (books.length === 0) {
+        const emptyBook = document.createElement("li");
+        emptyBook.className = "video-missing";
+        emptyBook.textContent = "لا توجد كتب أو ملفات مضافة لهذه المادة حتى الآن.";
+        booksList.appendChild(emptyBook);
+      } else {
+        books.forEach((book) => {
+          const li = document.createElement("li");
+          li.className = "lesson-item";
+
+          const strong = document.createElement("strong");
+          strong.textContent = book.title || "كتاب / ملف دراسي";
+          li.appendChild(strong);
+
+          const actions = document.createElement("div");
+          actions.className = "video-actions";
+
+          const link = document.createElement("a");
+          link.href = book.url;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.className = "btn btn-sm";
+          link.textContent = "فتح / تحميل الملف";
+
+          actions.appendChild(link);
+          li.appendChild(actions);
+          booksList.appendChild(li);
+        });
+      }
 
       const savedNote = sessionStorage.getItem("courseNote_" + courseId) || "";
       courseNoteInput.value = savedNote;
@@ -930,7 +936,8 @@
           localStorage.setItem(STUDENTS_LOG_KEY, JSON.stringify(cloudState.studentsLog));
         }
         if (cloudState.coursesData && typeof cloudState.coursesData === "object") {
-          COURSES_DATA = cloudState.coursesData;
+          COURSES_DATA = normalizeCoursesData(cloudState.coursesData);
+          localStorage.setItem(COURSES_CACHE_KEY, JSON.stringify(COURSES_DATA));
         }
         renderCoursePage();
       }
