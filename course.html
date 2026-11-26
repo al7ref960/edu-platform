@@ -157,14 +157,53 @@
       background-color: #eff6ff;
       border: 1px solid #bfdbfe;
       border-radius: 10px;
-      padding: 12px 14px;
-      margin-bottom: 10px;
+      padding: 14px;
+      margin-bottom: 14px;
     }
 
     .lesson-item strong {
       color: #1e3a8a;
       display: block;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
+    .video-box {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      margin-top: 12px;
+      border-radius: 10px;
+      overflow: hidden;
+      background-color: #0f172a;
+      border: 1px solid #93c5fd;
+    }
+
+    .video-box iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .video-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .video-missing {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background-color: #ffffff;
+      border: 1px dashed #93c5fd;
+      color: #1e3a8a;
+      font-size: 0.88rem;
     }
 
     .meta-bar {
@@ -387,50 +426,155 @@
       return ALLOWED_CODES_SET.has((code || "").trim());
     }
 
+    function parseYouTubeVideo(urlOrId) {
+      const raw = (urlOrId || "").trim();
+      if (!raw) return null;
+
+      if (/^[A-Za-z0-9_-]{11}$/.test(raw)) {
+        return {
+          id: raw,
+          embedUrl: "https://www.youtube.com/embed/" + raw,
+          watchUrl: "https://www.youtube.com/watch?v=" + raw
+        };
+      }
+
+      try {
+        const parsed = new URL(raw);
+        const host = parsed.hostname.replace(/^www\./, "").replace(/^m\./, "");
+        let videoId = "";
+
+        if (host === "youtu.be") {
+          videoId = parsed.pathname.split("/").filter(Boolean)[0] || "";
+        } else if (host === "youtube.com" || host === "youtube-nocookie.com") {
+          if (parsed.pathname === "/watch") {
+            videoId = parsed.searchParams.get("v") || "";
+          } else {
+            const parts = parsed.pathname.split("/").filter(Boolean);
+            const idx = parts.findIndex((p) => p === "embed" || p === "shorts" || p === "live" || p === "v");
+            if (idx !== -1 && parts[idx + 1]) {
+              videoId = parts[idx + 1];
+            }
+          }
+        }
+
+        videoId = videoId.split("?")[0].split("&")[0];
+        if (!/^[A-Za-z0-9_-]{11}$/.test(videoId)) return null;
+
+        return {
+          id: videoId,
+          embedUrl: "https://www.youtube.com/embed/" + videoId,
+          watchUrl: "https://www.youtube.com/watch?v=" + videoId
+        };
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // ضع لينك اليوتيوب الخاص بكل درس داخل حقل youtubeUrl
     const COURSES_DATA = {
       "1": {
         title: "مبادئ القانون",
         description: "مدخل إلى القاعدة القانونية، مصادر القانون، وتطبيقاته الأساسية في الحياة العملية.",
         lessons: [
-          { title: "الدرس الأول: مفهوم القاعدة القانونية وخصائصها", summary: "الفرق بين القاعدة القانونية والقواعد الأخلاقية والاجتماعية." },
-          { title: "الدرس الثاني: مصادر القانون وتدرجها", summary: "التشريع، العرف، ومبادئ الشريعة والقانون." },
-          { title: "الدرس الثالث: الأشخاص وحقوقهم والتزاماتهم", summary: "الشخص الطبيعي والشخص المعنوي وأهلية الأداء والوجوب." }
+          {
+            title: "الدرس الأول: مفهوم القاعدة القانونية وخصائصها",
+            summary: "الفرق بين القاعدة القانونية والقواعد الأخلاقية والاجتماعية.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثاني: مصادر القانون وتدرجها",
+            summary: "التشريع، العرف، ومبادئ الشريعة والقانون.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثالث: الأشخاص وحقوقهم والتزاماتهم",
+            summary: "الشخص الطبيعي والشخص المعنوي وأهلية الأداء والوجوب.",
+            youtubeUrl: ""
+          }
         ]
       },
       "2": {
         title: "مبادئ الاقتصاد",
         description: "فهم المشكلة الاقتصادية، ندرة الموارد، وآليات السوق والعرض والطلب.",
         lessons: [
-          { title: "الدرس الأول: المشكلة الاقتصادية والندرة", summary: "اختيار البدائل وتكلفة الفرصة البديلة وإنتاجية الموارد." },
-          { title: "الدرس الثاني: الطلب والعرض وتوازن السوق", summary: "العلاقة بين السعر والكمية المطلوبة والمعروضة." },
-          { title: "الدرس الثالث: النشاط الاقتصادي والسياسات العامة", summary: "الناتج المحلي، التضخم، ودور الدولة في استقرار السوق." }
+          {
+            title: "الدرس الأول: المشكلة الاقتصادية والندرة",
+            summary: "اختيار البدائل وتكلفة الفرصة البديلة وإنتاجية الموارد.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثاني: الطلب والعرض وتوازن السوق",
+            summary: "العلاقة بين السعر والكمية المطلوبة والمعروضة.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثالث: النشاط الاقتصادي والسياسات العامة",
+            summary: "الناتج المحلي، التضخم، ودور الدولة في استقرار السوق.",
+            youtubeUrl: ""
+          }
         ]
       },
       "3": {
         title: "لغة أجنبية",
         description: "تنمية الحصيلة اللغوية، القواعد الأساسية، وفهم النصوص والتواصل.",
         lessons: [
-          { title: "الدرس الأول: المفردات الأساسية والمصطلحات", summary: "الكلمات الأكثر استخداماً في القراءة والمحادثة اليومية." },
-          { title: "الدرس الثاني: الأزمنة وتركيب الجملة", summary: "بناء الجمل الصحيحة في المضارع والماضي والمستقبل." },
-          { title: "الدرس الثالث: الفهم القرائي والكتابة المختصرة", summary: "استخراج الفكرة الرئيسية وصياغة فقرات واضحة." }
+          {
+            title: "الدرس الأول: المفردات الأساسية والمصطلحات",
+            summary: "الكلمات الأكثر استخداماً في القراءة والمحادثة اليومية.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثاني: الأزمنة وتركيب الجملة",
+            summary: "بناء الجمل الصحيحة في المضارع والماضي والمستقبل.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثالث: الفهم القرائي والكتابة المختصرة",
+            summary: "استخراج الفكرة الرئيسية وصياغة فقرات واضحة.",
+            youtubeUrl: ""
+          }
         ]
       },
       "4": {
         title: "مبادئ المحاسبة المالية",
         description: "أسس الدورة المحاسبية، قيود اليومية، إعداد ميزان المراجعة والقوائم المالية.",
         lessons: [
-          { title: "الدرس الأول: المعادلة المحاسبية والحسابات", summary: "الأصول = الخصوم + حقوق الملكية، وتأثير العمليات المالية." },
-          { title: "الدرس الثاني: دفتر اليومية ودفتر الأستاذ", summary: "تسجيل القيود المحاسبية والترحيل إلى الحسابات المختصة." },
-          { title: "الدرس الثالث: ميزان المراجعة والقوائم الختامية", summary: "التحقق من التوازن وإعداد قائمة الدخل والمركز المالي." }
+          {
+            title: "الدرس الأول: المعادلة المحاسبية والحسابات",
+            summary: "الأصول = الخصوم + حقوق الملكية، وتأثير العمليات المالية.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثاني: دفتر اليومية ودفتر الأستاذ",
+            summary: "تسجيل القيود المحاسبية والترحيل إلى الحسابات المختصة.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثالث: ميزان المراجعة والقوائم الختامية",
+            summary: "التحقق من التوازن وإعداد قائمة الدخل والمركز المالي.",
+            youtubeUrl: ""
+          }
         ]
       },
       "5": {
         title: "مبادئ إدارة الأعمال",
         description: "دراسة وظائف الإدارة الحديثة واتخاذ القرار وتنظيم فرق العمل وتحقيق الأهداف.",
         lessons: [
-          { title: "الدرس الأول: التخطيط وتحديد الأهداف", summary: "وضع الخطط قصيرة وطويلة المدى وتحديد الأولويات." },
-          { title: "الدرس الثاني: التنظيم وتوزيع المسؤوليات", summary: "الهياكل التنظيمية وتفويض الصلاحيات وتنسيق الأقسام." },
-          { title: "الدرس الثالث: القيادة والرقابة وتحسين الأداء", summary: "تحفيز العاملين وقياس النتائج ومعالجة الانحرافات." }
+          {
+            title: "الدرس الأول: التخطيط وتحديد الأهداف",
+            summary: "وضع الخطط قصيرة وطويلة المدى وتحديد الأولويات.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثاني: التنظيم وتوزيع المسؤوليات",
+            summary: "الهياكل التنظيمية وتفويض الصلاحيات وتنسيق الأقسام.",
+            youtubeUrl: ""
+          },
+          {
+            title: "الدرس الثالث: القيادة والرقابة وتحسين الأداء",
+            summary: "تحفيز العاملين وقياس النتائج ومعالجة الانحرافات.",
+            youtubeUrl: ""
+          }
         ]
       }
     };
@@ -607,6 +751,41 @@
 
         li.appendChild(strong);
         li.appendChild(p);
+
+        const yt = parseYouTubeVideo(lesson.youtubeUrl);
+        if (yt) {
+          const box = document.createElement("div");
+          box.className = "video-box";
+
+          const iframe = document.createElement("iframe");
+          iframe.src = yt.embedUrl;
+          iframe.title = lesson.title;
+          iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+          iframe.allowFullscreen = true;
+          iframe.loading = "lazy";
+
+          box.appendChild(iframe);
+          li.appendChild(box);
+
+          const actions = document.createElement("div");
+          actions.className = "video-actions";
+
+          const watchLink = document.createElement("a");
+          watchLink.href = yt.watchUrl;
+          watchLink.target = "_blank";
+          watchLink.rel = "noopener noreferrer";
+          watchLink.className = "btn btn-sm";
+          watchLink.textContent = "فتح الفيديو على يوتيوب";
+
+          actions.appendChild(watchLink);
+          li.appendChild(actions);
+        } else {
+          const missing = document.createElement("div");
+          missing.className = "video-missing";
+          missing.textContent = "لم يتم إضافة رابط فيديو يوتيوب لهذا الدرس بعد في COURSES_DATA.";
+          li.appendChild(missing);
+        }
+
         lessonsList.appendChild(li);
       });
 
