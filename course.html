@@ -6,6 +6,32 @@
   <title>تفاصيل الكورس - منصة الحريف — البشمحاسب بوده</title>
   <link rel="stylesheet" href="style.css">
   <style>
+    .btn,
+    a.btn,
+    button.btn {
+      background-color: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    .btn:hover,
+    a.btn:hover,
+    button.btn:hover {
+      background-color: #1d4ed8;
+      border-color: #1d4ed8;
+    }
+
+    .btn-secondary {
+      background-color: #3b82f6;
+      border-color: #3b82f6;
+      color: #ffffff;
+    }
+
+    .btn-secondary:hover {
+      background-color: #1d4ed8;
+      border-color: #1d4ed8;
+    }
+
     .admin-bar {
       display: flex;
       align-items: center;
@@ -14,8 +40,8 @@
       flex-wrap: wrap;
       margin-bottom: 14px;
       padding: 10px 14px;
-      background-color: #f8fafc;
-      border: 1px solid #cbd5e1;
+      background-color: #eff6ff;
+      border: 1px solid #93c5fd;
       border-radius: 10px;
     }
 
@@ -30,13 +56,14 @@
     .admin-panel h3,
     .admin-panel h4 {
       margin-top: 0;
+      color: #1e3a8a;
     }
 
     textarea,
     select {
       width: 100%;
       padding: 10px 12px;
-      border: 1px solid #cbd5e1;
+      border: 1px solid #93c5fd;
       border-radius: 8px;
       font-family: Tahoma, Arial, sans-serif;
       font-size: 0.95rem;
@@ -44,7 +71,8 @@
     }
 
     textarea:focus,
-    select:focus {
+    select:focus,
+    input:focus {
       outline: 2px solid #2563eb;
       border-color: #2563eb;
     }
@@ -57,11 +85,11 @@
     }
 
     .btn-success {
-      background-color: #16a34a;
+      background-color: #2563eb;
     }
 
     .btn-success:hover {
-      background-color: #15803d;
+      background-color: #1d4ed8;
     }
 
     .btn-danger {
@@ -94,7 +122,7 @@
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #bfdbfe;
       border-radius: 10px;
       padding: 12px 14px;
       margin-top: 10px;
@@ -104,7 +132,7 @@
     .book-title {
       margin: 0;
       font-size: 0.98rem;
-      color: #0f172a;
+      color: #1e3a8a;
       font-weight: bold;
     }
 
@@ -147,7 +175,7 @@
       <div class="admin-bar">
         <span id="adminStatusText">وضع الطالب</span>
         <div class="quick-actions">
-          <button type="button" id="toggleAdminBtn" class="btn btn-secondary btn-sm">وضع التحكم</button>
+          <button type="button" id="toggleAdminBtn" class="btn btn-sm">وضع التحكم</button>
           <button type="button" id="lockAdminBtn" class="btn btn-danger btn-sm hidden">إنهاء التحكم</button>
         </div>
       </div>
@@ -433,456 +461,4 @@
           },
           {
             title: "6. الوظائف الأساسية للمنظمة وأخلاقيات الأعمال",
-            notes: "لمحة عن إدارة التسويق، إدارة الموارد البشرية، الإدارة المالية، والإنتاج، مع أهمية المسؤولية الاجتماعية وأخلاقيات العمل.",
-            youtubeId: ""
-          }
-        ]
-      }
-    };
-
-    const lockedBox = document.getElementById("lockedBox");
-    const courseBox = document.getElementById("courseBox");
-    const courseTitle = document.getElementById("courseTitle");
-    const courseDesc = document.getElementById("courseDesc");
-    const booksList = document.getElementById("booksList");
-    const lessonsList = document.getElementById("lessonsList");
-    const studentBadge = document.getElementById("studentBadge");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const menuToggle = document.getElementById("menuToggle");
-    const mobileMenu = document.getElementById("mobileMenu");
-
-    const adminStatusText = document.getElementById("adminStatusText");
-    const toggleAdminBtn = document.getElementById("toggleAdminBtn");
-    const lockAdminBtn = document.getElementById("lockAdminBtn");
-    const adminAuthBox = document.getElementById("adminAuthBox");
-    const adminCodeInput = document.getElementById("adminCodeInput");
-    const verifyAdminBtn = document.getElementById("verifyAdminBtn");
-    const cancelAdminAuthBtn = document.getElementById("cancelAdminAuthBtn");
-    const adminAuthMsg = document.getElementById("adminAuthMsg");
-
-    const adminPanel = document.getElementById("adminPanel");
-    const editCourseTitle = document.getElementById("editCourseTitle");
-    const editCourseDesc = document.getElementById("editCourseDesc");
-    const saveCourseMetaBtn = document.getElementById("saveCourseMetaBtn");
-
-    const lessonSelect = document.getElementById("lessonSelect");
-    const lessonTitleInput = document.getElementById("lessonTitleInput");
-    const lessonNotesInput = document.getElementById("lessonNotesInput");
-    const lessonYoutubeInput = document.getElementById("lessonYoutubeInput");
-    const saveLessonBtn = document.getElementById("saveLessonBtn");
-    const newLessonBtn = document.getElementById("newLessonBtn");
-    const deleteLessonBtn = document.getElementById("deleteLessonBtn");
-
-    const bookTitleInput = document.getElementById("bookTitleInput");
-    const bookUrlInput = document.getElementById("bookUrlInput");
-    const addBookBtn = document.getElementById("addBookBtn");
-
-    const exportJsonBtn = document.getElementById("exportJsonBtn");
-    const importJsonBtn = document.getElementById("importJsonBtn");
-    const importFileInput = document.getElementById("importFileInput");
-    const copyCodeBtn = document.getElementById("copyCodeBtn");
-    const resetDefaultBtn = document.getElementById("resetDefaultBtn");
-    const adminMsg = document.getElementById("adminMsg");
-
-    let currentCourseId = "1";
-    let coursesState = null;
-
-    function cloneDefaultCourses() {
-      return JSON.parse(JSON.stringify(DEFAULT_COURSES));
-    }
-
-    function loadCoursesState() {
-      try {
-        const raw = localStorage.getItem(COURSES_STORAGE_KEY);
-        if (!raw) return cloneDefaultCourses();
-        const parsed = JSON.parse(raw);
-        if (!parsed || typeof parsed !== "object") return cloneDefaultCourses();
-        const merged = cloneDefaultCourses();
-        Object.keys(parsed).forEach((key) => {
-          if (parsed[key] && typeof parsed[key] === "object") {
-            merged[key] = {
-              title: parsed[key].title || merged[key]?.title || "",
-              desc: parsed[key].desc || merged[key]?.desc || "",
-              books: Array.isArray(parsed[key].books) ? parsed[key].books : (merged[key]?.books || []),
-              lessons: Array.isArray(parsed[key].lessons) ? parsed[key].lessons : (merged[key]?.lessons || [])
-            };
-          }
-        });
-        return merged;
-      } catch (e) {
-        return cloneDefaultCourses();
-      }
-    }
-
-    function saveCoursesState() {
-      localStorage.setItem(COURSES_STORAGE_KEY, JSON.stringify(coursesState));
-    }
-
-    function isAdminUnlocked() {
-      return localStorage.getItem(ADMIN_SESSION_KEY) === "true";
-    }
-
-    function showAdminMessage(text, type) {
-      adminMsg.className = "msg " + (type || "info");
-      adminMsg.textContent = text;
-    }
-
-    function isValidCode(code) {
-      const clean = code.trim().toUpperCase();
-      const match = clean.match(/^([A-Z]{1,3})-?(\d{1,5})$/);
-      if (!match) return false;
-      const num = parseInt(match[2], 10);
-      return num >= 1 && num <= 50000;
-    }
-
-    function extractYoutubeId(value) {
-      if (!value) return "";
-      const clean = value.trim();
-      if (/^[a-zA-Z0-9_-]{11}$/.test(clean)) return clean;
-      const match = clean.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
-      return match ? match[1] : "";
-    }
-
-    function isSafePdfUrl(url) {
-      const clean = (url || "").trim();
-      if (!clean) return false;
-      if (/^https?:\/\//i.test(clean)) return true;
-      if (/^[a-zA-Z0-9_./-]+\.pdf$/i.test(clean)) return true;
-      if (/^books\/[a-zA-Z0-9_./-]+$/i.test(clean)) return true;
-      return false;
-    }
-
-    function renderBooks(books) {
-      booksList.innerHTML = "";
-      const unlocked = isAdminUnlocked();
-
-      if (!books || books.length === 0) {
-        const emptyEl = document.createElement("p");
-        emptyEl.className = "empty-note";
-        emptyEl.textContent = "لا توجد كتب أو ملفات PDF مضافة لهذه المادة حتى الآن.";
-        booksList.appendChild(emptyEl);
-        return;
-      }
-
-      books.forEach((book, index) => {
-        const row = document.createElement("div");
-        row.className = "book-item";
-
-        const info = document.createElement("div");
-        const titleEl = document.createElement("p");
-        titleEl.className = "book-title";
-        titleEl.textContent = book.title || ("ملف PDF " + (index + 1));
-        info.appendChild(titleEl);
-
-        const urlEl = document.createElement("p");
-        urlEl.className = "book-meta";
-        urlEl.textContent = book.url || "";
-        info.appendChild(urlEl);
-
-        row.appendChild(info);
-
-        const actions = document.createElement("div");
-        actions.className = "lesson-admin-btns";
-
-        if (isSafePdfUrl(book.url)) {
-          const openBtn = document.createElement("a");
-          openBtn.href = book.url.trim();
-          openBtn.target = "_blank";
-          openBtn.rel = "noopener noreferrer";
-          openBtn.className = "btn btn-sm";
-          openBtn.textContent = "فتح / تحميل PDF";
-          actions.appendChild(openBtn);
-        }
-
-        if (unlocked) {
-          const delBookBtn = document.createElement("button");
-          delBookBtn.type = "button";
-          delBookBtn.className = "btn btn-danger btn-sm";
-          delBookBtn.textContent = "حذف";
-          delBookBtn.addEventListener("click", function () {
-            coursesState[currentCourseId].books.splice(index, 1);
-            saveCoursesState();
-            renderCurrentCourse();
-            showAdminMessage("تم حذف ملف PDF.", "info");
-          });
-          actions.appendChild(delBookBtn);
-        }
-
-        row.appendChild(actions);
-        booksList.appendChild(row);
-      });
-    }
-
-    function populateLessonForm(index) {
-      const course = coursesState[currentCourseId];
-      const lessons = course.lessons || [];
-      if (index === "new" || !lessons[index]) {
-        lessonSelect.value = "new";
-        lessonTitleInput.value = "";
-        lessonNotesInput.value = "";
-        lessonYoutubeInput.value = "";
-        return;
-      }
-      const lesson = lessons[index];
-      lessonSelect.value = String(index);
-      lessonTitleInput.value = lesson.title || "";
-      lessonNotesInput.value = lesson.notes || "";
-      lessonYoutubeInput.value = lesson.youtubeId || "";
-    }
-
-    function refreshAdminControls() {
-      const unlocked = isAdminUnlocked();
-      const course = coursesState[currentCourseId];
-
-      if (unlocked) {
-        adminStatusText.textContent = "وضع التحكم مفعّل (أدمن)";
-        toggleAdminBtn.classList.add("hidden");
-        lockAdminBtn.classList.remove("hidden");
-        adminAuthBox.classList.add("hidden");
-        adminPanel.classList.remove("hidden");
-
-        editCourseTitle.value = course.title || "";
-        editCourseDesc.value = course.desc || "";
-
-        const prevSelected = lessonSelect.value;
-        lessonSelect.innerHTML = "";
-        (course.lessons || []).forEach((lesson, idx) => {
-          const opt = document.createElement("option");
-          opt.value = String(idx);
-          opt.textContent = lesson.title || ("درس " + (idx + 1));
-          lessonSelect.appendChild(opt);
-        });
-
-        const newOpt = document.createElement("option");
-        newOpt.value = "new";
-        newOpt.textContent = "+ إضافة درس جديد";
-        lessonSelect.appendChild(newOpt);
-
-        if (prevSelected === "new" || (course.lessons && course.lessons[Number(prevSelected)])) {
-          populateLessonForm(prevSelected);
-        } else if (course.lessons && course.lessons.length > 0) {
-          populateLessonForm(0);
-        } else {
-          populateLessonForm("new");
-        }
-      } else {
-        adminStatusText.textContent = "وضع الطالب";
-        toggleAdminBtn.classList.remove("hidden");
-        lockAdminBtn.classList.add("hidden");
-        adminPanel.classList.add("hidden");
-      }
-    }
-
-    function renderLessons(lessons) {
-      lessonsList.innerHTML = "";
-      const unlocked = isAdminUnlocked();
-
-      lessons.forEach((lesson, index) => {
-        const item = document.createElement("div");
-        item.className = "lesson-item";
-
-        const header = document.createElement("div");
-        header.className = "lesson-header";
-
-        const titleEl = document.createElement("h4");
-        titleEl.className = "lesson-title";
-        titleEl.textContent = lesson.title;
-        header.appendChild(titleEl);
-
-        const actionsWrap = document.createElement("div");
-        actionsWrap.className = "lesson-admin-btns";
-
-        const vid = extractYoutubeId(lesson.youtubeId);
-        if (vid) {
-          const watchLink = document.createElement("a");
-          watchLink.href = "https://www.youtube.com/watch?v=" + encodeURIComponent(vid);
-          watchLink.target = "_blank";
-          watchLink.rel = "noopener noreferrer";
-          watchLink.className = "btn";
-          watchLink.style.padding = "6px 12px";
-          watchLink.style.fontSize = "0.85rem";
-          watchLink.textContent = "فتح على يوتيوب";
-          actionsWrap.appendChild(watchLink);
-        }
-
-        if (unlocked) {
-          const editBtn = document.createElement("button");
-          editBtn.type = "button";
-          editBtn.className = "btn btn-secondary btn-sm";
-          editBtn.textContent = "تعديل";
-          editBtn.addEventListener("click", function () {
-            populateLessonForm(index);
-            lessonTitleInput.focus();
-          });
-          actionsWrap.appendChild(editBtn);
-
-          const delBtn = document.createElement("button");
-          delBtn.type = "button";
-          delBtn.className = "btn btn-danger btn-sm";
-          delBtn.textContent = "حذف";
-          delBtn.addEventListener("click", function () {
-            coursesState[currentCourseId].lessons.splice(index, 1);
-            saveCoursesState();
-            renderCurrentCourse();
-            showAdminMessage("تم حذف الدرس.", "info");
-          });
-          actionsWrap.appendChild(delBtn);
-        }
-
-        header.appendChild(actionsWrap);
-        item.appendChild(header);
-
-        if (lesson.notes) {
-          const notesEl = document.createElement("p");
-          notesEl.className = "lesson-notes";
-          notesEl.textContent = lesson.notes;
-          item.appendChild(notesEl);
-        }
-
-        if (vid) {
-          const wrapper = document.createElement("div");
-          wrapper.className = "video-wrapper";
-
-          const iframe = document.createElement("iframe");
-          iframe.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(vid);
-          iframe.title = lesson.title;
-          iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-          iframe.allowFullscreen = true;
-
-          wrapper.appendChild(iframe);
-          item.appendChild(wrapper);
-        } else {
-          const placeholder = document.createElement("div");
-          placeholder.className = "video-placeholder";
-          placeholder.textContent = "لم يتم ربط فيديو يوتيوب بهذا الدرس بعد — يمكنك إضافته من لوحة التحكم.";
-          item.appendChild(placeholder);
-        }
-
-        lessonsList.appendChild(item);
-      });
-    }
-
-    function renderCurrentCourse() {
-      const course = coursesState[currentCourseId] || coursesState["1"];
-      document.title = course.title + " - منصة الحريف — البشمحاسب بوده";
-      courseTitle.textContent = course.title;
-      courseDesc.textContent = course.desc;
-      renderBooks(course.books || []);
-      renderLessons(course.lessons || []);
-      refreshAdminControls();
-    }
-
-    function initCoursePage() {
-      const savedName = localStorage.getItem("studentName");
-      const savedCode = localStorage.getItem("studentCode");
-      const isLoggedIn = localStorage.getItem("studentAccess") === "granted";
-
-      if (!savedName || !savedCode || !isValidCode(savedCode) || !isLoggedIn) {
-        lockedBox.classList.remove("hidden");
-        courseBox.classList.add("hidden");
-        logoutBtn.classList.add("hidden");
-        menuToggle.classList.add("hidden");
-        studentBadge.textContent = "";
-        return;
-      }
-
-      lockedBox.classList.add("hidden");
-      courseBox.classList.remove("hidden");
-      logoutBtn.classList.remove("hidden");
-      menuToggle.classList.remove("hidden");
-      studentBadge.textContent = "أهلاً، " + savedName;
-
-      const params = new URLSearchParams(window.location.search);
-      currentCourseId = params.get("id") || "1";
-      if (!coursesState[currentCourseId]) {
-        currentCourseId = "1";
-      }
-
-      renderCurrentCourse();
-    }
-
-    toggleAdminBtn.addEventListener("click", function () {
-      adminAuthBox.classList.remove("hidden");
-      adminAuthMsg.textContent = "";
-      adminCodeInput.value = "";
-      adminCodeInput.focus();
-    });
-
-    cancelAdminAuthBtn.addEventListener("click", function () {
-      adminAuthBox.classList.add("hidden");
-      adminAuthMsg.textContent = "";
-    });
-
-    verifyAdminBtn.addEventListener("click", function () {
-      const entered = adminCodeInput.value.trim();
-      if (entered === ADMIN_CODE) {
-        localStorage.setItem(ADMIN_SESSION_KEY, "true");
-        adminAuthBox.classList.add("hidden");
-        adminAuthMsg.textContent = "";
-        renderCurrentCourse();
-        showAdminMessage("تم تفعيل وضع التحكم بنجاح.", "info");
-      } else {
-        adminAuthMsg.className = "msg error";
-        adminAuthMsg.textContent = "كود التحكم غير صحيح.";
-      }
-    });
-
-    lockAdminBtn.addEventListener("click", function () {
-      localStorage.removeItem(ADMIN_SESSION_KEY);
-      renderCurrentCourse();
-    });
-
-    saveCourseMetaBtn.addEventListener("click", function () {
-      const newTitle = editCourseTitle.value.trim();
-      const newDesc = editCourseDesc.value.trim();
-      if (!newTitle) {
-        showAdminMessage("من فضلك اكتب اسم المادة.", "error");
-        return;
-      }
-      coursesState[currentCourseId].title = newTitle;
-      coursesState[currentCourseId].desc = newDesc;
-      saveCoursesState();
-      renderCurrentCourse();
-      showAdminMessage("تم حفظ بيانات المادة.", "info");
-    });
-
-    lessonSelect.addEventListener("change", function () {
-      populateLessonForm(lessonSelect.value);
-    });
-
-    newLessonBtn.addEventListener("click", function () {
-      populateLessonForm("new");
-      lessonTitleInput.focus();
-    });
-
-    saveLessonBtn.addEventListener("click", function () {
-      const title = lessonTitleInput.value.trim();
-      const notes = lessonNotesInput.value.trim();
-      const youtubeId = lessonYoutubeInput.value.trim();
-
-      if (!title) {
-        showAdminMessage("من فضلك اكتب عنوان الدرس.", "error");
-        return;
-      }
-
-      const lessonObj = { title, notes, youtubeId };
-      const lessons = coursesState[currentCourseId].lessons;
-
-      if (lessonSelect.value === "new") {
-        lessons.push(lessonObj);
-        populateLessonForm(lessons.length - 1);
-        showAdminMessage("تمت إضافة الدرس الجديد.", "info");
-      } else {
-        const idx = Number(lessonSelect.value);
-        if (lessons[idx]) {
-          lessons[idx] = lessonObj;
-          showAdminMessage("تم تحديث بيانات الدرس.", "info");
-        }
-      }
-
-      saveCoursesState();
-      renderCurrentCourse();
-    });
-
-    deleteLessonBtn.addEventListener("click", function () {
-      if (lessonSelect.value === "new")
+            notes: "لمحة عن إدارة التسويق، إدارة الموارد البشرية، الإدارة المالية، والإنتاج، مع أهمية المسؤولية الاجتماعية وأخلاقيات العمل
