@@ -31,7 +31,9 @@
 
     .navbar,
     .container,
-    .owner-footer {
+    .owner-footer,
+    .side-drawer,
+    .drawer-backdrop {
       position: relative;
       z-index: 1;
     }
@@ -45,6 +47,7 @@
       justify-content: space-between;
       gap: 10px;
       flex-wrap: wrap;
+      z-index: 20;
     }
 
     .nav-actions {
@@ -152,12 +155,38 @@
       font-size: 0.85rem;
     }
 
-    .admin-panel {
-      background-color: #eff6ff;
-      border: 2px solid #2563eb;
-      border-radius: 12px;
+    /* القائمة الجانبية */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      z-index: 40;
+    }
+
+    .side-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(460px, 94vw);
+      height: 100vh;
+      background: #eff6ff;
+      border-left: 2px solid #2563eb;
+      box-shadow: -8px 0 24px rgba(15, 23, 42, 0.18);
       padding: 16px;
-      margin-top: 16px;
+      overflow-y: auto;
+      z-index: 50;
+      transition: transform 0.25s ease;
+    }
+
+    .side-drawer.closed {
+      transform: translateX(100%);
+    }
+
+    .drawer-tabs {
+      display: flex;
+      gap: 8px;
+      margin: 12px 0;
+      flex-wrap: wrap;
     }
 
     .admin-subbox {
@@ -184,12 +213,12 @@
       width: 100%;
       border-collapse: collapse;
       background-color: #ffffff;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
     }
 
     th, td {
       border: 1px solid #bfdbfe;
-      padding: 8px 10px;
+      padding: 7px 9px;
       text-align: right;
     }
 
@@ -235,154 +264,189 @@
     <strong>منصة الحريف — البشمندس بوده</strong>
     <div class="nav-actions">
       <span id="studentBadge"></span>
-      <button type="button" id="openAdminBtn" class="btn btn-secondary btn-sm">لوحة التحكم</button>
+      <button type="button" id="openAdminBtn" class="btn btn-secondary btn-sm">القائمة الجانبية والتحكم</button>
       <button type="button" id="logoutBtn" class="btn btn-danger btn-sm hidden">تسجيل خروج</button>
     </div>
   </header>
 
-  <main class="container">
+  <div id="drawerBackdrop" class="drawer-backdrop hidden"></div>
+
+  <aside id="sideDrawer" class="side-drawer closed" aria-label="قائمة التحكم والطلاب المسجلين">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+      <h3 style="margin:0;">القائمة الجانبية</h3>
+      <button type="button" id="closeDrawerBtn" class="btn btn-danger btn-sm">إغلاق</button>
+    </div>
+
     <!-- نافذة كود لوحة التحكم -->
-    <section id="adminAuthSection" class="card admin-panel hidden">
-      <h3>دخول لوحة التحكم</h3>
+    <div id="adminAuthSection" class="admin-subbox">
+      <h4>دخول لوحة التحكم</h4>
       <label for="adminCodeInput">أدخل كود الأدمن</label>
       <input type="password" id="adminCodeInput" placeholder="اكتب كود التحكم">
       <div class="admin-actions">
         <button type="button" id="verifyAdminBtn" class="btn btn-sm">فتح لوحة التحكم</button>
-        <button type="button" id="closeAdminAuthBtn" class="btn btn-secondary btn-sm">إلغاء</button>
       </div>
       <div id="adminAuthMsg" class="msg"></div>
-    </section>
+    </div>
 
-    <!-- لوحة التحكم -->
-    <section id="adminDashboardSection" class="card admin-panel hidden">
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-        <h3>لوحة التحكم — إدارة المحتوى وسجل الطلاب</h3>
-        <button type="button" id="lockAdminBtn" class="btn btn-danger btn-sm">إغلاق لوحة التحكم</button>
-      </div>
-      <p id="studentsCountText" style="margin:8px 0 0; color:#1e3a8a;"></p>
-
-      <div class="admin-actions">
-        <button type="button" id="exportCodesBtn" class="btn btn-secondary btn-sm">تصدير 20,000 كود TXT</button>
-        <button type="button" id="exportLogBtn" class="btn btn-sm">تصدير سجل الطلاب JSON</button>
-        <button type="button" id="clearLogBtn" class="btn btn-danger btn-sm">مسح سجل الطلاب</button>
+    <!-- محتوى لوحة التحكم والصفحة الجانبية للمسجلين -->
+    <div id="adminDashboardSection" class="hidden">
+      <div class="drawer-tabs">
+        <button type="button" id="tabManageBtn" class="btn btn-sm">إدارة المحتوى والاختبارات</button>
+        <button type="button" id="tabRegisteredBtn" class="btn btn-secondary btn-sm">الطلاب المسجلون</button>
+        <button type="button" id="lockAdminBtn" class="btn btn-danger btn-sm">قفل اللوحة</button>
       </div>
       <div id="adminDashboardMsg" class="msg"></div>
 
-      <!-- 1. رفع درس جديد وفيديو يوتيوب -->
-      <div class="admin-subbox">
-        <h4>رفع درس جديد إلى المادة</h4>
-        <label for="uploadCourseSelect">اختر المادة الدراسية</label>
-        <select id="uploadCourseSelect">
-          <option value="1">مبادئ القانون</option>
-          <option value="2">مبادئ الاقتصاد</option>
-          <option value="3">لغة أجنبية</option>
-          <option value="4">مبادئ المحاسبة المالية</option>
-          <option value="5">مبادئ إدارة الأعمال</option>
-        </select>
-
-        <label for="lessonTitleInput">عنوان الدرس</label>
-        <input type="text" id="lessonTitleInput" placeholder="مثال: الدرس الرابع — تطبيقات عملية">
-
-        <label for="lessonSummaryInput">ملخص الدرس</label>
-        <textarea id="lessonSummaryInput" placeholder="اكتب ملخصاً مختصراً للدرس..."></textarea>
-
-        <label for="lessonYoutubeInput">رابط أو معرف فيديو يوتيوب (اختياري)</label>
-        <input type="text" id="lessonYoutubeInput" placeholder="مثال: https://youtu.be/... أو معرف الفيديو">
-
+      <!-- تبويب 1: إدارة المحتوى والاختبارات -->
+      <div id="manageTabPanel">
         <div class="admin-actions">
-          <button type="button" id="publishLessonBtn" class="btn btn-sm">رفع الدرس إلى قاعدة البيانات</button>
+          <button type="button" id="exportCodesBtn" class="btn btn-secondary btn-sm">تصدير 20,000 كود TXT</button>
         </div>
-        <div id="lessonUploadMsg" class="msg"></div>
-      </div>
 
-      <!-- 2. رفع / إضافة كتاب أو ملف للمادة -->
-      <div class="admin-subbox">
-        <h4>إضافة كتاب أو ملف (من مجلد books أو رابط أو ملف محلي)</h4>
-        <label for="bookCourseSelect">اختر المادة الدراسية</label>
-        <select id="bookCourseSelect">
-          <option value="1">مبادئ القانون</option>
-          <option value="2">مبادئ الاقتصاد</option>
-          <option value="3">لغة أجنبية</option>
-          <option value="4">مبادئ المحاسبة المالية</option>
-          <option value="5">مبادئ إدارة الأعمال</option>
-        </select>
+        <!-- 1. رفع درس جديد بعدة روابط فيديو -->
+        <div class="admin-subbox">
+          <h4>رفع درس جديد (يدعم أكثر من رابط فيديو)</h4>
+          <label for="uploadCourseSelect">اختر المادة الدراسية</label>
+          <select id="uploadCourseSelect">
+            <option value="1">مبادئ القانون</option>
+            <option value="2">مبادئ الاقتصاد</option>
+            <option value="3">لغة أجنبية</option>
+            <option value="4">مبادئ المحاسبة المالية</option>
+            <option value="5">مبادئ إدارة الأعمال</option>
+          </select>
 
-        <label for="bookTitleInput">اسم الكتاب أو الملف</label>
-        <input type="text" id="bookTitleInput" placeholder="مثال: مذكرة المحاسبة — الترم الأول">
+          <label for="lessonTitleInput">عنوان الدرس</label>
+          <input type="text" id="lessonTitleInput" placeholder="مثال: الدرس الرابع — تطبيقات عملية">
 
-        <label for="bookUrlInput">مسار أو رابط الملف (مثال: books/accounting.pdf أو رابط مباشر)</label>
-        <input type="text" id="bookUrlInput" placeholder="books/file.pdf أو https://...">
+          <label for="lessonSummaryInput">ملخص الدرس</label>
+          <textarea id="lessonSummaryInput" placeholder="اكتب ملخصاً مختصراً للدرس..."></textarea>
 
-        <label for="bookFileInput">أو اختر ملفاً من جهازك (PDF أو مستند)</label>
-        <input type="file" id="bookFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip">
+          <label for="lessonYoutubeInput">روابط أو معرفات فيديوهات يوتيوب (افصل بفاصلة أو سطر جديد)</label>
+          <textarea id="lessonYoutubeInput" placeholder="مثال:&#10;https://youtu.be/VIDEO_ID_1&#10;https://youtu.be/VIDEO_ID_2"></textarea>
 
-        <div class="admin-actions">
-          <button type="button" id="publishBookBtn" class="btn btn-sm">حفظ الكتاب / الملف</button>
+          <div class="admin-actions">
+            <button type="button" id="publishLessonBtn" class="btn btn-sm">رفع الدرس إلى قاعدة البيانات</button>
+          </div>
+          <div id="lessonUploadMsg" class="msg"></div>
         </div>
-        <div id="bookUploadMsg" class="msg"></div>
-      </div>
 
-      <!-- 3. إنشاء ورفع اختبار اختيار من متعدد للمادة -->
-      <div class="admin-subbox">
-        <h4>إنشاء ورفع اختبار للمادة</h4>
-        <label for="quizCourseSelect">اختر المادة الدراسية</label>
-        <select id="quizCourseSelect">
-          <option value="1">مبادئ القانون</option>
-          <option value="2">مبادئ الاقتصاد</option>
-          <option value="3">لغة أجنبية</option>
-          <option value="4">مبادئ المحاسبة المالية</option>
-          <option value="5">مبادئ إدارة الأعمال</option>
-        </select>
+        <!-- 2. رفع / إضافة كتاب أو ملف للمادة -->
+        <div class="admin-subbox">
+          <h4>إضافة كتاب أو ملف (من مجلد books أو رابط أو ملف محلي)</h4>
+          <label for="bookCourseSelect">اختر المادة الدراسية</label>
+          <select id="bookCourseSelect">
+            <option value="1">مبادئ القانون</option>
+            <option value="2">مبادئ الاقتصاد</option>
+            <option value="3">لغة أجنبية</option>
+            <option value="4">مبادئ المحاسبة المالية</option>
+            <option value="5">مبادئ إدارة الأعمال</option>
+          </select>
 
-        <label for="quizTitleInput">عنوان الاختبار</label>
-        <input type="text" id="quizTitleInput" placeholder="مثال: اختبار الوحدة الأولى">
+          <label for="bookTitleInput">اسم الكتاب أو الملف</label>
+          <input type="text" id="bookTitleInput" placeholder="مثال: مذكرة المحاسبة — الترم الأول">
 
-        <label for="quizQuestionInput">نص السؤال</label>
-        <input type="text" id="quizQuestionInput" placeholder="اكتب السؤال هنا...">
+          <label for="bookUrlInput">مسار أو رابط الملف (مثال: books/accounting.pdf)</label>
+          <input type="text" id="bookUrlInput" placeholder="books/file.pdf أو رابط مباشر">
 
-        <label for="quizOptionsInput">الاختيارات (افصل بينها بفاصلة عادية أو عربية)</label>
-        <input type="text" id="quizOptionsInput" placeholder="مثال: الاختيار الأول، الاختيار الثاني، الاختيار الثالث">
+          <label for="bookFileInput">أو اختر ملفاً من جهازك (PDF أو مستند)</label>
+          <input type="file" id="bookFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip">
 
-        <label for="quizCorrectIndexInput">رقم الإجابة الصحيحة (يبدأ من 1)</label>
-        <input type="number" id="quizCorrectIndexInput" min="1" value="1">
-
-        <div class="admin-actions">
-          <button type="button" id="publishQuizBtn" class="btn btn-sm">حفظ ورفع الاختبار</button>
+          <div class="admin-actions">
+            <button type="button" id="publishBookBtn" class="btn btn-sm">حفظ الكتاب / الملف</button>
+          </div>
+          <div id="bookUploadMsg" class="msg"></div>
         </div>
-        <div id="quizUploadMsg" class="msg"></div>
-      </div>
 
-      <!-- 4. إدارة الكود المؤقت -->
-      <div class="admin-subbox">
-        <h4>إدارة الكود المؤقت (Temporary Access Code)</h4>
-        <label for="tempCodeHoursInput">مدة الصلاحية بالساعات</label>
-        <input type="number" id="tempCodeHoursInput" min="1" max="720" value="24">
+        <!-- 3. إنشاء ورفع اختبار (بابل شيت + مقالي) -->
+        <div class="admin-subbox">
+          <h4>إنشاء ورفع اختبار (بابل شيت / مقالي)</h4>
+          <label for="quizCourseSelect">اختر المادة الدراسية</label>
+          <select id="quizCourseSelect">
+            <option value="1">مبادئ القانون</option>
+            <option value="2">مبادئ الاقتصاد</option>
+            <option value="3">لغة أجنبية</option>
+            <option value="4">مبادئ المحاسبة المالية</option>
+            <option value="5">مبادئ إدارة الأعمال</option>
+          </select>
 
-        <div class="admin-actions">
-          <button type="button" id="generateTempCodeBtn" class="btn btn-sm">توليد وحفظ كود مؤقت</button>
-          <button type="button" id="clearTempCodeBtn" class="btn btn-danger btn-sm">إلغاء الكود المؤقت</button>
+          <label for="quizTypeSelect">نوع السؤال</label>
+          <select id="quizTypeSelect">
+            <option value="mcq">بابل شيت (اختيار من متعدد)</option>
+            <option value="essay">سؤال مقالي</option>
+          </select>
+
+          <label for="quizTitleInput">عنوان الاختبار</label>
+          <input type="text" id="quizTitleInput" placeholder="مثال: اختبار شامل — الوحدة الأولى">
+
+          <label for="quizQuestionInput">نص السؤال</label>
+          <input type="text" id="quizQuestionInput" placeholder="اكتب نص السؤال هنا...">
+
+          <label for="quizPointsInput">درجة السؤال</label>
+          <input type="number" id="quizPointsInput" min="1" max="100" value="5">
+
+          <div id="mcqFieldsBox">
+            <label for="quizOptionsInput">الاختيارات (افصل بينها بفاصلة عادية أو عربية)</label>
+            <input type="text" id="quizOptionsInput" placeholder="مثال: الاختيار الأول، الاختيار الثاني، الاختيار الثالث">
+
+            <label for="quizCorrectIndexInput">رقم الإجابة الصحيحة (يبدأ من 1)</label>
+            <input type="number" id="quizCorrectIndexInput" min="1" value="1">
+          </div>
+
+          <div id="essayFieldsBox" class="hidden">
+            <label for="quizModelAnswerInput">الإجابة النموذجية / نقاط الحل (اختياري)</label>
+            <textarea id="quizModelAnswerInput" placeholder="اكتب العناصر أو الإجابة النموذجية..."></textarea>
+          </div>
+
+          <div class="admin-actions">
+            <button type="button" id="publishQuizBtn" class="btn btn-sm">حفظ ورفع السؤال للاختبار</button>
+          </div>
+          <div id="quizUploadMsg" class="msg"></div>
         </div>
-        <div id="tempCodeStatus" class="msg info"></div>
+
+        <!-- 4. إدارة الكود المؤقت -->
+        <div class="admin-subbox">
+          <h4>إدارة الكود المؤقت</h4>
+          <label for="tempCodeHoursInput">مدة الصلاحية بالساعات</label>
+          <input type="number" id="tempCodeHoursInput" min="1" max="720" value="24">
+
+          <div class="admin-actions">
+            <button type="button" id="generateTempCodeBtn" class="btn btn-sm">توليد وحفظ كود مؤقت</button>
+            <button type="button" id="clearTempCodeBtn" class="btn btn-danger btn-sm">إلغاء الكود المؤقت</button>
+          </div>
+          <div id="tempCodeStatus" class="msg info"></div>
+        </div>
       </div>
 
-      <!-- سجل الطلاب -->
-      <div class="log-table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>اسم الطالب</th>
-              <th>كود الطالب</th>
-              <th>رقم الهاتف</th>
-              <th>العنوان</th>
-              <th>وقت الدخول</th>
-            </tr>
-          </thead>
-          <tbody id="studentsLogBody"></tbody>
-        </table>
+      <!-- تبويب 2: الصفحة الجانبية للناس اللي سجلت -->
+      <div id="registeredTabPanel" class="hidden">
+        <div class="admin-subbox">
+          <h4>الطلاب المسجلون في المنصة</h4>
+          <p id="studentsCountText" style="margin:6px 0 0; color:#1e3a8a;"></p>
+          <div class="admin-actions">
+            <button type="button" id="exportLogBtn" class="btn btn-sm">تصدير سجل الطلاب JSON</button>
+            <button type="button" id="clearLogBtn" class="btn btn-danger btn-sm">مسح سجل الطلاب</button>
+          </div>
+          <div class="log-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>اسم الطالب</th>
+                  <th>كود الطالب</th>
+                  <th>رقم الهاتف</th>
+                  <th>العنوان</th>
+                  <th>وقت الدخول</th>
+                </tr>
+              </thead>
+              <tbody id="studentsLogBody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </section>
+    </div>
+  </aside>
 
+  <main class="container">
     <!-- شاشة تسجيل الدخول -->
     <section id="loginSection" class="card">
       <h1>منصة الحريف — البشمندس بوده</h1>
@@ -526,14 +590,21 @@
       return digits.length >= 8 && digits.length <= 15;
     }
 
+    function extractVideoUrlsList(rawText) {
+      return (rawText || "")
+        .split(/[\n,،]+/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
     const DEFAULT_COURSES_DATA = {
       "1": {
         title: "مبادئ القانون",
         description: "مدخل إلى القاعدة القانونية، مصادر القانون، وتطبيقاته الأساسية في الحياة العملية.",
         lessons: [
-          { title: "الدرس الأول: مفهوم القاعدة القانونية وخصائصها", summary: "الفرق بين القاعدة القانونية والقواعد الأخلاقية والاجتماعية.", youtubeUrl: "" },
-          { title: "الدرس الثاني: مصادر القانون وتدرجها", summary: "التشريع، العرف، ومبادئ الشريعة والقانون.", youtubeUrl: "" },
-          { title: "الدرس الثالث: الأشخاص وحقوقهم والتزاماتهم", summary: "الشخص الطبيعي والشخص المعنوي وأهلية الأداء والوجوب.", youtubeUrl: "" }
+          { title: "الدرس الأول: مفهوم القاعدة القانونية وخصائصها", summary: "الفرق بين القاعدة القانونية والقواعد الأخلاقية والاجتماعية.", youtubeUrls: [] },
+          { title: "الدرس الثاني: مصادر القانون وتدرجها", summary: "التشريع، العرف، ومبادئ الشريعة والقانون.", youtubeUrls: [] },
+          { title: "الدرس الثالث: الأشخاص وحقوقهم والتزاماتهم", summary: "الشخص الطبيعي والشخص المعنوي وأهلية الأداء والوجوب.", youtubeUrls: [] }
         ],
         books: [],
         quizzes: []
@@ -542,9 +613,9 @@
         title: "مبادئ الاقتصاد",
         description: "فهم المشكلة الاقتصادية، ندرة الموارد، وآليات السوق والعرض والطلب.",
         lessons: [
-          { title: "الدرس الأول: المشكلة الاقتصادية والندرة", summary: "اختيار البدائل وتكلفة الفرصة البديلة وإنتاجية الموارد.", youtubeUrl: "" },
-          { title: "الدرس الثاني: الطلب والعرض وتوازن السوق", summary: "العلاقة بين السعر والكمية المطلوبة والمعروضة.", youtubeUrl: "" },
-          { title: "الدرس الثالث: النشاط الاقتصادي والسياسات العامة", summary: "الناتج المحلي، التضخم، ودور الدولة في استقرار السوق.", youtubeUrl: "" }
+          { title: "الدرس الأول: المشكلة الاقتصادية والندرة", summary: "اختيار البدائل وتكلفة الفرصة البديلة وإنتاجية الموارد.", youtubeUrls: [] },
+          { title: "الدرس الثاني: الطلب والعرض وتوازن السوق", summary: "العلاقة بين السعر والكمية المطلوبة والمعروضة.", youtubeUrls: [] },
+          { title: "الدرس الثالث: النشاط الاقتصادي والسياسات العامة", summary: "الناتج المحلي، التضخم، ودور الدولة في استقرار السوق.", youtubeUrls: [] }
         ],
         books: [],
         quizzes: []
@@ -553,9 +624,9 @@
         title: "لغة أجنبية",
         description: "تنمية الحصيلة اللغوية، القواعد الأساسية، وفهم النصوص والتواصل.",
         lessons: [
-          { title: "الدرس الأول: المفردات الأساسية والمصطلحات", summary: "الكلمات الأكثر استخداماً في القراءة والمحادثة اليومية.", youtubeUrl: "" },
-          { title: "الدرس الثاني: الأزمنة وتركيب الجملة", summary: "بناء الجمل الصحيحة في المضارع والماضي والمستقبل.", youtubeUrl: "" },
-          { title: "الدرس الثالث: الفهم القرائي والكتابة المختصرة", summary: "استخراج الفكرة الرئيسية وصياغة فقرات واضحة.", youtubeUrl: "" }
+          { title: "الدرس الأول: المفردات الأساسية والمصطلحات", summary: "الكلمات الأكثر استخداماً في القراءة والمحادثة اليومية.", youtubeUrls: [] },
+          { title: "الدرس الثاني: الأزمنة وتركيب الجملة", summary: "بناء الجمل الصحيحة في المضارع والماضي والمستقبل.", youtubeUrls: [] },
+          { title: "الدرس الثالث: الفهم القرائي والكتابة المختصرة", summary: "استخراج الفكرة الرئيسية وصياغة فقرات واضحة.", youtubeUrls: [] }
         ],
         books: [],
         quizzes: []
@@ -564,9 +635,9 @@
         title: "مبادئ المحاسبة المالية",
         description: "أسس الدورة المحاسبية، قيود اليومية، إعداد ميزان المراجعة والقوائم المالية.",
         lessons: [
-          { title: "الدرس الأول: المعادلة المحاسبية والحسابات", summary: "الأصول = الخصوم + حقوق الملكية، وتأثير العمليات المالية.", youtubeUrl: "" },
-          { title: "الدرس الثاني: دفتر اليومية ودفتر الأستاذ", summary: "تسجيل القيود المحاسبية والترحيل إلى الحسابات المختصة.", youtubeUrl: "" },
-          { title: "الدرس الثالث: ميزان المراجعة والقوائم الختامية", summary: "التحقق من التوازن وإعداد قائمة الدخل والمركز المالي.", youtubeUrl: "" }
+          { title: "الدرس الأول: المعادلة المحاسبية والحسابات", summary: "الأصول = الخصوم + حقوق الملكية، وتأثير العمليات المالية.", youtubeUrls: [] },
+          { title: "الدرس الثاني: دفتر اليومية ودفتر الأستاذ", summary: "تسجيل القيود المحاسبية والترحيل إلى الحسابات المختصة.", youtubeUrls: [] },
+          { title: "الدرس الثالث: ميزان المراجعة والقوائم الختامية", summary: "التحقق من التوازن وإعداد قائمة الدخل والمركز المالي.", youtubeUrls: [] }
         ],
         books: [],
         quizzes: []
@@ -575,9 +646,9 @@
         title: "مبادئ إدارة الأعمال",
         description: "دراسة وظائف الإدارة الحديثة واتخاذ القرار وتنظيم فرق العمل وتحقيق الأهداف.",
         lessons: [
-          { title: "الدرس الأول: التخطيط وتحديد الأهداف", summary: "وضع الخطط قصيرة وطويلة المدى وتحديد الأولويات.", youtubeUrl: "" },
-          { title: "الدرس الثاني: التنظيم وتوزيع المسؤوليات", summary: "الهياكل التنظيمية وتفويض الصلاحيات وتنسيق الأقسام.", youtubeUrl: "" },
-          { title: "الدرس الثالث: القيادة والرقابة وتحسين الأداء", summary: "تحفيز العاملين وقياس النتائج ومعالجة الانحرافات.", youtubeUrl: "" }
+          { title: "الدرس الأول: التخطيط وتحديد الأهداف", summary: "وضع الخطط قصيرة وطويلة المدى وتحديد الأولويات.", youtubeUrls: [] },
+          { title: "الدرس الثاني: التنظيم وتوزيع المسؤوليات", summary: "الهياكل التنظيمية وتفويض الصلاحيات وتنسيق الأقسام.", youtubeUrls: [] },
+          { title: "الدرس الثالث: القيادة والرقابة وتحسين الأداء", summary: "تحفيز العاملين وقياس النتائج ومعالجة الانحرافات.", youtubeUrls: [] }
         ],
         books: [],
         quizzes: []
@@ -586,6 +657,18 @@
 
     function cloneDefaultCourses() {
       return JSON.parse(JSON.stringify(DEFAULT_COURSES_DATA));
+    }
+
+    function normalizeLesson(lesson) {
+      const urls = Array.isArray(lesson.youtubeUrls) ? [...lesson.youtubeUrls] : [];
+      if (lesson.youtubeUrl && !urls.includes(lesson.youtubeUrl)) {
+        urls.unshift(lesson.youtubeUrl);
+      }
+      return {
+        title: lesson.title || "درس",
+        summary: lesson.summary || "",
+        youtubeUrls: urls
+      };
     }
 
     function normalizeCoursesData(rawCourses) {
@@ -597,7 +680,9 @@
         if (incoming && typeof incoming === "object") {
           if (incoming.title) base[courseId].title = incoming.title;
           if (incoming.description) base[courseId].description = incoming.description;
-          if (Array.isArray(incoming.lessons)) base[courseId].lessons = incoming.lessons;
+          if (Array.isArray(incoming.lessons)) {
+            base[courseId].lessons = incoming.lessons.map(normalizeLesson);
+          }
           if (Array.isArray(incoming.books)) base[courseId].books = incoming.books;
           if (Array.isArray(incoming.quizzes)) base[courseId].quizzes = incoming.quizzes;
         }
@@ -625,13 +710,20 @@
     const logoutBtn = document.getElementById("logoutBtn");
 
     const openAdminBtn = document.getElementById("openAdminBtn");
+    const closeDrawerBtn = document.getElementById("closeDrawerBtn");
+    const sideDrawer = document.getElementById("sideDrawer");
+    const drawerBackdrop = document.getElementById("drawerBackdrop");
+
     const adminAuthSection = document.getElementById("adminAuthSection");
     const adminCodeInput = document.getElementById("adminCodeInput");
     const verifyAdminBtn = document.getElementById("verifyAdminBtn");
-    const closeAdminAuthBtn = document.getElementById("closeAdminAuthBtn");
     const adminAuthMsg = document.getElementById("adminAuthMsg");
 
     const adminDashboardSection = document.getElementById("adminDashboardSection");
+    const tabManageBtn = document.getElementById("tabManageBtn");
+    const tabRegisteredBtn = document.getElementById("tabRegisteredBtn");
+    const manageTabPanel = document.getElementById("manageTabPanel");
+    const registeredTabPanel = document.getElementById("registeredTabPanel");
     const lockAdminBtn = document.getElementById("lockAdminBtn");
     const studentsCountText = document.getElementById("studentsCountText");
     const studentsLogBody = document.getElementById("studentsLogBody");
@@ -655,10 +747,15 @@
     const bookUploadMsg = document.getElementById("bookUploadMsg");
 
     const quizCourseSelect = document.getElementById("quizCourseSelect");
+    const quizTypeSelect = document.getElementById("quizTypeSelect");
     const quizTitleInput = document.getElementById("quizTitleInput");
     const quizQuestionInput = document.getElementById("quizQuestionInput");
+    const quizPointsInput = document.getElementById("quizPointsInput");
+    const mcqFieldsBox = document.getElementById("mcqFieldsBox");
+    const essayFieldsBox = document.getElementById("essayFieldsBox");
     const quizOptionsInput = document.getElementById("quizOptionsInput");
     const quizCorrectIndexInput = document.getElementById("quizCorrectIndexInput");
+    const quizModelAnswerInput = document.getElementById("quizModelAnswerInput");
     const publishQuizBtn = document.getElementById("publishQuizBtn");
     const quizUploadMsg = document.getElementById("quizUploadMsg");
 
@@ -666,6 +763,27 @@
     const generateTempCodeBtn = document.getElementById("generateTempCodeBtn");
     const clearTempCodeBtn = document.getElementById("clearTempCodeBtn");
     const tempCodeStatus = document.getElementById("tempCodeStatus");
+
+    function openDrawer() {
+      drawerBackdrop.classList.remove("hidden");
+      sideDrawer.classList.remove("closed");
+      refreshAdminView();
+    }
+
+    function closeDrawer() {
+      sideDrawer.classList.add("closed");
+      drawerBackdrop.classList.add("hidden");
+      adminAuthMsg.textContent = "";
+    }
+
+    function switchDrawerTab(tab) {
+      const isRegistered = tab === "registered";
+      manageTabPanel.classList.toggle("hidden", isRegistered);
+      registeredTabPanel.classList.toggle("hidden", !isRegistered);
+      if (isRegistered) {
+        renderStudentsLog();
+      }
+    }
 
     async function loadCloudState() {
       try {
@@ -744,7 +862,7 @@
     function renderStudentsLog() {
       const list = loadStudentsLog();
       studentsCountText.textContent =
-        "إجمالي تسجيلات الدخول المسجلة: " + list.length + " | عدد الأكواد المفعّلة: " + ALLOWED_CODES_LIST.length;
+        "إجمالي المسجلين: " + list.length + " | الأكواد المفعّلة: " + ALLOWED_CODES_LIST.length;
       studentsLogBody.innerHTML = "";
 
       if (list.length === 0) {
@@ -797,6 +915,7 @@
         renderStudentsLog();
         renderTempCodeStatus();
       } else {
+        adminAuthSection.classList.remove("hidden");
         adminDashboardSection.classList.add("hidden");
       }
     }
@@ -833,11 +952,17 @@
       refreshAdminView();
     }
 
+    quizTypeSelect.addEventListener("change", function () {
+      const isEssay = quizTypeSelect.value === "essay";
+      mcqFieldsBox.classList.toggle("hidden", isEssay);
+      essayFieldsBox.classList.toggle("hidden", !isEssay);
+    });
+
     publishLessonBtn.addEventListener("click", async function () {
       const courseId = uploadCourseSelect.value;
       const title = lessonTitleInput.value.trim();
       const summary = lessonSummaryInput.value.trim();
-      const youtubeUrl = lessonYoutubeInput.value.trim();
+      const youtubeUrls = extractVideoUrlsList(lessonYoutubeInput.value);
 
       if (!title) {
         lessonUploadMsg.className = "msg error";
@@ -849,7 +974,7 @@
       COURSES_DATA[courseId].lessons.push({
         title: title,
         summary: summary || "درس مضاف من لوحة التحكم.",
-        youtubeUrl: youtubeUrl
+        youtubeUrls: youtubeUrls
       });
 
       const saved = await persistCoursesData();
@@ -858,7 +983,7 @@
       lessonYoutubeInput.value = "";
       lessonUploadMsg.className = saved ? "msg info" : "msg error";
       lessonUploadMsg.textContent = saved
-        ? "تم رفع الدرس وحفظه على Firebase بنجاح."
+        ? "تم رفع الدرس وروابط الفيديو وحفظها على Firebase بنجاح."
         : "تم الحفظ محلياً، لكن تعذر الاتصال بـ Firebase.";
     });
 
@@ -907,42 +1032,70 @@
 
     publishQuizBtn.addEventListener("click", async function () {
       const courseId = quizCourseSelect.value;
+      const type = quizTypeSelect.value === "essay" ? "essay" : "mcq";
       const title = quizTitleInput.value.trim() || "اختبار المادة";
       const question = quizQuestionInput.value.trim();
-      const options = quizOptionsInput.value
-        .split(/[,،]/)
-        .map((item) => item.trim())
-        .filter(Boolean);
-      const correctIndex = Number(quizCorrectIndexInput.value) - 1;
+      const points = Math.max(1, Number(quizPointsInput.value) || 5);
 
-      if (!question || options.length < 2) {
+      if (!question) {
         quizUploadMsg.className = "msg error";
-        quizUploadMsg.textContent = "اكتب نص السؤال واخترين على الأقل مفصولين بفاصلة.";
-        return;
-      }
-
-      if (correctIndex < 0 || correctIndex >= options.length) {
-        quizUploadMsg.className = "msg error";
-        quizUploadMsg.textContent = "رقم الإجابة الصحيحة خارج نطاق الاختيارات.";
+        quizUploadMsg.textContent = "من فضلك أدخل نص السؤال.";
         return;
       }
 
       COURSES_DATA = normalizeCoursesData(COURSES_DATA);
-      COURSES_DATA[courseId].quizzes.push({
-        title: title,
-        question: question,
-        options: options,
-        correctIndex: correctIndex
-      });
+      if (!Array.isArray(COURSES_DATA[courseId].quizzes)) {
+        COURSES_DATA[courseId].quizzes = [];
+      }
+
+      if (type === "mcq") {
+        const options = quizOptionsInput.value
+          .split(/[,،]/)
+          .map((item) => item.trim())
+          .filter(Boolean);
+        const correctIndex = Number(quizCorrectIndexInput.value) - 1;
+
+        if (options.length < 2) {
+          quizUploadMsg.className = "msg error";
+          quizUploadMsg.textContent = "اكتب اختيارين على الأقل مفصولين بفاصلة لسؤال البابل شيت.";
+          return;
+        }
+
+        if (correctIndex < 0 || correctIndex >= options.length) {
+          quizUploadMsg.className = "msg error";
+          quizUploadMsg.textContent = "رقم الإجابة الصحيحة خارج نطاق الاختيارات.";
+          return;
+        }
+
+        COURSES_DATA[courseId].quizzes.push({
+          type: "mcq",
+          title: title,
+          question: question,
+          points: points,
+          options: options,
+          correctIndex: correctIndex
+        });
+      } else {
+        const modelAnswer = quizModelAnswerInput.value.trim();
+        COURSES_DATA[courseId].quizzes.push({
+          type: "essay",
+          title: title,
+          question: question,
+          points: points,
+          modelAnswer: modelAnswer
+        });
+      }
 
       const saved = await persistCoursesData();
       quizTitleInput.value = "";
       quizQuestionInput.value = "";
+      quizPointsInput.value = "5";
       quizOptionsInput.value = "";
       quizCorrectIndexInput.value = "1";
+      quizModelAnswerInput.value = "";
       quizUploadMsg.className = saved ? "msg info" : "msg error";
       quizUploadMsg.textContent = saved
-        ? "تم رفع الاختبار وحفظه في Firebase بنجاح."
+        ? "تم رفع السؤال وحفظه في Firebase بنجاح."
         : "تم الحفظ محلياً، لكن تعذر الاتصال بـ Firebase.";
     });
 
@@ -1018,27 +1171,21 @@
       renderHomeState();
     });
 
-    openAdminBtn.addEventListener("click", function () {
-      if (sessionStorage.getItem(ADMIN_SESSION_KEY) === "true") {
-        refreshAdminView();
-        return;
-      }
-      adminAuthSection.classList.remove("hidden");
-      adminAuthMsg.textContent = "";
-      adminCodeInput.value = "";
-      adminCodeInput.focus();
+    openAdminBtn.addEventListener("click", openDrawer);
+    closeDrawerBtn.addEventListener("click", closeDrawer);
+    drawerBackdrop.addEventListener("click", closeDrawer);
+    tabManageBtn.addEventListener("click", function () {
+      switchDrawerTab("manage");
     });
-
-    closeAdminAuthBtn.addEventListener("click", function () {
-      adminAuthSection.classList.add("hidden");
-      adminAuthMsg.textContent = "";
+    tabRegisteredBtn.addEventListener("click", function () {
+      switchDrawerTab("registered");
     });
 
     verifyAdminBtn.addEventListener("click", function () {
       if (adminCodeInput.value.trim() === ADMIN_CODE) {
         sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
-        adminAuthSection.classList.add("hidden");
         adminAuthMsg.textContent = "";
+        switchDrawerTab("manage");
         refreshAdminView();
       } else {
         adminAuthMsg.className = "msg error";
