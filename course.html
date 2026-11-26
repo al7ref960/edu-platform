@@ -233,6 +233,83 @@
       background-color: #dc2626;
     }
 
+    .quiz-question-card {
+      background-color: #ffffff;
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(30, 58, 138, 0.04);
+    }
+
+    .quiz-question-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .quiz-question-text {
+      color: #0f172a;
+      font-weight: bold;
+      font-size: 0.98rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .quiz-points-tag {
+      background-color: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 0.78rem;
+      font-weight: bold;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .bubble-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      border: 1px solid #dbeafe;
+      border-radius: 10px;
+      background-color: #f8fafc;
+      color: #0f172a;
+      font-weight: normal !important;
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .bubble-option:hover {
+      background-color: #eff6ff;
+      border-color: #93c5fd;
+    }
+
+    .bubble-option input[type="radio"] {
+      width: auto !important;
+      margin: 0 !important;
+      accent-color: #2563eb;
+      transform: scale(1.15);
+    }
+
+    .bubble-letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: #dbeafe;
+      color: #1e3a8a;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
     .video-box {
       position: relative;
       width: 100%;
@@ -786,11 +863,6 @@
       return `${String(studentCode || "").trim().toUpperCase()}__course_${courseId}__q${quizzesCount}`;
     }
 
-    function hasTakenExam(studentCode, courseId, quizzesCount) {
-      const attempts = loadExamAttempts();
-      return Boolean(attempts[getAttemptKey(studentCode, courseId, quizzesCount)]);
-    }
-
     function markExamCompleted(studentCode, courseId, quizzesCount, resultSummary) {
       const attempts = loadExamAttempts();
       const key = getAttemptKey(studentCode, courseId, quizzesCount);
@@ -957,6 +1029,18 @@
       return String(mins).padStart(2, "0") + ":" + String(secs).padStart(2, "0");
     }
 
+    function cleanQuestionDisplayText(rawQuestion) {
+      let text = String(rawQuestion || "").trim();
+      text = text
+        .replace(/عنوان الاختبار\s*[:\-].*?(?=نص السؤال\s*[:\-]|الاختيارات\s*[:\-]|رقم الإجابة الصحيحة\s*[:\-]|$)/gi, "")
+        .replace(/نص السؤال\s*[:\-]\s*/gi, "")
+        .replace(/الاختيارات\s*[:\-].*?(?=رقم الإجابة الصحيحة\s*[:\-]|$)/gi, "")
+        .replace(/رقم الإجابة الصحيحة\s*[:\-].*$/gi, "")
+        .replace(/^السؤال\s*\d+\s*[:\-]?\s*/i, "")
+        .trim();
+      return text || String(rawQuestion || "").trim();
+    }
+
     function renderQuizzesSection(courseId, course, studentCode, isEn) {
       if (examCountdownInterval) {
         clearInterval(examCountdownInterval);
@@ -991,6 +1075,15 @@
         return;
       }
 
+      const firstTitle = (quizzes[0] && quizzes[0].title) ? quizzes[0].title.trim() : "";
+      if (firstTitle) {
+        const examHeader = document.createElement("div");
+        examHeader.className = "meta-bar";
+        examHeader.style.fontWeight = "bold";
+        examHeader.textContent = (isEn ? "Exam: " : "عنوان الاختبار: ") + firstTitle;
+        quizzesContainer.appendChild(examHeader);
+      }
+
       const durationMinutes = Math.max(1, Number(course.quizDurationMinutes) || 15);
       const startKey = "examStart__" + attemptKey;
       let startTimestamp = Number(sessionStorage.getItem(startKey) || 0);
@@ -1018,37 +1111,61 @@
 
       const formBox = document.createElement("div");
       const questionRefs = [];
+      const arabicLetters = ["أ", "ب", "ج", "د", "هـ", "و"];
 
       quizzes.forEach((quiz, qIdx) => {
         const isEssay = quiz.type === "essay";
         const points = Math.max(1, Number(quiz.points) || 5);
+        const cleanedQuestion = cleanQuestionDisplayText(quiz.question);
+
         const box = document.createElement("div");
-        box.className = "lesson-item";
+        box.className = "quiz-question-card";
 
-        const badgeText = isEssay
-          ? (isEn ? ` [Essay — ${points} pts]` : ` [مقالي — ${points} درجات]`)
-          : (isEn ? ` [Bubble Sheet — ${points} pts]` : ` [بابل شيت — ${points} درجات]`);
+        const head = document.createElement("div");
+        head.className = "quiz-question-head";
 
-        const qTitle = document.createElement("strong");
-        qTitle.textContent = (qIdx + 1) + "- " + (quiz.title || "") + badgeText + ": " + quiz.question;
-        box.appendChild(qTitle);
+        const qTitle = document.createElement("p");
+        qTitle.className = "quiz-question-text";
+        qTitle.textContent = `${qIdx + 1}. ${cleanedQuestion}`;
+
+        const ptsTag = document.createElement("span");
+        ptsTag.className = "quiz-points-tag";
+        ptsTag.textContent = isEn ? `${points} pts` : `${points} درجات`;
+
+        head.appendChild(qTitle);
+        head.appendChild(ptsTag);
+        box.appendChild(head);
 
         if (!isEssay) {
           const groupName = "quiz_" + courseId + "_" + qIdx;
           (quiz.options || []).forEach((optText, oIdx) => {
             const optLabel = document.createElement("label");
-            optLabel.style.fontWeight = "normal";
-            optLabel.style.cursor = "pointer";
+            optLabel.className = "bubble-option";
 
             const radio = document.createElement("input");
             radio.type = "radio";
             radio.name = groupName;
             radio.value = String(oIdx);
-            radio.style.width = "auto";
-            radio.style.marginInlineEnd = "8px";
+
+            const letterBadge = document.createElement("span");
+            letterBadge.className = "bubble-letter";
+            letterBadge.textContent = isEn ? String.fromCharCode(65 + oIdx) : (arabicLetters[oIdx] || String(oIdx + 1));
+
+            const textSpan = document.createElement("span");
+            textSpan.textContent = optText;
+
+            radio.addEventListener("change", function () {
+              box.querySelectorAll(".bubble-option").forEach((lbl) => {
+                lbl.style.backgroundColor = "#f8fafc";
+                lbl.style.borderColor = "#dbeafe";
+              });
+              optLabel.style.backgroundColor = "#eff6ff";
+              optLabel.style.borderColor = "#2563eb";
+            });
 
             optLabel.appendChild(radio);
-            optLabel.appendChild(document.createTextNode(optText));
+            optLabel.appendChild(letterBadge);
+            optLabel.appendChild(textSpan);
             box.appendChild(optLabel);
           });
 
@@ -1059,7 +1176,6 @@
         } else {
           const essayArea = document.createElement("textarea");
           essayArea.placeholder = isEn ? "Write your essay answer here..." : "اكتب إجابتك المقالية هنا...";
-          essayArea.style.marginTop = "8px";
           box.appendChild(essayArea);
 
           const itemFeedback = document.createElement("div");
@@ -1073,7 +1189,7 @@
 
       const submitExamBtn = document.createElement("button");
       submitExamBtn.type = "button";
-      submitExamBtn.className = "btn btn-sm";
+      submitExamBtn.className = "btn";
       submitExamBtn.textContent = isEn ? "Submit Exam" : "تسليم الاختبار وحساب النتيجة";
 
       const summaryMsg = document.createElement("div");
