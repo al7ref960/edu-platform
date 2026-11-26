@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصتي التعليمية</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .menu-btn {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    .mobile-menu a {
+      color: #ffffff;
+      text-decoration: none;
+      padding: 6px 4px;
+      border-bottom: 1px solid #334155;
+      font-size: 0.95rem;
+    }
+    .mobile-menu a:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <strong>منصتي التعليمية</strong>
+    <div class="nav-actions">
+      <a href="login.html" id="authBtn" class="btn">دخول الطلاب</a>
+      <button type="button" id="menuToggle" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu">القائمة</button>
+    </div>
+  </header>
+
+  <nav id="mobileMenu" class="mobile-menu" aria-label="القائمة الجانبية">
+    <a href="index.html">الرئيسية</a>
+    <a href="login.html">دخول الطلاب</a>
+    <a href="course.html?id=1">الكورس الأول</a>
+    <a href="course.html?id=2">الكورس الثاني</a>
+  </nav>
+
+  <section class="hero">
+    <h1>أهلاً بك في منصتي التعليمية</h1>
+    <p>شروحات مبسطة وتدريبات منظمة خطوة بخطوة.</p>
+  </section>
+
+  <main class="container">
+    <h2>الكورسات المتاحة</h2>
+
+    <div class="card">
+      <h3>الكورس الأول: أساسيات الشرح والمراجعة</h3>
+      <p>شرح شامل لأهم النقاط بأسلوب مبسط.</p>
+      <a href="course.html?id=1" class="btn">دخول الكورس</a>
+    </div>
+
+    <div class="card">
+      <h3>الكورس الثاني: تطبيقات عملية وحل تدريبات</h3>
+      <p>تدريبات عملية وأسئلة متنوعة لتثبيت المعلومات.</p>
+      <a href="course.html?id=2" class="btn">دخول الكورس</a>
+    </div>
+  </main>
+
+  <script>
+    const authBtn = document.getElementById("authBtn");
+    const menuToggle = document.getElementById("menuToggle");
+    const mobileMenu = document.getElementById("mobileMenu");
+
+    const studentName = localStorage.getItem("studentName");
+    if (studentName && studentName.trim() !== "") {
+      authBtn.textContent = "أهلاً، " + studentName.trim();
+    }
+
+    menuToggle.addEventListener("click", function () {
+      const isOpen = mobileMenu.classList.toggle("open");
+      menuToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+  </script>
+
+</body>
+</html>
