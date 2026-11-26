@@ -5,6 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>منصة الحريف — البشمحاسب بوده</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .btn,
+    a.btn,
+    button.btn {
+      background-color: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    .btn:hover,
+    a.btn:hover,
+    button.btn:hover {
+      background-color: #1d4ed8;
+      border-color: #1d4ed8;
+    }
+
+    .btn-logout {
+      background-color: #dc2626 !important;
+      border-color: #dc2626 !important;
+    }
+
+    input:focus {
+      outline: 2px solid #2563eb;
+      border-color: #2563eb;
+    }
+  </style>
 </head>
 <body>
 
@@ -26,92 +52,63 @@
     <a href="course.html?id=5">مبادئ إدارة الأعمال</a>
   </nav>
 
-  <!-- بوابة تسجيل الدخول -->
-  <section id="gateSection" class="container">
-    <div class="gate-box">
-      <h2>تسجيل الدخول — منصة الحريف</h2>
+  <main class="container">
+    <!-- شاشة تسجيل الدخول -->
+    <section id="loginSection" class="card">
+      <h1>مرحباً بك في منصة الحريف — البشمحاسب بوده</h1>
+      <p>أدخل اسمك وكود الطالب للوصول إلى المواد الدراسية، الفيديوهات، وملفات PDF.</p>
 
-      <div id="quickLoginBox" class="quick-login-box hidden">
-        <p id="quickLoginText"></p>
-        <div class="quick-actions">
-          <button type="button" id="continueBtn" class="btn">متابعة الدخول</button>
-          <button type="button" id="switchAccountBtn" class="btn btn-secondary">تغيير الطالب</button>
+      <form id="loginForm">
+        <label for="studentNameInput">اسم الطالب</label>
+        <input type="text" id="studentNameInput" placeholder="اكتب اسمك بالكامل" required>
+
+        <label for="studentCodeInput">كود الطالب</label>
+        <input type="text" id="studentCodeInput" placeholder="مثال: EDU101" required>
+
+        <div style="margin-top: 14px;">
+          <button type="submit" class="btn">دخول إلى المنصة</button>
         </div>
-      </div>
-
-      <form id="loginForm" novalidate>
-        <label for="studentName">اسم الطالب</label>
-        <input type="text" id="studentName" name="studentName" placeholder="اكتب اسمك الكامل" required>
-
-        <label for="studentCode">كود الطالب</label>
-        <input type="text" id="studentCode" name="studentCode" placeholder="مثال: EDU101" required>
-
-        <button type="submit" class="btn btn-full">دخول إلى المنصة</button>
         <div id="loginMsg" class="msg"></div>
       </form>
-
-      <div id="gateContactBox" class="quick-login-box hidden" style="margin-top: 16px;">
-        <p id="gateContactText"></p>
-        <div id="gateContactActions" class="quick-actions"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- المحتوى الرئيسي بعد تسجيل الدخول -->
-  <main id="platformSection" class="hidden">
-    <section class="hero">
-      <h1>منصة الحريف — البشمحاسب بوده</h1>
-      <p id="welcomeSubtext">إعداد وتقديم: عبد الرحمن مجدي (الحريف) — اختر المادة المناسبة وابدأ دراستك</p>
     </section>
 
-    <div class="container">
+    <!-- شاشة الكورسات بعد تسجيل الدخول -->
+    <section id="coursesSection" class="hidden">
       <div class="card">
-        <h3>مبادئ القانون</h3>
+        <h1>منصة الحريف — البشمحاسب بوده</h1>
+        <p id="welcomeText"></p>
+      </div>
+
+      <div class="card">
+        <h2>مبادئ القانون</h2>
         <p>شرح مبسط للقواعد القانونية الأساسية وتطبيقاتها العملية.</p>
         <a href="course.html?id=1" class="btn">دخول الكورس</a>
       </div>
 
       <div class="card">
-        <h3>مبادئ الاقتصاد</h3>
+        <h2>مبادئ الاقتصاد</h2>
         <p>فهم أساسيات العرض والطلب والنشاط الاقتصادي والموارد.</p>
         <a href="course.html?id=2" class="btn">دخول الكورس</a>
       </div>
 
       <div class="card">
-        <h3>لغة أجنبية</h3>
-        <p>تنمية مهارات القراءة والمفردات والقواعد الأساسية.</p>
+        <h2>لغة أجنبية</h2>
+        <p>تطوير المفردات والقواعد الأساسية ومهارات القراءة والفهم.</p>
         <a href="course.html?id=3" class="btn">دخول الكورس</a>
       </div>
 
       <div class="card">
-        <h3>مبادئ المحاسبة المالية</h3>
-        <p>أساسيات القيود المحاسبية والقوائم المالية وتوازن الحسابات.</p>
+        <h2>مبادئ المحاسبة المالية</h2>
+        <p>أسس التسجيل المحاسبي وإعداد القوائم المالية خطوة بخطوة.</p>
         <a href="course.html?id=4" class="btn">دخول الكورس</a>
       </div>
 
       <div class="card">
-        <h3>مبادئ إدارة الأعمال</h3>
-        <p>مفاهيم التخطيط والتنظيم والتوجيه والرقابة في المنظمات.</p>
+        <h2>مبادئ إدارة الأعمال</h2>
+        <p>التعرف على وظائف الإدارة والتخطيط والتنظيم والقيادة والرقابة.</p>
         <a href="course.html?id=5" class="btn">دخول الكورس</a>
       </div>
-
-      <div class="card">
-        <h3>للحصول على كود الدخول أو التواصل مع الحريف</h3>
-        <p id="platformContactText"></p>
-        <div id="platformContactActions" class="quick-actions"></div>
-      </div>
-
-      <div class="card">
-        <h3>سجل الطلاب المسجلين</h3>
-        <p>بيانات الطلاب المسجلين محفوظة محلياً في هذا المتصفح.</p>
-        <div class="quick-actions" style="margin-bottom: 12px;">
-          <button type="button" id="copyRegistryBtn" class="btn btn-secondary">نسخ السجل</button>
-          <button type="button" id="downloadRegistryBtn" class="btn">تحميل ملف TXT</button>
-        </div>
-        <pre id="registryBox" style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0; overflow-x:auto; margin:0; font-family:Tahoma, Arial, sans-serif;">لا توجد بيانات مسجلة بعد.</pre>
-        <div id="registryMsg" class="msg"></div>
-      </div>
-    </div>
+    </section>
   </main>
 
   <footer style="text-align:center; padding:18px 14px; color:#64748b; font-size:0.88rem;">
@@ -119,84 +116,17 @@
   </footer>
 
   <script>
-    const CONTACT_PHONE = "01145332036";
-    const REGISTRY_KEY = "eduPlatformStudentsRegistry";
-
-    const gateSection = document.getElementById("gateSection");
-    const platformSection = document.getElementById("platformSection");
-    const quickLoginBox = document.getElementById("quickLoginBox");
-    const quickLoginText = document.getElementById("quickLoginText");
-    const continueBtn = document.getElementById("continueBtn");
-    const switchAccountBtn = document.getElementById("switchAccountBtn");
+    const loginSection = document.getElementById("loginSection");
+    const coursesSection = document.getElementById("coursesSection");
     const loginForm = document.getElementById("loginForm");
-    const studentNameInput = document.getElementById("studentName");
-    const studentCodeInput = document.getElementById("studentCode");
+    const studentNameInput = document.getElementById("studentNameInput");
+    const studentCodeInput = document.getElementById("studentCodeInput");
     const loginMsg = document.getElementById("loginMsg");
+    const welcomeText = document.getElementById("welcomeText");
     const studentBadge = document.getElementById("studentBadge");
     const logoutBtn = document.getElementById("logoutBtn");
     const menuToggle = document.getElementById("menuToggle");
     const mobileMenu = document.getElementById("mobileMenu");
-    const welcomeSubtext = document.getElementById("welcomeSubtext");
-    const registryBox = document.getElementById("registryBox");
-    const copyRegistryBtn = document.getElementById("copyRegistryBtn");
-    const downloadRegistryBtn = document.getElementById("downloadRegistryBtn");
-    const registryMsg = document.getElementById("registryMsg");
-
-    const gateContactBox = document.getElementById("gateContactBox");
-    const gateContactText = document.getElementById("gateContactText");
-    const gateContactActions = document.getElementById("gateContactActions");
-    const platformContactText = document.getElementById("platformContactText");
-    const platformContactActions = document.getElementById("platformContactActions");
-
-    function normalizePhone(raw) {
-      return (raw || "").replace(/[^\d+]/g, "");
-    }
-
-    function toWhatsappDigits(phone) {
-      const digits = phone.replace(/\D/g, "");
-      if (!digits) return "";
-      if (digits.startsWith("00")) return digits.slice(2);
-      if (digits.startsWith("0") && digits.length === 11) return "2" + digits;
-      return digits;
-    }
-
-    function buildContactButtons(container, cleanPhone) {
-      container.innerHTML = "";
-
-      const callLink = document.createElement("a");
-      callLink.href = "tel:" + cleanPhone;
-      callLink.className = "btn";
-      callLink.textContent = "اتصال مباشر";
-      container.appendChild(callLink);
-
-      const waDigits = toWhatsappDigits(cleanPhone);
-      if (waDigits) {
-        const waLink = document.createElement("a");
-        waLink.href = "https://wa.me/" + waDigits;
-        waLink.target = "_blank";
-        waLink.rel = "noopener noreferrer";
-        waLink.className = "btn btn-secondary";
-        waLink.textContent = "تواصل واتساب";
-        container.appendChild(waLink);
-      }
-    }
-
-    function renderContactInfo() {
-      const cleanPhone = normalizePhone(CONTACT_PHONE);
-      if (!cleanPhone) {
-        gateContactBox.classList.add("hidden");
-        platformContactText.textContent = "";
-        platformContactActions.innerHTML = "";
-        return;
-      }
-
-      gateContactBox.classList.remove("hidden");
-      gateContactText.textContent = "محتاج كود الدخول أو استفسار؟ تواصل مع الحريف (البشمحاسب بوده): " + cleanPhone;
-      buildContactButtons(gateContactActions, cleanPhone);
-
-      platformContactText.textContent = "رقم التواصل للحصول على الأكواد والاستفسارات: " + cleanPhone;
-      buildContactButtons(platformContactActions, cleanPhone);
-    }
 
     function isValidCode(code) {
       const clean = code.trim().toUpperCase();
@@ -206,149 +136,62 @@
       return num >= 1 && num <= 50000;
     }
 
-    function normalizeCode(code) {
-      return code.trim().toUpperCase();
-    }
-
-    function getRegistry() {
-      try {
-        const raw = localStorage.getItem(REGISTRY_KEY);
-        const list = raw ? JSON.parse(raw) : [];
-        return Array.isArray(list) ? list : [];
-      } catch (e) {
-        return [];
-      }
-    }
-
-    function saveToRegistry(name, code) {
-      const list = getRegistry();
-      const now = new Date().toLocaleString("ar-EG");
-      const existingIndex = list.findIndex((item) => item.code === code);
-      if (existingIndex >= 0) {
-        list[existingIndex].name = name;
-        list[existingIndex].lastLogin = now;
-      } else {
-        list.push({ name, code, lastLogin: now });
-      }
-      localStorage.setItem(REGISTRY_KEY, JSON.stringify(list));
-      renderRegistry();
-    }
-
-    function formatRegistryText() {
-      const list = getRegistry();
-      if (list.length === 0) {
-        return "لا توجد بيانات مسجلة بعد.";
-      }
-      return list
-        .map((item, idx) => `${idx + 1}. الاسم: ${item.name} | الكود: ${item.code} | آخر دخول: ${item.lastLogin}`)
-        .join("\n");
-    }
-
-    function renderRegistry() {
-      registryBox.textContent = formatRegistryText();
-    }
-
-    function showPlatform(name, code) {
-      localStorage.setItem("studentName", name);
-      localStorage.setItem("studentCode", code);
-      localStorage.setItem("studentAccess", "granted");
-
-      gateSection.classList.add("hidden");
-      platformSection.classList.remove("hidden");
-      studentBadge.textContent = "أهلاً، " + name;
-      welcomeSubtext.textContent = `إعداد وتقديم: عبد الرحمن مجدي (الحريف) — أهلاً بك يا ${name} (${code})`;
-      logoutBtn.classList.remove("hidden");
-      menuToggle.classList.remove("hidden");
-      renderRegistry();
-    }
-
-    function showGate() {
-      platformSection.classList.add("hidden");
-      gateSection.classList.remove("hidden");
-      studentBadge.textContent = "";
-      logoutBtn.classList.add("hidden");
-      menuToggle.classList.add("hidden");
-      mobileMenu.classList.remove("open");
-      menuToggle.setAttribute("aria-expanded", "false");
-
-      const savedName = localStorage.getItem("studentName");
-      const savedCode = localStorage.getItem("studentCode");
-
-      if (savedName && savedCode && isValidCode(savedCode)) {
-        quickLoginText.textContent = `تم العثور على بيانات محفوظة للطالب: ${savedName} (${normalizeCode(savedCode)})`;
-        quickLoginBox.classList.remove("hidden");
-        studentNameInput.value = savedName;
-        studentCodeInput.value = normalizeCode(savedCode);
-      } else {
-        quickLoginBox.classList.add("hidden");
-      }
-    }
-
-    function initApp() {
-      renderContactInfo();
-      renderRegistry();
-      const savedName = localStorage.getItem("studentName");
-      const savedCode = localStorage.getItem("studentCode");
-      const isLoggedIn = localStorage.getItem("studentAccess") === "granted";
-
-      if (savedName && savedCode && isValidCode(savedCode) && isLoggedIn) {
-        showPlatform(savedName, normalizeCode(savedCode));
-      } else {
-        showGate();
-      }
-    }
-
-    continueBtn.addEventListener("click", function () {
-      const savedName = localStorage.getItem("studentName");
-      const savedCode = localStorage.getItem("studentCode");
-      if (savedName && savedCode && isValidCode(savedCode)) {
-        const cleanCode = normalizeCode(savedCode);
-        saveToRegistry(savedName, cleanCode);
-        showPlatform(savedName, cleanCode);
-      }
-    });
-
-    switchAccountBtn.addEventListener("click", function () {
+    function renderHomeState() {
+      // مسح أي بيانات قديمة مخزنة بشكل دائم
+      localStorage.removeItem("studentAccess");
       localStorage.removeItem("studentName");
       localStorage.removeItem("studentCode");
-      localStorage.removeItem("studentAccess");
-      studentNameInput.value = "";
-      studentCodeInput.value = "";
-      loginMsg.textContent = "";
-      quickLoginBox.classList.add("hidden");
-      studentNameInput.focus();
-    });
+
+      const name = sessionStorage.getItem("studentName");
+      const code = sessionStorage.getItem("studentCode");
+      const access = sessionStorage.getItem("studentAccess") === "granted";
+
+      if (name && code && isValidCode(code) && access) {
+        loginSection.classList.add("hidden");
+        coursesSection.classList.remove("hidden");
+        logoutBtn.classList.remove("hidden");
+        menuToggle.classList.remove("hidden");
+        studentBadge.textContent = "أهلاً، " + name;
+        welcomeText.textContent = "إعداد وتقديم: عبد الرحمن مجدي (الحريف) — أهلاً بك يا " + name + " (" + code + ")";
+      } else {
+        loginSection.classList.remove("hidden");
+        coursesSection.classList.add("hidden");
+        logoutBtn.classList.add("hidden");
+        menuToggle.classList.add("hidden");
+        studentBadge.textContent = "";
+      }
+    }
 
     loginForm.addEventListener("submit", function (e) {
       e.preventDefault();
       const name = studentNameInput.value.trim();
-      const rawCode = studentCodeInput.value.trim();
+      const code = studentCodeInput.value.trim().toUpperCase();
 
-      if (name.length < 2) {
+      if (!name) {
         loginMsg.className = "msg error";
-        loginMsg.textContent = "من فضلك اكتب اسم الطالب بشكل صحيح.";
-        studentNameInput.focus();
+        loginMsg.textContent = "من فضلك أدخل اسم الطالب.";
         return;
       }
 
-      if (!isValidCode(rawCode)) {
+      if (!isValidCode(code)) {
         loginMsg.className = "msg error";
-        loginMsg.textContent = "كود الطالب غير صحيح. استخدم صيغة مثل EDU101 أو ST-205.";
-        studentCodeInput.focus();
+        loginMsg.textContent = "كود الطالب غير صحيح. استخدم صيغة مثل EDU101.";
         return;
       }
 
-      const cleanCode = normalizeCode(rawCode);
-      loginMsg.className = "msg info";
-      loginMsg.textContent = "تم التحقق بنجاح، جاري فتح المنصة...";
-      saveToRegistry(name, cleanCode);
-      showPlatform(name, cleanCode);
+      sessionStorage.setItem("studentName", name);
+      sessionStorage.setItem("studentCode", code);
+      sessionStorage.setItem("studentAccess", "granted");
+      loginMsg.textContent = "";
+      renderHomeState();
     });
 
     logoutBtn.addEventListener("click", function () {
-      localStorage.removeItem("studentAccess");
-      loginMsg.textContent = "";
-      showGate();
+      sessionStorage.removeItem("studentName");
+      sessionStorage.removeItem("studentCode");
+      sessionStorage.removeItem("studentAccess");
+      sessionStorage.removeItem("eduPlatformAdminUnlocked");
+      renderHomeState();
     });
 
     menuToggle.addEventListener("click", function () {
@@ -356,31 +199,7 @@
       menuToggle.setAttribute("aria-expanded", String(isOpen));
     });
 
-    copyRegistryBtn.addEventListener("click", async function () {
-      try {
-        await navigator.clipboard.writeText(formatRegistryText());
-        registryMsg.className = "msg info";
-        registryMsg.textContent = "تم نسخ سجل الطلاب.";
-      } catch (e) {
-        registryMsg.className = "msg error";
-        registryMsg.textContent = "تعذر النسخ التلقائي.";
-      }
-    });
-
-    downloadRegistryBtn.addEventListener("click", function () {
-      const content = formatRegistryText();
-      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "students-registry.txt";
-      a.click();
-      URL.revokeObjectURL(url);
-      registryMsg.className = "msg info";
-      registryMsg.textContent = "تم تحميل ملف السجل TXT.";
-    });
-
-    initApp();
+    renderHomeState();
   </script>
 
 </body>
