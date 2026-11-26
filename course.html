@@ -31,7 +31,9 @@
 
     .navbar,
     .container,
-    .owner-footer {
+    .owner-footer,
+    .side-drawer,
+    .drawer-backdrop {
       position: relative;
       z-index: 1;
     }
@@ -45,6 +47,7 @@
       justify-content: space-between;
       gap: 10px;
       flex-wrap: wrap;
+      z-index: 20;
     }
 
     .nav-actions {
@@ -225,12 +228,38 @@
       color: #1e3a8a;
     }
 
-    .admin-panel {
-      background-color: #eff6ff;
-      border: 2px solid #2563eb;
-      border-radius: 12px;
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      z-index: 40;
+    }
+
+    .side-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(460px, 94vw);
+      height: 100vh;
+      background: #eff6ff;
+      border-left: 2px solid #2563eb;
+      box-shadow: -8px 0 24px rgba(15, 23, 42, 0.18);
       padding: 16px;
-      margin-top: 16px;
+      overflow-y: auto;
+      z-index: 50;
+      transition: transform 0.25s ease;
+    }
+
+    .side-drawer.closed {
+      transform: translateX(100%);
+    }
+
+    .admin-subbox {
+      background-color: #ffffff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 14px;
     }
 
     .admin-actions {
@@ -249,12 +278,12 @@
       width: 100%;
       border-collapse: collapse;
       background-color: #ffffff;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
     }
 
     th, td {
       border: 1px solid #bfdbfe;
-      padding: 8px 10px;
+      padding: 7px 9px;
       text-align: right;
     }
 
@@ -301,56 +330,62 @@
     <div class="nav-actions">
       <span id="studentBadge"></span>
       <a href="index.html" class="btn btn-secondary btn-sm">المواد الدراسية</a>
-      <button type="button" id="openAdminBtn" class="btn btn-secondary btn-sm">لوحة التحكم</button>
+      <button type="button" id="openAdminBtn" class="btn btn-secondary btn-sm">القائمة الجانبية للمسجلين</button>
       <button type="button" id="logoutBtn" class="btn btn-danger btn-sm hidden">تسجيل خروج</button>
     </div>
   </header>
 
-  <main class="container">
+  <div id="drawerBackdrop" class="drawer-backdrop hidden"></div>
+
+  <aside id="sideDrawer" class="side-drawer closed" aria-label="قائمة الطلاب المسجلين والتحكم">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+      <h3 style="margin:0;">الطلاب المسجلون والتحكم</h3>
+      <button type="button" id="closeDrawerBtn" class="btn btn-danger btn-sm">إغلاق</button>
+    </div>
+
     <!-- نافذة كود لوحة التحكم -->
-    <section id="adminAuthSection" class="card admin-panel hidden">
-      <h3>دخول لوحة التحكم</h3>
+    <div id="adminAuthSection" class="admin-subbox">
+      <h4>دخول لوحة التحكم</h4>
       <label for="adminCodeInput">أدخل كود الأدمن</label>
       <input type="password" id="adminCodeInput" placeholder="اكتب كود التحكم">
       <div class="admin-actions">
         <button type="button" id="verifyAdminBtn" class="btn btn-sm">فتح لوحة التحكم</button>
-        <button type="button" id="closeAdminAuthBtn" class="btn btn-secondary btn-sm">إلغاء</button>
       </div>
       <div id="adminAuthMsg" class="msg"></div>
-    </section>
+    </div>
 
-    <!-- لوحة التحكم وسجل الطلاب -->
-    <section id="adminDashboardSection" class="card admin-panel hidden">
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-        <h3>لوحة التحكم — سجل الطلاب</h3>
-        <button type="button" id="lockAdminBtn" class="btn btn-danger btn-sm">إغلاق لوحة التحكم</button>
+    <!-- سجل الطلاب المسجلين -->
+    <div id="adminDashboardSection" class="hidden">
+      <div class="admin-subbox">
+        <h4>الطلاب المسجلون في المنصة</h4>
+        <p id="studentsCountText" style="margin:6px 0 0; color:#1e3a8a;"></p>
+        <div class="admin-actions">
+          <button type="button" id="exportCodesBtn" class="btn btn-secondary btn-sm">تصدير 20,000 كود TXT</button>
+          <button type="button" id="exportLogBtn" class="btn btn-sm">تصدير السجل JSON</button>
+          <button type="button" id="clearLogBtn" class="btn btn-danger btn-sm">مسح السجل</button>
+          <button type="button" id="lockAdminBtn" class="btn btn-danger btn-sm">قفل اللوحة</button>
+        </div>
+        <div id="adminDashboardMsg" class="msg"></div>
+        <div class="log-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>اسم الطالب</th>
+                <th>كود الطالب</th>
+                <th>رقم الهاتف</th>
+                <th>العنوان</th>
+                <th>وقت الدخول</th>
+              </tr>
+            </thead>
+            <tbody id="studentsLogBody"></tbody>
+          </table>
+        </div>
       </div>
-      <p id="studentsCountText" style="margin:8px 0 0; color:#1e3a8a;"></p>
+    </div>
+  </aside>
 
-      <div class="admin-actions">
-        <button type="button" id="exportCodesBtn" class="btn btn-secondary btn-sm">تصدير 20,000 كود TXT</button>
-        <button type="button" id="exportLogBtn" class="btn btn-sm">تصدير سجل الطلاب JSON</button>
-        <button type="button" id="clearLogBtn" class="btn btn-danger btn-sm">مسح سجل الطلاب</button>
-      </div>
-      <div id="adminDashboardMsg" class="msg"></div>
-
-      <div class="log-table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>اسم الطالب</th>
-              <th>كود الطالب</th>
-              <th>رقم الهاتف</th>
-              <th>العنوان</th>
-              <th>وقت الدخول</th>
-            </tr>
-          </thead>
-          <tbody id="studentsLogBody"></tbody>
-        </table>
-      </div>
-    </section>
-
+  <main class="container">
     <!-- تنبيه عدم وجود جلسة صالحة -->
     <section id="unauthorizedSection" class="card hidden">
       <h2>تنبيه الدخول</h2>
@@ -470,16 +505,12 @@
       return Boolean(activeTemp && clean === activeTemp);
     }
 
-    function parseYouTubeVideo(urlOrId) {
+    function parseYouTubeEmbedUrl(urlOrId) {
       const raw = (urlOrId || "").trim();
       if (!raw) return null;
 
       if (/^[A-Za-z0-9_-]{11}$/.test(raw)) {
-        return {
-          id: raw,
-          embedUrl: "https://www.youtube.com/embed/" + raw,
-          watchUrl: "https://www.youtube.com/watch?v=" + raw
-        };
+        return "https://www.youtube-nocookie.com/embed/" + raw + "?rel=0&modestbranding=1";
       }
 
       try {
@@ -504,11 +535,7 @@
         videoId = videoId.split("?")[0].split("&")[0];
         if (!/^[A-Za-z0-9_-]{11}$/.test(videoId)) return null;
 
-        return {
-          id: videoId,
-          embedUrl: "https://www.youtube.com/embed/" + videoId,
-          watchUrl: "https://www.youtube.com/watch?v=" + videoId
-        };
+        return "https://www.youtube-nocookie.com/embed/" + videoId + "?rel=0&modestbranding=1";
       } catch (e) {
         return null;
       }
@@ -519,9 +546,9 @@
         title: "مبادئ القانون",
         description: "مدخل إلى القاعدة القانونية، مصادر القانون، وتطبيقاته الأساسية في الحياة العملية.",
         lessons: [
-          { title: "الدرس الأول: مفهوم القاعدة القانونية وخصائصها", summary: "الفرق بين القاعدة القانونية والقواعد الأخلاقية والاجتماعية.", youtubeUrl: "" },
-          { title: "الدرس الثاني: مصادر القانون وتدرجها", summary: "التشريع، العرف، ومبادئ الشريعة والقانون.", youtubeUrl: "" },
-          { title: "الدرس الثالث: الأشخاص وحقوقهم والتزاماتهم", summary: "الشخص الطبيعي والشخص المعنوي وأهلية الأداء والوجوب.", youtubeUrl: "" }
+          { title: "الدرس الأول: مفهوم القاعدة القانونية وخصائصها", summary: "الفرق بين القاعدة القانونية والقواعد الأخلاقية والاجتماعية.", youtubeUrls: [] },
+          { title: "الدرس الثاني: مصادر القانون وتدرجها", summary: "التشريع، العرف، ومبادئ الشريعة والقانون.", youtubeUrls: [] },
+          { title: "الدرس الثالث: الأشخاص وحقوقهم والتزاماتهم", summary: "الشخص الطبيعي والشخص المعنوي وأهلية الأداء والوجوب.", youtubeUrls: [] }
         ],
         books: [],
         quizzes: []
@@ -530,9 +557,9 @@
         title: "مبادئ الاقتصاد",
         description: "فهم المشكلة الاقتصادية، ندرة الموارد، وآليات السوق والعرض والطلب.",
         lessons: [
-          { title: "الدرس الأول: المشكلة الاقتصادية والندرة", summary: "اختيار البدائل وتكلفة الفرصة البديلة وإنتاجية الموارد.", youtubeUrl: "" },
-          { title: "الدرس الثاني: الطلب والعرض وتوازن السوق", summary: "العلاقة بين السعر والكمية المطلوبة والمعروضة.", youtubeUrl: "" },
-          { title: "الدرس الثالث: النشاط الاقتصادي والسياسات العامة", summary: "الناتج المحلي، التضخم، ودور الدولة في استقرار السوق.", youtubeUrl: "" }
+          { title: "الدرس الأول: المشكلة الاقتصادية والندرة", summary: "اختيار البدائل وتكلفة الفرصة البديلة وإنتاجية الموارد.", youtubeUrls: [] },
+          { title: "الدرس الثاني: الطلب والعرض وتوازن السوق", summary: "العلاقة بين السعر والكمية المطلوبة والمعروضة.", youtubeUrls: [] },
+          { title: "الدرس الثالث: النشاط الاقتصادي والسياسات العامة", summary: "الناتج المحلي، التضخم، ودور الدولة في استقرار السوق.", youtubeUrls: [] }
         ],
         books: [],
         quizzes: []
@@ -541,9 +568,9 @@
         title: "لغة أجنبية",
         description: "تنمية الحصيلة اللغوية، القواعد الأساسية، وفهم النصوص والتواصل.",
         lessons: [
-          { title: "الدرس الأول: المفردات الأساسية والمصطلحات", summary: "الكلمات الأكثر استخداماً في القراءة والمحادثة اليومية.", youtubeUrl: "" },
-          { title: "الدرس الثاني: الأزمنة وتركيب الجملة", summary: "بناء الجمل الصحيحة في المضارع والماضي والمستقبل.", youtubeUrl: "" },
-          { title: "الدرس الثالث: الفهم القرائي والكتابة المختصرة", summary: "استخراج الفكرة الرئيسية وصياغة فقرات واضحة.", youtubeUrl: "" }
+          { title: "الدرس الأول: المفردات الأساسية والمصطلحات", summary: "الكلمات الأكثر استخداماً في القراءة والمحادثة اليومية.", youtubeUrls: [] },
+          { title: "الدرس الثاني: الأزمنة وتركيب الجملة", summary: "بناء الجمل الصحيحة في المضارع والماضي والمستقبل.", youtubeUrls: [] },
+          { title: "الدرس الثالث: الفهم القرائي والكتابة المختصرة", summary: "استخراج الفكرة الرئيسية وصياغة فقرات واضحة.", youtubeUrls: [] }
         ],
         books: [],
         quizzes: []
@@ -552,9 +579,9 @@
         title: "مبادئ المحاسبة المالية",
         description: "أسس الدورة المحاسبية، قيود اليومية، إعداد ميزان المراجعة والقوائم المالية.",
         lessons: [
-          { title: "الدرس الأول: المعادلة المحاسبية والحسابات", summary: "الأصول = الخصوم + حقوق الملكية، وتأثير العمليات المالية.", youtubeUrl: "" },
-          { title: "الدرس الثاني: دفتر اليومية ودفتر الأستاذ", summary: "تسجيل القيود المحاسبية والترحيل إلى الحسابات المختصة.", youtubeUrl: "" },
-          { title: "الدرس الثالث: ميزان المراجعة والقوائم الختامية", summary: "التحقق من التوازن وإعداد قائمة الدخل والمركز المالي.", youtubeUrl: "" }
+          { title: "الدرس الأول: المعادلة المحاسبية والحسابات", summary: "الأصول = الخصوم + حقوق الملكية، وتأثير العمليات المالية.", youtubeUrls: [] },
+          { title: "الدرس الثاني: دفتر اليومية ودفتر الأستاذ", summary: "تسجيل القيود المحاسبية والترحيل إلى الحسابات المختصة.", youtubeUrls: [] },
+          { title: "الدرس الثالث: ميزان المراجعة والقوائم الختامية", summary: "التحقق من التوازن وإعداد قائمة الدخل والمركز المالي.", youtubeUrls: [] }
         ],
         books: [],
         quizzes: []
@@ -563,14 +590,26 @@
         title: "مبادئ إدارة الأعمال",
         description: "دراسة وظائف الإدارة الحديثة واتخاذ القرار وتنظيم فرق العمل وتحقيق الأهداف.",
         lessons: [
-          { title: "الدرس الأول: التخطيط وتحديد الأهداف", summary: "وضع الخطط قصيرة وطويلة المدى وتحديد الأولويات.", youtubeUrl: "" },
-          { title: "الدرس الثاني: التنظيم وتوزيع المسؤوليات", summary: "الهياكل التنظيمية وتفويض الصلاحيات وتنسيق الأقسام.", youtubeUrl: "" },
-          { title: "الدرس الثالث: القيادة والرقابة وتحسين الأداء", summary: "تحفيز العاملين وقياس النتائج ومعالجة الانحرافات.", youtubeUrl: "" }
+          { title: "الدرس الأول: التخطيط وتحديد الأهداف", summary: "وضع الخطط قصيرة وطويلة المدى وتحديد الأولويات.", youtubeUrls: [] },
+          { title: "الدرس الثاني: التنظيم وتوزيع المسؤوليات", summary: "الهياكل التنظيمية وتفويض الصلاحيات وتنسيق الأقسام.", youtubeUrls: [] },
+          { title: "الدرس الثالث: القيادة والرقابة وتحسين الأداء", summary: "تحفيز العاملين وقياس النتائج ومعالجة الانحرافات.", youtubeUrls: [] }
         ],
         books: [],
         quizzes: []
       }
     };
+
+    function normalizeLesson(lesson) {
+      const urls = Array.isArray(lesson.youtubeUrls) ? [...lesson.youtubeUrls] : [];
+      if (lesson.youtubeUrl && !urls.includes(lesson.youtubeUrl)) {
+        urls.unshift(lesson.youtubeUrl);
+      }
+      return {
+        title: lesson.title || "درس",
+        summary: lesson.summary || "",
+        youtubeUrls: urls
+      };
+    }
 
     function normalizeCoursesData(rawCourses) {
       const base = JSON.parse(JSON.stringify(DEFAULT_COURSES_DATA));
@@ -581,7 +620,9 @@
         if (incoming && typeof incoming === "object") {
           if (incoming.title) base[courseId].title = incoming.title;
           if (incoming.description) base[courseId].description = incoming.description;
-          if (Array.isArray(incoming.lessons)) base[courseId].lessons = incoming.lessons;
+          if (Array.isArray(incoming.lessons)) {
+            base[courseId].lessons = incoming.lessons.map(normalizeLesson);
+          }
           if (Array.isArray(incoming.books)) base[courseId].books = incoming.books;
           if (Array.isArray(incoming.quizzes)) base[courseId].quizzes = incoming.quizzes;
         }
@@ -613,10 +654,13 @@
     const noteMsg = document.getElementById("noteMsg");
 
     const openAdminBtn = document.getElementById("openAdminBtn");
+    const closeDrawerBtn = document.getElementById("closeDrawerBtn");
+    const sideDrawer = document.getElementById("sideDrawer");
+    const drawerBackdrop = document.getElementById("drawerBackdrop");
+
     const adminAuthSection = document.getElementById("adminAuthSection");
     const adminCodeInput = document.getElementById("adminCodeInput");
     const verifyAdminBtn = document.getElementById("verifyAdminBtn");
-    const closeAdminAuthBtn = document.getElementById("closeAdminAuthBtn");
     const adminAuthMsg = document.getElementById("adminAuthMsg");
 
     const adminDashboardSection = document.getElementById("adminDashboardSection");
@@ -627,6 +671,18 @@
     const exportLogBtn = document.getElementById("exportLogBtn");
     const clearLogBtn = document.getElementById("clearLogBtn");
     const adminDashboardMsg = document.getElementById("adminDashboardMsg");
+
+    function openDrawer() {
+      drawerBackdrop.classList.remove("hidden");
+      sideDrawer.classList.remove("closed");
+      refreshAdminView();
+    }
+
+    function closeDrawer() {
+      sideDrawer.classList.add("closed");
+      drawerBackdrop.classList.add("hidden");
+      adminAuthMsg.textContent = "";
+    }
 
     async function loadCloudState() {
       try {
@@ -684,7 +740,7 @@
     function renderStudentsLog() {
       const list = loadStudentsLog();
       studentsCountText.textContent =
-        "إجمالي تسجيلات الدخول المسجلة: " + list.length + " | عدد الأكواد المفعّلة: " + ALLOWED_CODES_LIST.length;
+        "إجمالي المسجلين: " + list.length + " | الأكواد المفعّلة: " + ALLOWED_CODES_LIST.length;
       studentsLogBody.innerHTML = "";
 
       if (list.length === 0) {
@@ -736,6 +792,7 @@
         adminDashboardSection.classList.remove("hidden");
         renderStudentsLog();
       } else {
+        adminAuthSection.classList.remove("hidden");
         adminDashboardSection.classList.add("hidden");
       }
     }
@@ -791,50 +848,50 @@
 
       lessonsList.innerHTML = "";
       course.lessons.forEach((lesson) => {
+        const normalized = normalizeLesson(lesson);
         const li = document.createElement("li");
         li.className = "lesson-item";
 
         const strong = document.createElement("strong");
-        strong.textContent = lesson.title;
+        strong.textContent = normalized.title;
 
         const p = document.createElement("p");
         p.style.margin = "0";
-        p.textContent = lesson.summary;
+        p.textContent = normalized.summary;
 
         li.appendChild(strong);
         li.appendChild(p);
 
-        const yt = parseYouTubeVideo(lesson.youtubeUrl);
-        if (yt) {
-          const box = document.createElement("div");
-          box.className = "video-box";
+        const validEmbeds = normalized.youtubeUrls
+          .map((item) => parseYouTubeEmbedUrl(item))
+          .filter(Boolean);
 
-          const iframe = document.createElement("iframe");
-          iframe.src = yt.embedUrl;
-          iframe.title = lesson.title;
-          iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-          iframe.allowFullscreen = true;
-          iframe.loading = "lazy";
+        if (validEmbeds.length > 0) {
+          validEmbeds.forEach((embedUrl, vidIdx) => {
+            const vidLabel = document.createElement("div");
+            vidLabel.style.marginTop = "10px";
+            vidLabel.style.fontWeight = "bold";
+            vidLabel.style.color = "#1e3a8a";
+            vidLabel.textContent = "فيديو الدرس (" + (vidIdx + 1) + ") — تشغيل داخل المنصة";
+            li.appendChild(vidLabel);
 
-          box.appendChild(iframe);
-          li.appendChild(box);
+            const box = document.createElement("div");
+            box.className = "video-box";
 
-          const actions = document.createElement("div");
-          actions.className = "video-actions";
+            const iframe = document.createElement("iframe");
+            iframe.src = embedUrl;
+            iframe.title = normalized.title + " - فيديو " + (vidIdx + 1);
+            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+            iframe.allowFullscreen = true;
+            iframe.loading = "lazy";
 
-          const watchLink = document.createElement("a");
-          watchLink.href = yt.watchUrl;
-          watchLink.target = "_blank";
-          watchLink.rel = "noopener noreferrer";
-          watchLink.className = "btn btn-sm";
-          watchLink.textContent = "فتح الفيديو على يوتيوب";
-
-          actions.appendChild(watchLink);
-          li.appendChild(actions);
+            box.appendChild(iframe);
+            li.appendChild(box);
+          });
         } else {
           const missing = document.createElement("div");
           missing.className = "video-missing";
-          missing.textContent = "لم يتم إضافة رابط فيديو يوتيوب لهذا الدرس بعد.";
+          missing.textContent = "لم يتم إضافة فيديوهات لهذا الدرس بعد.";
           li.appendChild(missing);
         }
 
@@ -896,59 +953,113 @@
         emptyQuiz.textContent = "لا توجد اختبارات مضافة لهذه المادة حتى الآن.";
         quizzesContainer.appendChild(emptyQuiz);
       } else {
+        const formBox = document.createElement("div");
+        const questionRefs = [];
+
         quizzes.forEach((quiz, qIdx) => {
+          const isEssay = quiz.type === "essay";
+          const points = Math.max(1, Number(quiz.points) || 5);
           const box = document.createElement("div");
           box.className = "lesson-item";
 
+          const badgeText = isEssay ? " [مقالي — " + points + " درجات]" : " [بابل شيت — " + points + " درجات]";
           const qTitle = document.createElement("strong");
-          qTitle.textContent = (quiz.title || "اختبار") + " — " + quiz.question;
+          qTitle.textContent = (qIdx + 1) + "- " + (quiz.title || "سؤال") + badgeText + ": " + quiz.question;
           box.appendChild(qTitle);
 
-          const groupName = "quiz_" + courseId + "_" + qIdx;
-          (quiz.options || []).forEach((optText, oIdx) => {
-            const optLabel = document.createElement("label");
-            optLabel.style.fontWeight = "normal";
-            optLabel.style.cursor = "pointer";
+          if (!isEssay) {
+            const groupName = "quiz_" + courseId + "_" + qIdx;
+            (quiz.options || []).forEach((optText, oIdx) => {
+              const optLabel = document.createElement("label");
+              optLabel.style.fontWeight = "normal";
+              optLabel.style.cursor = "pointer";
 
-            const radio = document.createElement("input");
-            radio.type = "radio";
-            radio.name = groupName;
-            radio.value = String(oIdx);
-            radio.style.width = "auto";
-            radio.style.marginLeft = "8px";
+              const radio = document.createElement("input");
+              radio.type = "radio";
+              radio.name = groupName;
+              radio.value = String(oIdx);
+              radio.style.width = "auto";
+              radio.style.marginLeft = "8px";
 
-            optLabel.appendChild(radio);
-            optLabel.appendChild(document.createTextNode(optText));
-            box.appendChild(optLabel);
-          });
+              optLabel.appendChild(radio);
+              optLabel.appendChild(document.createTextNode(optText));
+              box.appendChild(optLabel);
+            });
 
-          const checkBtn = document.createElement("button");
-          checkBtn.type = "button";
-          checkBtn.className = "btn btn-sm";
-          checkBtn.style.marginTop = "10px";
-          checkBtn.textContent = "تحقق من الإجابة";
+            const itemFeedback = document.createElement("div");
+            itemFeedback.className = "msg";
+            box.appendChild(itemFeedback);
 
-          const resultMsg = document.createElement("div");
-          resultMsg.className = "msg";
+            questionRefs.push({ type: "mcq", quiz, groupName, points, itemFeedback });
+          } else {
+            const essayArea = document.createElement("textarea");
+            essayArea.placeholder = "اكتب إجابتك المقالية هنا...";
+            essayArea.style.marginTop = "8px";
+            box.appendChild(essayArea);
 
-          checkBtn.addEventListener("click", function () {
-            const selected = box.querySelector(`input[name="${groupName}"]:checked`);
-            if (!selected) {
-              resultMsg.className = "msg error";
-              resultMsg.textContent = "اختر إجابة أولاً.";
-              return;
-            }
-            const isCorrect = Number(selected.value) === Number(quiz.correctIndex);
-            resultMsg.className = isCorrect ? "msg info" : "msg error";
-            resultMsg.textContent = isCorrect
-              ? "إجابة صحيحة! أحسنت."
-              : "إجابة غير صحيحة، راجع الدرس وحاول مرة أخرى.";
-          });
+            const itemFeedback = document.createElement("div");
+            itemFeedback.className = "msg";
+            box.appendChild(itemFeedback);
 
-          box.appendChild(checkBtn);
-          box.appendChild(resultMsg);
-          quizzesContainer.appendChild(box);
+            questionRefs.push({ type: "essay", quiz, essayArea, points, itemFeedback });
+          }
+
+          formBox.appendChild(box);
         });
+
+        const submitExamBtn = document.createElement("button");
+        submitExamBtn.type = "button";
+        submitExamBtn.className = "btn btn-sm";
+        submitExamBtn.textContent = "تسليم الاختبار وحساب النتيجة";
+
+        const summaryMsg = document.createElement("div");
+        summaryMsg.className = "msg info";
+
+        submitExamBtn.addEventListener("click", function () {
+          let mcqEarned = 0;
+          let mcqTotal = 0;
+          let essayTotal = 0;
+          let answeredEssayCount = 0;
+
+          questionRefs.forEach((ref) => {
+            if (ref.type === "mcq") {
+              mcqTotal += ref.points;
+              const selected = formBox.querySelector(`input[name="${ref.groupName}"]:checked`);
+              if (selected && Number(selected.value) === Number(ref.quiz.correctIndex)) {
+                mcqEarned += ref.points;
+                ref.itemFeedback.className = "msg info";
+                ref.itemFeedback.textContent = "إجابة صحيحة (+" + ref.points + " درجات).";
+              } else {
+                const correctText = (ref.quiz.options && ref.quiz.options[ref.quiz.correctIndex]) || "";
+                ref.itemFeedback.className = "msg error";
+                ref.itemFeedback.textContent =
+                  "إجابة غير صحيحة (0 / " + ref.points + ")" +
+                  (correctText ? " — الإجابة الصحيحة: " + correctText : "");
+              }
+            } else {
+              essayTotal += ref.points;
+              const studentAnswer = ref.essayArea.value.trim();
+              if (studentAnswer) answeredEssayCount += 1;
+
+              ref.itemFeedback.className = "msg info";
+              ref.itemFeedback.textContent =
+                (studentAnswer ? "تم تسجيل إجابتك المقالية" : "لم تكتب إجابة مقالية") +
+                " (درجة السؤال: " + ref.points + ")" +
+                (ref.quiz.modelAnswer ? " | النموذج الاسترشادي: " + ref.quiz.modelAnswer : "");
+            }
+          });
+
+          const totalMarks = mcqTotal + essayTotal;
+          summaryMsg.className = "msg info";
+          summaryMsg.textContent =
+            "درجة البابل شيت التلقائية: " + mcqEarned + " من " + mcqTotal +
+            " | الأسئلة المقالية المجاب عنها: " + answeredEssayCount + " (من " + essayTotal + " درجات)" +
+            " | إجمالي درجات الاختبار: " + totalMarks;
+        });
+
+        formBox.appendChild(submitExamBtn);
+        formBox.appendChild(summaryMsg);
+        quizzesContainer.appendChild(formBox);
       }
 
       const savedNote = sessionStorage.getItem("courseNote_" + courseId) || "";
@@ -973,26 +1084,13 @@
       noteMsg.textContent = "تم مسح ملاحظة الجلسة.";
     });
 
-    openAdminBtn.addEventListener("click", function () {
-      if (sessionStorage.getItem(ADMIN_SESSION_KEY) === "true") {
-        refreshAdminView();
-        return;
-      }
-      adminAuthSection.classList.remove("hidden");
-      adminAuthMsg.textContent = "";
-      adminCodeInput.value = "";
-      adminCodeInput.focus();
-    });
-
-    closeAdminAuthBtn.addEventListener("click", function () {
-      adminAuthSection.classList.add("hidden");
-      adminAuthMsg.textContent = "";
-    });
+    openAdminBtn.addEventListener("click", openDrawer);
+    closeDrawerBtn.addEventListener("click", closeDrawer);
+    drawerBackdrop.addEventListener("click", closeDrawer);
 
     verifyAdminBtn.addEventListener("click", function () {
       if (adminCodeInput.value.trim() === ADMIN_CODE) {
         sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
-        adminAuthSection.classList.add("hidden");
         adminAuthMsg.textContent = "";
         refreshAdminView();
       } else {
