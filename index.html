@@ -84,6 +84,7 @@
     input[type="text"],
     input[type="tel"],
     input[type="password"],
+    input[type="number"],
     input[type="file"],
     select,
     textarea {
@@ -312,13 +313,56 @@
         <label for="bookUrlInput">مسار أو رابط الملف (مثال: books/accounting.pdf أو رابط مباشر)</label>
         <input type="text" id="bookUrlInput" placeholder="books/file.pdf أو https://...">
 
-        <label for="bookFileInput">أو اختر ملفاً من جهازك للمعاينة الفورية</label>
+        <label for="bookFileInput">أو اختر ملفاً من جهازك (PDF أو مستند)</label>
         <input type="file" id="bookFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip">
 
         <div class="admin-actions">
           <button type="button" id="publishBookBtn" class="btn btn-sm">حفظ الكتاب / الملف</button>
         </div>
         <div id="bookUploadMsg" class="msg"></div>
+      </div>
+
+      <!-- 3. إنشاء ورفع اختبار اختيار من متعدد للمادة -->
+      <div class="admin-subbox">
+        <h4>إنشاء ورفع اختبار للمادة</h4>
+        <label for="quizCourseSelect">اختر المادة الدراسية</label>
+        <select id="quizCourseSelect">
+          <option value="1">مبادئ القانون</option>
+          <option value="2">مبادئ الاقتصاد</option>
+          <option value="3">لغة أجنبية</option>
+          <option value="4">مبادئ المحاسبة المالية</option>
+          <option value="5">مبادئ إدارة الأعمال</option>
+        </select>
+
+        <label for="quizTitleInput">عنوان الاختبار</label>
+        <input type="text" id="quizTitleInput" placeholder="مثال: اختبار الوحدة الأولى">
+
+        <label for="quizQuestionInput">نص السؤال</label>
+        <input type="text" id="quizQuestionInput" placeholder="اكتب السؤال هنا...">
+
+        <label for="quizOptionsInput">الاختيارات (افصل بينها بفاصلة عادية أو عربية)</label>
+        <input type="text" id="quizOptionsInput" placeholder="مثال: الاختيار الأول، الاختيار الثاني، الاختيار الثالث">
+
+        <label for="quizCorrectIndexInput">رقم الإجابة الصحيحة (يبدأ من 1)</label>
+        <input type="number" id="quizCorrectIndexInput" min="1" value="1">
+
+        <div class="admin-actions">
+          <button type="button" id="publishQuizBtn" class="btn btn-sm">حفظ ورفع الاختبار</button>
+        </div>
+        <div id="quizUploadMsg" class="msg"></div>
+      </div>
+
+      <!-- 4. إدارة الكود المؤقت -->
+      <div class="admin-subbox">
+        <h4>إدارة الكود المؤقت (Temporary Access Code)</h4>
+        <label for="tempCodeHoursInput">مدة الصلاحية بالساعات</label>
+        <input type="number" id="tempCodeHoursInput" min="1" max="720" value="24">
+
+        <div class="admin-actions">
+          <button type="button" id="generateTempCodeBtn" class="btn btn-sm">توليد وحفظ كود مؤقت</button>
+          <button type="button" id="clearTempCodeBtn" class="btn btn-danger btn-sm">إلغاء الكود المؤقت</button>
+        </div>
+        <div id="tempCodeStatus" class="msg info"></div>
       </div>
 
       <!-- سجل الطلاب -->
@@ -349,7 +393,7 @@
         <input type="text" id="studentNameInput" placeholder="اكتب اسمك بالكامل" required>
 
         <label for="studentCodeInput">كود الطالب</label>
-        <input type="text" id="studentCodeInput" placeholder="أدخل الكود المخصص لك" required>
+        <input type="text" id="studentCodeInput" placeholder="أدخل الكود المخصص لك أو الكود المؤقت" required>
 
         <label for="studentPhoneInput">رقم هاتف الطالب</label>
         <input type="tel" id="studentPhoneInput" placeholder="مثال: 01145332036" required>
@@ -412,6 +456,7 @@
     const FIREBASE_DB_URL = "https://al7ref-platform-default-rtdb.firebaseio.com";
     const SYNC_NODE = "al7ref_platform_state";
     const COURSES_CACHE_KEY = "al7refCoursesDataCache";
+    const TEMP_CODE_CACHE_KEY = "al7refTempAccessCode";
 
     const ADMIN_CODE = "M2601820";
     const ADMIN_SESSION_KEY = "eduPlatformAdminUnlocked";
@@ -452,8 +497,28 @@
     const ALLOWED_CODES_LIST = generateComplexCodes(TOTAL_CODES);
     const ALLOWED_CODES_SET = new Set(ALLOWED_CODES_LIST);
 
+    let TEMP_ACCESS_CODE = null;
+    try {
+      const cachedTemp = localStorage.getItem(TEMP_CODE_CACHE_KEY);
+      if (cachedTemp) TEMP_ACCESS_CODE = JSON.parse(cachedTemp);
+    } catch (e) {}
+
+    function getActiveTempCode() {
+      if (!TEMP_ACCESS_CODE || !TEMP_ACCESS_CODE.code || !TEMP_ACCESS_CODE.expiresAt) {
+        return null;
+      }
+      if (Date.now() > Number(TEMP_ACCESS_CODE.expiresAt)) {
+        return null;
+      }
+      return String(TEMP_ACCESS_CODE.code).trim();
+    }
+
     function isValidCode(code) {
-      return ALLOWED_CODES_SET.has((code || "").trim());
+      const clean = (code || "").trim();
+      if (!clean) return false;
+      if (ALLOWED_CODES_SET.has(clean)) return true;
+      const activeTemp = getActiveTempCode();
+      return Boolean(activeTemp && clean === activeTemp);
     }
 
     function isValidPhone(phone) {
@@ -470,7 +535,8 @@
           { title: "الدرس الثاني: مصادر القانون وتدرجها", summary: "التشريع، العرف، ومبادئ الشريعة والقانون.", youtubeUrl: "" },
           { title: "الدرس الثالث: الأشخاص وحقوقهم والتزاماتهم", summary: "الشخص الطبيعي والشخص المعنوي وأهلية الأداء والوجوب.", youtubeUrl: "" }
         ],
-        books: []
+        books: [],
+        quizzes: []
       },
       "2": {
         title: "مبادئ الاقتصاد",
@@ -480,7 +546,8 @@
           { title: "الدرس الثاني: الطلب والعرض وتوازن السوق", summary: "العلاقة بين السعر والكمية المطلوبة والمعروضة.", youtubeUrl: "" },
           { title: "الدرس الثالث: النشاط الاقتصادي والسياسات العامة", summary: "الناتج المحلي، التضخم، ودور الدولة في استقرار السوق.", youtubeUrl: "" }
         ],
-        books: []
+        books: [],
+        quizzes: []
       },
       "3": {
         title: "لغة أجنبية",
@@ -490,7 +557,8 @@
           { title: "الدرس الثاني: الأزمنة وتركيب الجملة", summary: "بناء الجمل الصحيحة في المضارع والماضي والمستقبل.", youtubeUrl: "" },
           { title: "الدرس الثالث: الفهم القرائي والكتابة المختصرة", summary: "استخراج الفكرة الرئيسية وصياغة فقرات واضحة.", youtubeUrl: "" }
         ],
-        books: []
+        books: [],
+        quizzes: []
       },
       "4": {
         title: "مبادئ المحاسبة المالية",
@@ -500,7 +568,8 @@
           { title: "الدرس الثاني: دفتر اليومية ودفتر الأستاذ", summary: "تسجيل القيود المحاسبية والترحيل إلى الحسابات المختصة.", youtubeUrl: "" },
           { title: "الدرس الثالث: ميزان المراجعة والقوائم الختامية", summary: "التحقق من التوازن وإعداد قائمة الدخل والمركز المالي.", youtubeUrl: "" }
         ],
-        books: []
+        books: [],
+        quizzes: []
       },
       "5": {
         title: "مبادئ إدارة الأعمال",
@@ -510,7 +579,8 @@
           { title: "الدرس الثاني: التنظيم وتوزيع المسؤوليات", summary: "الهياكل التنظيمية وتفويض الصلاحيات وتنسيق الأقسام.", youtubeUrl: "" },
           { title: "الدرس الثالث: القيادة والرقابة وتحسين الأداء", summary: "تحفيز العاملين وقياس النتائج ومعالجة الانحرافات.", youtubeUrl: "" }
         ],
-        books: []
+        books: [],
+        quizzes: []
       }
     };
 
@@ -529,6 +599,7 @@
           if (incoming.description) base[courseId].description = incoming.description;
           if (Array.isArray(incoming.lessons)) base[courseId].lessons = incoming.lessons;
           if (Array.isArray(incoming.books)) base[courseId].books = incoming.books;
+          if (Array.isArray(incoming.quizzes)) base[courseId].quizzes = incoming.quizzes;
         }
       });
 
@@ -583,6 +654,19 @@
     const publishBookBtn = document.getElementById("publishBookBtn");
     const bookUploadMsg = document.getElementById("bookUploadMsg");
 
+    const quizCourseSelect = document.getElementById("quizCourseSelect");
+    const quizTitleInput = document.getElementById("quizTitleInput");
+    const quizQuestionInput = document.getElementById("quizQuestionInput");
+    const quizOptionsInput = document.getElementById("quizOptionsInput");
+    const quizCorrectIndexInput = document.getElementById("quizCorrectIndexInput");
+    const publishQuizBtn = document.getElementById("publishQuizBtn");
+    const quizUploadMsg = document.getElementById("quizUploadMsg");
+
+    const tempCodeHoursInput = document.getElementById("tempCodeHoursInput");
+    const generateTempCodeBtn = document.getElementById("generateTempCodeBtn");
+    const clearTempCodeBtn = document.getElementById("clearTempCodeBtn");
+    const tempCodeStatus = document.getElementById("tempCodeStatus");
+
     async function loadCloudState() {
       try {
         const res = await fetch(`${FIREBASE_DB_URL}/${SYNC_NODE}.json`);
@@ -634,6 +718,27 @@
       COURSES_DATA = normalizeCoursesData(COURSES_DATA);
       localStorage.setItem(COURSES_CACHE_KEY, JSON.stringify(COURSES_DATA));
       return await saveCloudState({ coursesData: COURSES_DATA });
+    }
+
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderTempCodeStatus() {
+      const activeTemp = getActiveTempCode();
+      if (activeTemp) {
+        const expDate = new Date(Number(TEMP_ACCESS_CODE.expiresAt)).toLocaleString("ar-EG");
+        tempCodeStatus.className = "msg info";
+        tempCodeStatus.textContent = "الكود المؤقت النشط: " + activeTemp + " | ينتهي في: " + expDate;
+      } else {
+        tempCodeStatus.className = "msg";
+        tempCodeStatus.textContent = "لا يوجد كود مؤقت نشط حالياً.";
+      }
     }
 
     function renderStudentsLog() {
@@ -690,6 +795,7 @@
         adminAuthSection.classList.add("hidden");
         adminDashboardSection.classList.remove("hidden");
         renderStudentsLog();
+        renderTempCodeStatus();
       } else {
         adminDashboardSection.classList.add("hidden");
       }
@@ -763,14 +869,21 @@
       const selectedFile = bookFileInput.files && bookFileInput.files[0];
 
       let finalTitle = customTitle;
-      if (!fileUrl && selectedFile) {
+      let mimeType = "";
+      let fileName = "";
+
+      if (selectedFile) {
         finalTitle = finalTitle || selectedFile.name;
-        fileUrl = URL.createObjectURL(selectedFile);
+        mimeType = selectedFile.type || "";
+        fileName = selectedFile.name;
+        if (!fileUrl) {
+          fileUrl = await readFileAsDataUrl(selectedFile);
+        }
       }
 
       if (!finalTitle || !fileUrl) {
         bookUploadMsg.className = "msg error";
-        bookUploadMsg.textContent = "أدخل اسم الكتاب ومسار/رابط الملف أو اختر ملفاً من جهازك.";
+        bookUploadMsg.textContent = "أدخل اسم الملف ومسار/رابط الملف أو اختر ملفاً من جهازك.";
         return;
       }
 
@@ -778,7 +891,8 @@
       COURSES_DATA[courseId].books.push({
         title: finalTitle,
         url: fileUrl,
-        isLocalObjectUrl: Boolean(!bookUrlInput.value.trim() && selectedFile)
+        mimeType: mimeType,
+        fileName: fileName || (finalTitle + ".pdf")
       });
 
       const saved = await persistCoursesData();
@@ -787,8 +901,70 @@
       bookFileInput.value = "";
       bookUploadMsg.className = saved ? "msg info" : "msg error";
       bookUploadMsg.textContent = saved
-        ? "تم حفظ الكتاب / الملف وإضافته للمادة بنجاح."
+        ? "تم حفظ الملف وإضافته للمادة بنجاح."
+        : "تم الحفظ محلياً؛ لو حجم الملف كبير يُفضّل رفعه داخل مجلد books في GitHub وربط مساره.";
+    });
+
+    publishQuizBtn.addEventListener("click", async function () {
+      const courseId = quizCourseSelect.value;
+      const title = quizTitleInput.value.trim() || "اختبار المادة";
+      const question = quizQuestionInput.value.trim();
+      const options = quizOptionsInput.value
+        .split(/[,،]/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+      const correctIndex = Number(quizCorrectIndexInput.value) - 1;
+
+      if (!question || options.length < 2) {
+        quizUploadMsg.className = "msg error";
+        quizUploadMsg.textContent = "اكتب نص السؤال واخترين على الأقل مفصولين بفاصلة.";
+        return;
+      }
+
+      if (correctIndex < 0 || correctIndex >= options.length) {
+        quizUploadMsg.className = "msg error";
+        quizUploadMsg.textContent = "رقم الإجابة الصحيحة خارج نطاق الاختيارات.";
+        return;
+      }
+
+      COURSES_DATA = normalizeCoursesData(COURSES_DATA);
+      COURSES_DATA[courseId].quizzes.push({
+        title: title,
+        question: question,
+        options: options,
+        correctIndex: correctIndex
+      });
+
+      const saved = await persistCoursesData();
+      quizTitleInput.value = "";
+      quizQuestionInput.value = "";
+      quizOptionsInput.value = "";
+      quizCorrectIndexInput.value = "1";
+      quizUploadMsg.className = saved ? "msg info" : "msg error";
+      quizUploadMsg.textContent = saved
+        ? "تم رفع الاختبار وحفظه في Firebase بنجاح."
         : "تم الحفظ محلياً، لكن تعذر الاتصال بـ Firebase.";
+    });
+
+    generateTempCodeBtn.addEventListener("click", async function () {
+      const hours = Math.max(1, Math.min(720, Number(tempCodeHoursInput.value) || 24));
+      const randomPart = Math.random().toString(36).substring(2, 7).toUpperCase();
+      const code = "TMP-" + randomPart + "-" + String(Math.floor(100 + Math.random() * 900));
+      const expiresAt = Date.now() + hours * 60 * 60 * 1000;
+
+      TEMP_ACCESS_CODE = { code, expiresAt };
+      localStorage.setItem(TEMP_CODE_CACHE_KEY, JSON.stringify(TEMP_ACCESS_CODE));
+      renderTempCodeStatus();
+
+      const saved = await saveCloudState({ tempAccessCode: TEMP_ACCESS_CODE });
+      tempCodeStatus.textContent += saved ? " — تمت المزامنة مع Firebase" : " — محلي فقط";
+    });
+
+    clearTempCodeBtn.addEventListener("click", async function () {
+      TEMP_ACCESS_CODE = null;
+      localStorage.removeItem(TEMP_CODE_CACHE_KEY);
+      renderTempCodeStatus();
+      await saveCloudState({ tempAccessCode: null });
     });
 
     loginForm.addEventListener("submit", function (e) {
@@ -806,7 +982,7 @@
 
       if (!isValidCode(code)) {
         loginMsg.className = "msg error";
-        loginMsg.textContent = "كود الطالب غير صحيح أو غير مسموح.";
+        loginMsg.textContent = "كود الطالب غير صحيح أو منتهي الصلاحية.";
         return;
       }
 
@@ -919,6 +1095,7 @@
 
     async function initHomeSync() {
       renderHomeState();
+      renderTempCodeStatus();
       const cloudState = await loadCloudState();
       if (cloudState && typeof cloudState === "object") {
         if (Array.isArray(cloudState.studentsLog)) {
@@ -928,7 +1105,15 @@
           COURSES_DATA = normalizeCoursesData(cloudState.coursesData);
           localStorage.setItem(COURSES_CACHE_KEY, JSON.stringify(COURSES_DATA));
         }
+        if (cloudState.tempAccessCode && typeof cloudState.tempAccessCode === "object") {
+          TEMP_ACCESS_CODE = cloudState.tempAccessCode;
+          localStorage.setItem(TEMP_CODE_CACHE_KEY, JSON.stringify(TEMP_ACCESS_CODE));
+        } else if (cloudState.tempAccessCode === null) {
+          TEMP_ACCESS_CODE = null;
+          localStorage.removeItem(TEMP_CODE_CACHE_KEY);
+        }
         renderHomeState();
+        renderTempCodeStatus();
       }
     }
 
