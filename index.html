@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصتي التعليمية</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .records-box {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 24px;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+    }
+
+    .records-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .records-header h3 {
+      margin: 0;
+    }
+
+    .records-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-sm {
+      padding: 7px 12px;
+      font-size: 0.85rem;
+    }
+
+    .btn-danger {
+      background-color: #dc2626;
+    }
+
+    .btn-danger:hover {
+      background-color: #b91c1c;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 10px 12px;
+      text-align: right;
+    }
+
+    th {
+      background-color: #f8fafc;
+      color: #0f172a;
+      font-weight: bold;
+    }
+
+    .empty-note {
+      color: #64748b;
+      margin: 8px 0 0;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <strong>منصتي التعليمية</strong>
+    <div class="nav-actions">
+      <span id="studentBadge"></span>
+      <button type="button" id="logoutBtn" class="btn btn-logout hidden">تسجيل خروج</button>
+      <button type="button" id="menuToggle" class="menu-btn hidden" aria-expanded="false" aria-controls="mobileMenu">القائمة</button>
+    </div>
+  </header>
+
+  <nav id="mobileMenu" aria-label="القائمة الجانبية">
+    <a href="index.html">الرئيسية</a>
+    <a href="course.html?id=1">مبادئ القانون</a>
+    <a href="course.html?id=2">مبادئ الاقتصاد</a>
+    <a href="course.html?id=3">لغة أجنبية</a>
+    <a href="course.html?id=4">مبادئ المحاسبة المالية</a>
+    <a href="course.html?id=5">مبادئ إدارة الأعمال</a>
+  </nav>
+
+  <!-- بوابة تسجيل دخول الطالب -->
+  <section id="gateSection" class="container">
+    <div class="gate-box">
+      <h2>تسجيل دخول الطالب</h2>
+
+      <div id="quickLoginBox" class="quick-login-box hidden">
+        <p id="savedAccountText"></p>
+        <div class="quick-actions">
+          <button type="button" id="quickLoginBtn" class="btn">دخول مباشر</button>
+          <button type="button" id="clearAccountBtn" class="btn btn-secondary">بيانات جديدة</button>
+        </div>
+      </div>
+
+      <form id="gateForm">
+        <label for="studentName">اسم الطالب</label>
+        <input type="text" id="studentName" placeholder="اكتب اسمك الكامل" required>
+
+        <label for="studentPhone">رقم الفون</label>
+        <input type="tel" id="studentPhone" placeholder="مثال: 010xxxxxxxx" required>
+
+        <label for="studentAddress">العنوان</label>
+        <input type="text" id="studentAddress" placeholder="المحافظة / المركز / المنطقة" required>
+
+        <label for="studentAge">السن</label>
+        <input type="number" id="studentAge" min="5" max="100" placeholder="مثال: 18" required>
+
+        <label for="studentCode">كود الدخول (حروف وأرقام من 1 إلى 50000)</label>
+        <input type="text" id="studentCode" placeholder="مثال: EDU120 أو ST4500" required>
+
+        <button type="submit" id="submitBtn" class="btn btn-full">تسجيل الدخول وفتح الكورسات</button>
+      </form>
+      <div id="gateMsg" class="msg"></div>
+    </div>
+  </section>
+
+  <!-- محتوى المنصة بعد الدخول -->
+  <div id="platformContent" class="hidden">
+    <section class="hero">
+      <h1 id="welcomeTitle">أهلاً بك في منصتي التعليمية</h1>
+      <p>اختر الكورس المناسب للبدء في الشرح والتدريبات.</p>
+    </section>
+
+    <main class="container">
+      <h2>الكورسات المتاحة</h2>
+
+      <div class="card">
+        <h3>1. مبادئ القانون</h3>
+        <p>شرح مبسط للقواعد القانونية الأساسية وتطبيقاتها العملية.</p>
+        <a href="course.html?id=1" class="btn">دخول الكورس</a>
+      </div>
+
+      <div class="card">
+        <h3>2. مبادئ الاقتصاد</h3>
+        <p>فهم أساسيات العرض والطلب والنشاط الاقتصادي والموارد.</p>
+        <a href="course.html?id=2" class="btn">دخول الكورس</a>
+      </div>
+
+      <div class="card">
+        <h3>3. لغة أجنبية</h3>
+        <p>تنمية مهارات القراءة والمفردات والقواعد الأساسية.</p>
+        <a href="course.html?id=3" class="btn">دخول الكورس</a>
+      </div>
+
+      <div class="card">
+        <h3>4. مبادئ المحاسبة المالية</h3>
+        <p>أساسيات القيود المحاسبية والقوائم المالية وتوازن الحسابات.</p>
+        <a href="course.html?id=4" class="btn">دخول الكورس</a>
+      </div>
+
+      <div class="card">
+        <h3>5. مبادئ إدارة الأعمال</h3>
+        <p>مفاهيم التخطيط والتنظيم والتوجيه والرقابة في المنظمات.</p>
+        <a href="course.html?id=5" class="btn">دخول الكورس</a>
+      </div>
+
+      <section class="records-box" aria-label="سجل الطلاب المسجلين">
+        <div class="records-header">
+          <h3>سجل الطلاب المسجلين (<span id="recordsCount">0</span>)</h3>
+          <div class="records-actions">
+            <button type="button" id="copyRecordsBtn" class="btn btn-sm">نسخ البيانات</button>
+            <button type="button" id="downloadRecordsBtn" class="btn btn-secondary btn-sm">تحميل ملف TXT</button>
+            <button type="button" id="clearRecordsBtn" class="btn btn-danger btn-sm">مسح السجل</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>الاسم</th>
+                <th>رقم الفون</th>
+                <th>العنوان</th>
+                <th>السن</th>
+                <th>الكود</th>
+                <th>وقت التسجيل</th>
+              </tr>
+            </thead>
+            <tbody id="recordsBody"></tbody>
+          </table>
+        </div>
+        <p id="emptyRecordsNote" class="empty-note hidden">لا توجد بيانات طلاب محفوظة في هذا المتصفح حتى الآن.</p>
+        <div id="recordsMsg" class="msg"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const STUDENTS_STORAGE_KEY = "eduPlatformStudentsLog";
+
+    const gateSection = document.getElementById("gateSection");
+    const platformContent = document.getElementById("platformContent");
+    const gateForm = document.getElementById("gateForm");
+
+    const quickLoginBox = document.getElementById("quickLoginBox");
+    const savedAccountText = document.getElementById("savedAccountText");
+    const quickLoginBtn = document.getElementById("quickLoginBtn");
+    const clearAccountBtn = document.getElementById("clearAccountBtn");
+
+    const studentNameInput = document.getElementById("studentName");
+    const studentPhoneInput = document.getElementById("studentPhone");
+    const studentAddressInput = document.getElementById("studentAddress");
+    const studentAgeInput = document.getElementById("studentAge");
+    const studentCodeInput = document.getElementById("studentCode");
+
+    const gateMsg = document.getElementById("gateMsg");
+    const studentBadge = document.getElementById("studentBadge");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const menuToggle = document.getElementById("menuToggle");
+    const mobileMenu = document.getElementById("mobileMenu");
+    const welcomeTitle = document.getElementById("welcomeTitle");
+
+    const recordsBody = document.getElementById("recordsBody");
+    const recordsCount = document.getElementById("recordsCount");
+    const emptyRecordsNote = document.getElementById("emptyRecordsNote");
+    const recordsMsg = document.getElementById("recordsMsg");
+    const copyRecordsBtn = document.getElementById("copyRecordsBtn");
+    const downloadRecordsBtn = document.getElementById("downloadRecordsBtn");
+    const clearRecordsBtn = document.getElementById("clearRecordsBtn");
+
+    function isValidCode(code) {
+      const clean = code.trim().toUpperCase();
+      const match = clean.match(/^([A-Z]{1,3})-?(\d{1,5})$/);
+      if (!match) return false;
+      const num = parseInt(match[2], 10);
+      return num >= 1 && num <= 50000;
+    }
+
+    function getStudentsLog() {
+      try {
+        const raw = localStorage.getItem(STUDENTS_STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveStudentToLog(student) {
+      const list = getStudentsLog();
+      list.unshift({
+        name: student.name,
+        phone: student.phone,
+        address: student.address,
+        age: student.age,
+        code: student.code,
+        time: new Date().toLocaleString("ar-EG")
+      });
+      localStorage.setItem(STUDENTS_STORAGE_KEY, JSON.stringify(list));
+    }
+
+    function renderStudentsLog() {
+      const list = getStudentsLog();
+      recordsCount.textContent = String(list.length);
+      recordsBody.innerHTML = "";
+
+      if (list.length === 0) {
+        emptyRecordsNote.classList.remove("hidden");
+        return;
+      }
+
+      emptyRecordsNote.classList.add("hidden");
+
+      list.forEach((item, index) => {
+        const tr = document.createElement("tr");
+        const cells = [
+          String(index + 1),
+          item.name || "",
+          item.phone || "",
+          item.address || "",
+          item.age || "",
+          item.code || "",
+          item.time || ""
+        ];
+
+        cells.forEach((val) => {
+          const td = document.createElement("td");
+          td.textContent = val;
+          tr.appendChild(td);
+        });
+
+        recordsBody.appendChild(tr);
+      });
+    }
+
+    function formatRecordsAsText() {
+      const list = getStudentsLog();
+      if (list.length === 0) return "";
+      return list
+        .map((item, i) =>
+          `${i + 1}) الاسم: ${item.name} | الفون: ${item.phone} | العنوان: ${item.address} | السن: ${item.age} | الكود: ${item.code} | الوقت: ${item.time}`
+        )
+        .join("\n");
+    }
+
+    function renderView() {
+      const savedName = localStorage.getItem("studentName");
+      const savedCode = localStorage.getItem("studentCode");
+      const isLoggedIn = localStorage.getItem("studentAccess") === "granted";
+
+      if (savedName && savedCode && isValidCode(savedCode) && isLoggedIn) {
+        gateSection.classList.add("hidden");
+        platformContent.classList.remove("hidden");
+        logoutBtn.classList.remove("hidden");
+        menuToggle.classList.remove("hidden");
+        studentBadge.textContent = "أهلاً، " + savedName;
+        welcomeTitle.textContent = "أهلاً بك يا " + savedName + " في منصتي التعليمية";
+        renderStudentsLog();
+      } else {
+        mobileMenu.classList.remove("open");
+        menuToggle.setAttribute("aria-expanded", "false");
+        gateSection.classList.remove("hidden");
+        platformContent.classList.add("hidden");
+        logoutBtn.classList.add("hidden");
+        menuToggle.classList.add("hidden");
+        studentBadge.textContent = "";
+
+        if (savedName && savedCode && isValidCode(savedCode)) {
+          quickLoginBox.classList.remove("hidden");
+          savedAccountText.textContent = "حساب محفوظ: " + savedName + " (كود: " + savedCode + ")";
+        } else {
+          quickLoginBox.classList.add("hidden");
+        }
+      }
+    }
+
+    quickLoginBtn.addEventListener("click", function () {
+      const savedName = localStorage.getItem("studentName");
+      const savedCode = localStorage.getItem("studentCode");
+      if (savedName && savedCode && isValidCode(savedCode)) {
+        localStorage.setItem("studentAccess", "granted");
+        gateMsg.textContent = "";
+        renderView();
+      }
+    });
+
+    clearAccountBtn.addEventListener("click", function () {
+      localStorage.removeItem("studentName");
+      localStorage.removeItem("studentPhone");
+      localStorage.removeItem("studentAddress");
+      localStorage.removeItem("studentAge");
+      localStorage.removeItem("studentCode");
+      localStorage.removeItem("studentAccess");
+      gateForm.reset();
+      gateMsg.textContent = "";
+      renderView();
+    });
+
+    gateForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const name = studentNameInput.value.trim();
+      const phone = studentPhoneInput.value.trim();
+      const address = studentAddressInput.value.trim();
+      const age = studentAgeInput.value.trim();
+      const code = studentCodeInput.value.trim().toUpperCase();
+
+      if (!name || !phone || !address || !age || !code) return;
+
+      if (!isValidCode(code)) {
+        gateMsg.className = "msg error";
+        gateMsg.textContent = "الكود غير صحيح. اكتب حروفاً وأرقاماً من 1 إلى 50000 (مثال: EDU120).";
+        return;
+      }
+
+      localStorage.setItem("studentName", name);
+      localStorage.setItem("studentPhone", phone);
+      localStorage.setItem("studentAddress", address);
+      localStorage.setItem("studentAge", age);
+      localStorage.setItem("studentCode", code);
+      localStorage.setItem("studentAccess", "granted");
+
+      saveStudentToLog({ name, phone, address, age, code });
+
+      gateMsg.textContent = "";
+      renderView();
+    });
+
+    copyRecordsBtn.addEventListener("click", async function () {
+      const text = formatRecordsAsText();
+      if (!text) {
+        recordsMsg.className = "msg error";
+        recordsMsg.textContent = "لا توجد بيانات لنسخها.";
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(text);
+        recordsMsg.className = "msg info";
+        recordsMsg.textContent = "تم نسخ سجل الطلاب بنجاح.";
+      } catch (err) {
+        recordsMsg.className = "msg error";
+        recordsMsg.textContent = "تعذر النسخ التلقائي، يمكنك تحديد الجدول ونسخه يدوياً.";
+      }
+    });
+
+    downloadRecordsBtn.addEventListener("click", function () {
+      const text = formatRecordsAsText();
+      if (!text) {
+        recordsMsg.className = "msg error";
+        recordsMsg.textContent = "لا توجد بيانات لتحميلها.";
+        return;
+      }
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "students-log.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+      recordsMsg.className = "msg info";
+      recordsMsg.textContent = "تم تحميل ملف students-log.txt.";
+    });
+
+    clearRecordsBtn.addEventListener("click", function () {
+      localStorage.removeItem(STUDENTS_STORAGE_KEY);
+      renderStudentsLog();
+      recordsMsg.className = "msg info";
+      recordsMsg.textContent = "تم مسح سجل الطلاب.";
+    });
+
+    logoutBtn.addEventListener("click", function () {
+      localStorage.removeItem("studentAccess");
+      renderView();
+    });
+
+    menuToggle.addEventListener("click", function () {
+      const isOpen = mobileMenu.classList.toggle("open");
+      menuToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    renderView();
+  </script>
+
+</body>
+</html>
